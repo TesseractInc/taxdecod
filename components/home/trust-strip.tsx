@@ -2,7 +2,7 @@
 
 import Reveal from "../ui/reveal";
 import CountUp from "../ui/count-up";
-import { FileText, Users, ShieldCheck, Sparkles } from "lucide-react";
+import { BadgeCheck, FileText, ShieldCheck, Users } from "lucide-react";
 
 export default function TrustStrip() {
   const items = [
@@ -13,26 +13,26 @@ export default function TrustStrip() {
     },
     {
       icon: FileText,
-      label: "Reports generated",
+      label: "Salary reports generated",
       value: <CountUp end={3860} suffix="+" />,
     },
     {
       icon: ShieldCheck,
-      label: "Built for trust-first clarity",
-      value: "UK focused",
+      label: "Calculation logic",
+      value: "UK-focused clarity",
     },
     {
-      icon: Sparkles,
-      label: "Used for real salary decisions",
-      value: "Offers • payslips • raises",
+      icon: BadgeCheck,
+      label: "Best used for",
+      value: "offers • payslips • raises",
     },
   ];
 
   return (
-    <section className="py-4">
+    <section className="pb-8 pt-2">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
-          <div className="grid gap-3 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950 md:grid-cols-2 xl:grid-cols-4">
             {items.map((item) => {
               const Icon = item.icon;
 
@@ -41,7 +41,7 @@ export default function TrustStrip() {
                   key={item.label}
                   className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-start gap-3">
                     <div className="rounded-xl bg-white p-2 dark:bg-slate-950">
                       <Icon className="h-4 w-4 app-accent" />
                     </div>

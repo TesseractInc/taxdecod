@@ -4,19 +4,19 @@ export default function UseCases() {
   const cases = [
     {
       title: "Compare job offers",
-      desc: "See the real after-tax difference between two salaries before making a decision.",
+      desc: "See the real after-tax difference between two salaries before making a career decision.",
     },
     {
       title: "Understand your payslip",
-      desc: "Break down PAYE, NI, pension, student loan, and tax code in plain English.",
+      desc: "Break down PAYE, NI, pension, student loan, and tax code in a way that actually makes sense.",
     },
     {
       title: "Budget with confidence",
-      desc: "Focus on your real monthly take-home pay rather than just gross salary.",
+      desc: "Focus on real monthly take-home pay instead of relying on gross salary assumptions.",
     },
     {
       title: "Check raises and bonuses",
-      desc: "See how much of extra pay you actually keep after deductions.",
+      desc: "Understand how much of extra pay you actually keep after the deductions kick in.",
     },
   ];
 
@@ -26,15 +26,14 @@ export default function UseCases() {
         <Reveal>
           <div className="max-w-3xl">
             <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-              Use cases
+              Real use cases
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-              Built for real salary questions
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+              Built for the salary questions people really have
             </h2>
             <p className="mt-4 text-slate-600 dark:text-slate-400">
-              TaxDecod is not just for quick calculations. It is designed to help
-              users understand salary decisions, payslips, and real monthly income
-              more clearly.
+              TaxDecod works best when it helps users make a decision, not just
+              generate a number.
             </p>
           </div>
         </Reveal>

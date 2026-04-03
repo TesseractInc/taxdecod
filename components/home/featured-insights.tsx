@@ -6,23 +6,23 @@ import { motion, AnimatePresence } from "framer-motion";
 const insights = [
   {
     id: "bonus",
-    title: "Bonus shock",
-    headline: "A £2,000 bonus never feels like £2,000",
-    text: "TaxDecod shows the real amount you actually keep after tax, NI, pension, and student loan deductions.",
+    title: "Bonus reality",
+    headline: "A bonus never feels like the headline number",
+    text: "TaxDecod should show the real amount you actually keep after tax, NI, pension, and student loan deductions — visually, not just in text.",
     accent: "from-sky-500/15 to-cyan-500/10",
   },
   {
     id: "raise",
-    title: "Raise reality",
+    title: "Raise impact",
     headline: "A raise changes less than most people expect",
-    text: "See the extra net pay per year and per month, not just the headline increase.",
+    text: "Users need to see the extra net pay per year and per month, not just the gross increase. That is where real salary psychology happens.",
     accent: "from-emerald-500/15 to-sky-500/10",
   },
   {
     id: "payslip",
     title: "Payslip clarity",
-    headline: "Most people do not really understand their payslip",
-    text: "Turn PAYE, NI, pension, and tax code into simple explanations that make sense instantly.",
+    headline: "Most people do not actually understand their payslip",
+    text: "Turn PAYE, NI, pension, and tax code into instant visual clarity so users stop feeling like payroll is a black box.",
     accent: "from-cyan-500/15 to-slate-500/10",
   },
 ];
@@ -34,13 +34,13 @@ export default function FeaturedInsights() {
   return (
     <section className="py-16">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-8 lg:grid-cols-[0.42fr_0.58fr]">
+        <div className="grid gap-8 lg:grid-cols-[0.4fr_0.6fr]">
           <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-              Featured insights
+              Focused insights
             </p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-              Explore the most useful salary angles
+              The salary questions people actually care about
             </h2>
 
             <div className="mt-6 grid gap-3">
@@ -71,7 +71,7 @@ export default function FeaturedInsights() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -14 }}
                 transition={{ duration: 0.28 }}
-                className={`min-h-[320px] bg-gradient-to-br ${selected.accent} p-8`}
+                className={`min-h-[340px] bg-gradient-to-br ${selected.accent} p-8`}
               >
                 <div className="max-w-2xl">
                   <p className="text-sm font-medium text-sky-700 dark:text-sky-300">
@@ -87,28 +87,28 @@ export default function FeaturedInsights() {
                   <div className="mt-8 grid max-w-xl gap-4 sm:grid-cols-3">
                     <div className="rounded-2xl border border-white/50 bg-white/70 px-4 py-4 dark:border-slate-800 dark:bg-slate-950/60">
                       <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Real net effect
+                        Better than
                       </p>
                       <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                        Visual
+                        raw tables
                       </p>
                     </div>
 
                     <div className="rounded-2xl border border-white/50 bg-white/70 px-4 py-4 dark:border-slate-800 dark:bg-slate-950/60">
                       <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Payslip clarity
+                        What users need
                       </p>
                       <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                        Plain English
+                        visual clarity
                       </p>
                     </div>
 
                     <div className="rounded-2xl border border-white/50 bg-white/70 px-4 py-4 dark:border-slate-800 dark:bg-slate-950/60">
                       <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Decision support
+                        Best outcome
                       </p>
                       <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                        Actionable
+                        better decisions
                       </p>
                     </div>
                   </div>

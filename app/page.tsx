@@ -5,7 +5,6 @@ import SiteHeader from "../components/layout/site-header";
 import Container from "../components/ui/container";
 import TrustStrip from "../components/home/trust-strip";
 import UseCases from "../components/home/use-cases";
-import SalarySignalStrip from "../components/home/salary-signal-strip";
 import HowItWorks from "../components/home/how-it-works";
 import FeaturedInsights from "../components/home/featured-insights";
 import MoneyExplainer from "../components/home/money-explainer";
@@ -16,7 +15,7 @@ import Reveal from "../components/ui/reveal";
 export const metadata: Metadata = {
   title: "TaxDecod | UK Salary & Take-Home Pay Calculator",
   description:
-    "Understand UK salary, tax, and take-home pay with full transparency. Calculate real income and decode your payslip.",
+    "See exactly what you take home after tax, NI, pension, and student loan. TaxDecod turns UK salary into a clear visual experience.",
 };
 
 const popularSalaryPages = [
@@ -40,35 +39,37 @@ export default function HomePage() {
     <main className="app-shell">
       <SiteHeader />
       <HeroSection />
-      <SalarySignalStrip />
       <TrustStrip />
-      <HowItWorks />
-      <JourneyCards />
-      <UseCases />
-      <FeaturedInsights />
       <MoneyExplainer />
+      <JourneyCards />
+      <HowItWorks />
+      <FeaturedInsights />
+      <UseCases />
 
       <section className="pb-10" id="seo-links">
         <Container>
           <Reveal>
-            <div className="app-card-strong p-8">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] app-accent">
-                Popular salary pages
-              </p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight app-title">
-                Explore UK after-tax salary breakdowns
-              </h2>
-              <p className="mt-4 max-w-3xl app-copy">
-                Browse popular UK salary examples and see estimated take-home pay,
-                deductions, and monthly income in a clearer format.
-              </p>
+            <div className="app-card-strong p-8 md:p-10">
+              <div className="max-w-3xl">
+                <p className="text-sm font-medium uppercase tracking-[0.2em] app-accent">
+                  Popular salary pages
+                </p>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-4xl">
+                  Explore UK after-tax salary breakdowns
+                </h2>
+                <p className="mt-4 app-copy">
+                  Jump straight into popular salary examples and see estimated
+                  take-home pay, deductions, and monthly income in a clearer,
+                  more visual format.
+                </p>
+              </div>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {popularSalaryPages.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="app-soft hover-lift px-4 py-4 text-sm"
+                    className="app-soft hover-lift rounded-3xl px-5 py-5 text-sm"
                   >
                     <span className="app-title">{item.label}</span>
                   </Link>
@@ -82,23 +83,26 @@ export default function HomePage() {
       <section className="pb-14">
         <Container>
           <Reveal>
-            <div className="app-card-strong p-8">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] app-accent">
-                Salary variants
-              </p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight app-title">
-                Explore more specific salary scenarios
-              </h2>
-              <p className="mt-4 max-w-3xl app-copy">
-                Monthly take-home, student loan impact, and Scotland-focused pages.
-              </p>
+            <div className="app-card-strong p-8 md:p-10">
+              <div className="max-w-3xl">
+                <p className="text-sm font-medium uppercase tracking-[0.2em] app-accent">
+                  Salary variants
+                </p>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-4xl">
+                  Explore more specific salary scenarios
+                </h2>
+                <p className="mt-4 app-copy">
+                  Go deeper into monthly take-home, student loan impact, and
+                  Scotland-focused salary pages.
+                </p>
+              </div>
 
               <div className="mt-8 grid gap-4 md:grid-cols-3">
                 {variantPages.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="app-soft hover-lift px-4 py-4 text-sm"
+                    className="app-soft hover-lift rounded-3xl px-5 py-5 text-sm"
                   >
                     <span className="app-title">{item.label}</span>
                   </Link>
