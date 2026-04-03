@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
 import SalaryVariantContent from "../../components/seo/salary-variant-content";
-import { parseNumericSalary, getScotlandSalaryPageData, getVariantSalaryParams } from "../../lib/tax/seo/salary-variants";
+import { parseNumericSalary, getScotlandSalaryPageData, getVariantSalaryParams } from "../../components/seo/salary-variants";
 
 type PageProps = {
   params: Promise<{
