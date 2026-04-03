@@ -1,5 +1,5 @@
 import { calculateTakeHome } from "../../lib/tax/calculators/take-home";
-import { CalculatorInput } from "../../../taxdecod/types/tax";
+import type { CalculatorInput } from "@/types/tax";
 
 export function parseNumericSalary(slug: string): number | null {
   const salary = Number(slug);
