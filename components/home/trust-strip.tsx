@@ -1,65 +1,74 @@
 "use client";
 
-import Reveal from "../ui/reveal";
-import CountUp from "../ui/count-up";
-import { BadgeCheck, FileText, ShieldCheck, Users } from "lucide-react";
+import { motion } from "framer-motion";
+import { BadgeCheck, FileText, ShieldCheck, Sparkles } from "lucide-react";
+
+const items = [
+  {
+    icon: ShieldCheck,
+    title: "Easy to understand",
+    text: "Clear enough for anyone",
+  },
+  {
+    icon: FileText,
+    title: "Payslip focused",
+    text: "Built around real needs",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Real take-home first",
+    text: "Net pay clarity matters",
+  },
+  {
+    icon: Sparkles,
+    title: "Modern experience",
+    text: "Visual, not confusing",
+  },
+];
 
 export default function TrustStrip() {
-  const items = [
-    {
-      icon: Users,
-      label: "Salary checks guided",
-      value: <CountUp end={12480} suffix="+" />,
-    },
-    {
-      icon: FileText,
-      label: "Salary reports generated",
-      value: <CountUp end={3860} suffix="+" />,
-    },
-    {
-      icon: ShieldCheck,
-      label: "Calculation logic",
-      value: "UK-focused clarity",
-    },
-    {
-      icon: BadgeCheck,
-      label: "Best used for",
-      value: "offers • payslips • raises",
-    },
-  ];
-
   return (
-    <section className="pb-8 pt-2">
-      <div className="mx-auto max-w-6xl px-6">
-        <Reveal>
-          <div className="grid gap-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950 md:grid-cols-2 xl:grid-cols-4">
-            {items.map((item) => {
-              const Icon = item.icon;
+    <section className="pb-10 pt-4">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {items.map((item, index) => {
+            const Icon = item.icon;
 
-              return (
-                <div
-                  key={item.label}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-xl bg-white p-2 dark:bg-slate-950">
+            return (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: index * 0.05 }}
+                whileHover={{ y: -4 }}
+                className="group relative"
+              >
+                <div className="absolute inset-0 rounded-[26px] opacity-0 blur-xl transition group-hover:opacity-100"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(14,165,233,0.18), transparent 70%)",
+                  }}
+                />
+
+                <div className="relative rounded-[26px] border p-5 app-card">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-xl bg-white p-2 shadow-sm dark:bg-slate-950">
                       <Icon className="h-4 w-4 app-accent" />
                     </div>
 
                     <div>
-                      <p className="text-xs uppercase tracking-[0.16em] app-subtle">
-                        {item.label}
+                      <p className="text-sm font-semibold app-title">
+                        {item.title}
                       </p>
-                      <p className="mt-1 text-sm font-semibold app-title">
-                        {item.value}
-                      </p>
+                      <p className="text-xs app-subtle">{item.text}</p>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </Reveal>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

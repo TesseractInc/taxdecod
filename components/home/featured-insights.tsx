@@ -34,13 +34,13 @@ export default function FeaturedInsights() {
   return (
     <section className="py-16">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid gap-8 lg:grid-cols-[0.4fr_0.6fr]">
-          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+        <div className="grid gap-8 lg:grid-cols-[0.38fr_0.62fr]">
+          <div className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
               Focused insights
             </p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-              The salary questions people actually care about
+              Explore the salary angles people actually care about
             </h2>
 
             <div className="mt-6 grid gap-3">
@@ -49,10 +49,10 @@ export default function FeaturedInsights() {
                   key={item.id}
                   type="button"
                   onClick={() => setActive(item.id)}
-                  className={`rounded-2xl border px-4 py-4 text-left transition ${
+                  className={`rounded-[22px] border px-4 py-4 text-left transition ${
                     active === item.id
                       ? "border-sky-300 bg-sky-50 dark:border-sky-700 dark:bg-sky-950/40"
-                      : "border-slate-200 bg-slate-50 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
+                      : "border-slate-200 bg-slate-50 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-950"
                   }`}
                 >
                   <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -63,7 +63,7 @@ export default function FeaturedInsights() {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selected.id}

@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import HeroSection from "../components/home/hero-section";
 import SiteHeader from "../components/layout/site-header";
 import Container from "../components/ui/container";
 import TrustStrip from "../components/home/trust-strip";
 import UseCases from "../components/home/use-cases";
 import HowItWorks from "../components/home/how-it-works";
-import FeaturedInsights from "../components/home/featured-insights";
-import MoneyExplainer from "../components/home/money-explainer";
 import ExploreNext from "../components/home/explore-next";
-import JourneyCards from "../components/home/journey-cards";
-import Reveal from "../components/ui/reveal";
+import HomeClient from "../components/home/home-client";
 
 export const metadata: Metadata = {
   title: "TaxDecod | UK Salary & Take-Home Pay Calculator",
@@ -38,78 +34,78 @@ export default function HomePage() {
   return (
     <main className="app-shell">
       <SiteHeader />
-      <HeroSection />
+
+      <HomeClient />
+
       <TrustStrip />
-      <MoneyExplainer />
-      <JourneyCards />
       <HowItWorks />
-      <FeaturedInsights />
       <UseCases />
 
       <section className="pb-10" id="seo-links">
         <Container>
-          <Reveal>
-            <div className="app-card-strong p-8 md:p-10">
-              <div className="max-w-3xl">
+          <div className="app-card-strong overflow-hidden rounded-[32px] p-8 md:p-10">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+              <div className="max-w-2xl">
                 <p className="text-sm font-medium uppercase tracking-[0.2em] app-accent">
                   Popular salary pages
                 </p>
                 <h2 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-4xl">
-                  Explore UK after-tax salary breakdowns
+                  Explore common salary examples instantly
                 </h2>
-                <p className="mt-4 app-copy">
-                  Jump straight into popular salary examples and see estimated
-                  take-home pay, deductions, and monthly income in a clearer,
-                  more visual format.
+                <p className="mt-4 text-base leading-8 app-copy">
+                  Open popular UK salary pages to see take-home pay,
+                  deductions, and clearer salary breakdowns without starting
+                  from scratch.
                 </p>
               </div>
 
-              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {popularSalaryPages.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="app-soft hover-lift rounded-3xl px-5 py-5 text-sm"
+                    className="app-soft hover-lift rounded-[24px] px-5 py-5 text-sm transition"
                   >
                     <span className="app-title">{item.label}</span>
                   </Link>
                 ))}
               </div>
             </div>
-          </Reveal>
+          </div>
         </Container>
       </section>
 
-      <section className="pb-14">
+      <section className="pb-16">
         <Container>
-          <Reveal>
-            <div className="app-card-strong p-8 md:p-10">
-              <div className="max-w-3xl">
+          <div className="app-card-strong overflow-hidden rounded-[32px] p-8 md:p-10">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+              <div className="max-w-2xl">
                 <p className="text-sm font-medium uppercase tracking-[0.2em] app-accent">
-                  Salary variants
+                  Specific salary scenarios
                 </p>
                 <h2 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-4xl">
-                  Explore more specific salary scenarios
+                  Go deeper into salary variations
                 </h2>
-                <p className="mt-4 app-copy">
-                  Go deeper into monthly take-home, student loan impact, and
-                  Scotland-focused salary pages.
+                <p className="mt-4 text-base leading-8 app-copy">
+                  Explore monthly take-home, student loan impact, and
+                  Scotland salary views with focused pages designed around
+                  real user questions.
                 </p>
               </div>
 
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-3">
                 {variantPages.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="app-soft hover-lift rounded-3xl px-5 py-5 text-sm"
+                    className="app-soft hover-lift rounded-[24px] px-5 py-5 text-sm transition"
                   >
                     <span className="app-title">{item.label}</span>
                   </Link>
                 ))}
               </div>
             </div>
-          </Reveal>
+          </div>
         </Container>
       </section>
 

@@ -5,32 +5,39 @@ import { Gauge, TrendingUp } from "lucide-react";
 import { TakeHomeResult } from "../../types/tax";
 import { calculateSalaryScore } from "../../lib/tax/explanations/salary-score";
 
-type Props = {
-  result: TakeHomeResult;
-};
-
-export default function SalaryScore({ result }: Props) {
+export default function SalaryScore({ result }: { result: TakeHomeResult }) {
   const { score, label, message } = calculateSalaryScore(result);
 
   const color =
     score >= 80
-      ? "var(--emerald)"
+      ? "#10b981"
       : score >= 65
-      ? "var(--primary)"
+      ? "#0ea5e9"
       : score >= 50
-      ? "var(--amber)"
-      : "var(--rose)";
+      ? "#f59e0b"
+      : "#ef4444";
 
   return (
-    <section className="app-card p-6">
-      <div className="flex items-start justify-between">
+    <section className="relative app-card p-7 overflow-hidden">
+      {/* glow */}
+      <div
+        className="absolute inset-0 opacity-0 hover:opacity-100 transition"
+        style={{
+          background:
+            "radial-gradient(circle at center, rgba(14,165,233,0.12), transparent 70%)",
+        }}
+      />
+
+      <div className="relative flex items-start justify-between">
         <div>
           <p className="text-sm font-medium app-accent">
             Salary Reality Score
           </p>
+
           <h2 className="mt-2 text-2xl font-semibold app-title">
             How strong is your real income?
           </h2>
+
           <p className="mt-2 text-sm app-copy">
             This score reflects how much of your salary you actually keep and how usable it is in real life.
           </p>
@@ -39,47 +46,50 @@ export default function SalaryScore({ result }: Props) {
         <Gauge className="h-6 w-6 app-accent" />
       </div>
 
-      {/* score visual */}
-      <div className="mt-8 flex items-center gap-6">
-        <div className="relative h-28 w-28">
+      <div className="mt-8 flex items-center gap-8">
+        {/* circle */}
+        <div className="relative h-32 w-32">
           <svg className="h-full w-full">
             <circle
-              cx="56"
-              cy="56"
-              r="50"
+              cx="64"
+              cy="64"
+              r="56"
               stroke="var(--line)"
               strokeWidth="8"
               fill="none"
             />
+
             <motion.circle
-              cx="56"
-              cy="56"
-              r="50"
+              cx="64"
+              cy="64"
+              r="56"
               stroke={color}
               strokeWidth="8"
               fill="none"
-              strokeDasharray="314"
-              strokeDashoffset={314 - (score / 100) * 314}
+              strokeDasharray="352"
+              strokeDashoffset={352 - (score / 100) * 352}
               strokeLinecap="round"
-              initial={{ strokeDashoffset: 314 }}
-              animate={{ strokeDashoffset: 314 - (score / 100) * 314 }}
-              transition={{ duration: 0.8 }}
+              initial={{ strokeDashoffset: 352 }}
+              animate={{ strokeDashoffset: 352 - (score / 100) * 352 }}
+              transition={{ duration: 1 }}
             />
           </svg>
 
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-2xl font-bold app-title">{score}</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-3xl font-bold app-title">{score}</span>
+            <span className="text-xs app-subtle">/100</span>
           </div>
         </div>
 
-        <div>
+        {/* text */}
+        <div className="max-w-sm">
           <p className="text-lg font-semibold app-title">{label}</p>
           <p className="mt-2 text-sm app-copy">{message}</p>
         </div>
       </div>
 
-      {/* share trigger */}
-      <div className="mt-6 app-soft p-4 flex items-center justify-between">
+      {/* CTA */}
+      <div className="mt-7 flex items-center justify-between rounded-[20px] border p-4 app-soft">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-4 w-4 app-accent" />
           <span className="text-sm app-title">

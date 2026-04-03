@@ -1,84 +1,73 @@
 "use client";
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+} from "recharts";
 import { TakeHomeResult } from "../../types/tax";
 import { formatCurrency } from "../../lib/tax/utils/currency";
 
-type DeductionChartProps = {
-  result: TakeHomeResult;
-};
-
-export default function DeductionChart({ result }: DeductionChartProps) {
+export default function DeductionChart({ result }: { result: TakeHomeResult }) {
   const data = [
-    { name: "Net Pay", value: result.netAnnual },
-    { name: "Income Tax", value: result.incomeTaxAnnual },
-    { name: "National Insurance", value: result.nationalInsuranceAnnual },
+    { name: "Take Home", value: result.netAnnual },
+    { name: "Tax", value: result.incomeTaxAnnual },
+    { name: "NI", value: result.nationalInsuranceAnnual },
     { name: "Pension", value: result.pensionAnnual },
-    { name: "Student Loan", value: result.studentLoanAnnual },
-  ].filter((item) => item.value > 0);
+    { name: "Loan", value: result.studentLoanAnnual },
+  ].filter((d) => d.value > 0);
 
-  const COLORS = ["#0ea5e9", "#38bdf8", "#10b981", "#f59e0b", "#f43f5e"];
+  const total = result.grossAnnual;
+
+  const COLORS = [
+    "#10b981",
+    "#0ea5e9",
+    "#38bdf8",
+    "#f59e0b",
+    "#f43f5e",
+  ];
+
+  const keepPercent =
+    total > 0 ? (result.netAnnual / total) * 100 : 0;
 
   return (
-    <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-      <div className="mb-4">
-        <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-          Visual breakdown
-        </p>
-        <h3 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-          Where your salary goes
-        </h3>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-          A quick visual split of what you keep and what gets deducted.
-        </p>
-      </div>
+    <div className="rounded-[32px] border p-6 bg-white dark:bg-slate-950 shadow-sm">
+      <h3 className="text-xl font-semibold app-title">
+        Salary composition
+      </h3>
 
-      <div className="h-[320px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="relative w-full h-[300px]">
+        <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
               data={data}
               dataKey="value"
-              nameKey="name"
-              innerRadius={75}
+              innerRadius={70}
               outerRadius={110}
               paddingAngle={3}
             >
               {data.map((entry, index) => (
-                <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+                <Cell key={index} fill={COLORS[index]} />
               ))}
             </Pie>
-            <Tooltip
-              formatter={(value) =>
-  typeof value === "number" ? formatCurrency(value) : formatCurrency(0)
-}
-              contentStyle={{
-                background: "#0f172a",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: "16px",
-                color: "#fff",
-              }}
-            />
           </PieChart>
         </ResponsiveContainer>
+
+        {/* CENTER CONTENT */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <p className="text-xs app-subtle">You keep</p>
+          <p className="text-3xl font-bold text-emerald-500">
+            {keepPercent.toFixed(0)}%
+          </p>
+        </div>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {data.map((item, index) => (
-          <div
-            key={item.name}
-            className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 dark:bg-slate-900"
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className="h-3 w-3 rounded-full"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
-              />
-              <span className="text-sm text-slate-700 dark:text-slate-300">{item.name}</span>
-            </div>
-            <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-              {formatCurrency(item.value)}
-            </span>
+      <div className="mt-4 space-y-2">
+        {data.map((d, i) => (
+          <div key={d.name} className="flex justify-between text-sm">
+            <span>{d.name}</span>
+            <span>{formatCurrency(d.value)}</span>
           </div>
         ))}
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Calculator, CircleDollarSign, ReceiptText } from "lucide-react";
+import { motion } from "framer-motion";
 import Reveal from "../ui/reveal";
 
 const steps = [
@@ -14,14 +15,14 @@ const steps = [
   {
     icon: CircleDollarSign,
     title: "See real take-home pay",
-    desc: "Instantly understand net pay, total deductions, and how much you actually keep.",
+    desc: "Instantly understand net pay, total deductions, and what you actually keep.",
     tone: "text-emerald-600 dark:text-emerald-400",
     bg: "bg-emerald-50 dark:bg-emerald-950/40",
   },
   {
     icon: ReceiptText,
-    title: "Move into deeper tools",
-    desc: "Go into payslip understanding, raise impact, bonus reality, and salary comparisons.",
+    title: "Understand the why",
+    desc: "Decode payslip items, tax code impact, bonuses, and raise scenarios.",
     tone: "text-cyan-600 dark:text-cyan-400",
     bg: "bg-cyan-50 dark:bg-cyan-950/40",
   },
@@ -37,12 +38,11 @@ export default function HowItWorks() {
               How it works
             </p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-              From salary confusion to visual clarity
+              From salary confusion to instant clarity
             </h2>
-            <p className="mt-4 text-slate-600 dark:text-slate-400">
-              The homepage should guide users clearly: start with the main
-              calculator, understand the money flow, then move into more specific
-              salary questions.
+            <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-400">
+              TaxDecod is designed to make salary understanding feel visual,
+              simple, and useful from the first interaction.
             </p>
           </div>
         </Reveal>
@@ -53,9 +53,12 @@ export default function HowItWorks() {
 
             return (
               <Reveal key={step.title} delay={index * 0.06}>
-                <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950"
+                >
                   <div
-                    className={`mb-5 inline-flex rounded-2xl p-3 ${step.bg} ${step.tone}`}
+                    className={`mb-5 inline-flex rounded-[22px] p-3 ${step.bg} ${step.tone}`}
                   >
                     <Icon className="h-6 w-6" />
                   </div>
@@ -66,7 +69,7 @@ export default function HowItWorks() {
                   <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
                     {step.desc}
                   </p>
-                </div>
+                </motion.div>
               </Reveal>
             );
           })}
