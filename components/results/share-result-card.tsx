@@ -126,7 +126,7 @@ Tax Code: ${values.taxCode || "—"}`;
               {copied === "link" ? "Copied page link" : "Copy page link"}
             </button>
 
-            {typeof navigator !== "undefined" && navigator.share ? (
+            {typeof window !== "undefined" && "share" in navigator ? (
               <button
                 type="button"
                 onClick={handleNativeShare}

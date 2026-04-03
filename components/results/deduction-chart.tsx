@@ -49,7 +49,9 @@ export default function DeductionChart({ result }: DeductionChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number) => formatCurrency(value)}
+              formatter={(value) =>
+  typeof value === "number" ? formatCurrency(value) : formatCurrency(0)
+}
               contentStyle={{
                 background: "#0f172a",
                 border: "1px solid rgba(255,255,255,0.1)",
