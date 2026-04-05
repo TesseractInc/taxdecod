@@ -1,11 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  CalculatorInput,
-  Region,
-  StudentLoanPlan,
-} from "../../types/tax";
+import { CalculatorInput, Region, StudentLoanPlan } from "../../types/tax";
 
 type CalculatorFormProps = {
   values: CalculatorInput;
@@ -69,20 +65,25 @@ export default function CalculatorForm({
           <label className="mb-2 block text-sm font-medium text-slate-900 dark:text-slate-100">
             Salary
           </label>
+
           <div className="relative">
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-500 dark:text-slate-400">
+            <span className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-base font-semibold text-slate-500 dark:text-slate-400">
               £
             </span>
+
             <input
               type="number"
+              inputMode="numeric"
               value={values.salary}
               onChange={(e) => updateField("salary", Number(e.target.value))}
-              className="app-input pl-9"
+              className="app-input pl-12"
               placeholder={salaryPlaceholder}
             />
           </div>
+
           <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-            Enter your gross {values.payPeriod === "monthly" ? "monthly" : "annual"} salary.
+            Enter your gross{" "}
+            {values.payPeriod === "monthly" ? "monthly" : "annual"} salary.
           </p>
         </div>
       </div>
@@ -95,7 +96,10 @@ export default function CalculatorForm({
           <select
             value={values.payPeriod}
             onChange={(e) =>
-              updateField("payPeriod", e.target.value as CalculatorInput["payPeriod"])
+              updateField(
+                "payPeriod",
+                e.target.value as CalculatorInput["payPeriod"]
+              )
             }
             className="app-input"
           >
@@ -132,13 +136,17 @@ export default function CalculatorForm({
           </label>
           <input
             type="number"
+            inputMode="decimal"
             value={values.pensionPercent}
-            onChange={(e) => updateField("pensionPercent", Number(e.target.value))}
+            onChange={(e) =>
+              updateField("pensionPercent", Number(e.target.value))
+            }
             className="app-input"
             placeholder="e.g. 5"
           />
           <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-            Pension reduces your take-home now, but supports longer-term savings.
+            Pension reduces your take-home now, but supports longer-term
+            savings.
           </p>
         </div>
 
@@ -149,7 +157,10 @@ export default function CalculatorForm({
           <select
             value={values.studentLoanPlan}
             onChange={(e) =>
-              updateField("studentLoanPlan", e.target.value as StudentLoanPlan)
+              updateField(
+                "studentLoanPlan",
+                e.target.value as StudentLoanPlan
+              )
             }
             className="app-input"
           >
@@ -198,7 +209,8 @@ export default function CalculatorForm({
               placeholder="1257L"
             />
             <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-              Default UK tax code is usually 1257L unless your payslip says otherwise.
+              Default UK tax code is usually 1257L unless your payslip says
+              otherwise.
             </p>
           </div>
         ) : null}
