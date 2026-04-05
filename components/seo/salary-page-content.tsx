@@ -1,5 +1,5 @@
 import { formatCurrency } from "../../lib/tax/utils/currency";
-import { CalculatorInput, TakeHomeResult } from "../../types/tax";
+import type { CalculatorInput, TakeHomeResult } from "../../types/tax";
 import InternalLinkBlock from "./internal-link-block";
 import {
   getRelatedSalaryLinks,
@@ -15,6 +15,38 @@ type SalaryPageContentProps = {
   weeklyNet: number;
 };
 
+function getSalaryPositioning(salary: number) {
+  if (salary < 30000) {
+    return {
+      label: "Lower salary range",
+      copy:
+        "At this level, budgeting pressure tends to be higher, so monthly take-home pay matters more than the headline annual figure.",
+    };
+  }
+
+  if (salary < 60000) {
+    return {
+      label: "Mid-range salary",
+      copy:
+        "This is a salary zone where many users compare lifestyle comfort, rent affordability, and whether extra income meaningfully changes monthly cash flow.",
+    };
+  }
+
+  if (salary < 90000) {
+    return {
+      label: "Upper-middle salary range",
+      copy:
+        "At this level, tax becomes more noticeable and gross salary increases do not translate into equal take-home gains.",
+    };
+  }
+
+  return {
+    label: "Higher salary range",
+    copy:
+      "At higher earnings, marginal tax pressure becomes more visible, so it is especially important to compare net pay rather than headline salary alone.",
+  };
+}
+
 export default function SalaryPageContent({
   salary,
   input,
@@ -25,6 +57,17 @@ export default function SalaryPageContent({
 }: SalaryPageContentProps) {
   const relatedSalaryLinks = getRelatedSalaryLinks(salary);
   const variantLinks = getVariantLinks(salary);
+
+  const totalDeductions =
+    result.incomeTaxAnnual +
+    result.nationalInsuranceAnnual +
+    result.pensionAnnual +
+    result.studentLoanAnnual;
+
+  const keepPercent =
+    result.grossAnnual > 0 ? (result.netAnnual / result.grossAnnual) * 100 : 0;
+
+  const salaryPositioning = getSalaryPositioning(salary);
 
   return (
     <div className="space-y-8">
@@ -70,76 +113,79 @@ export default function SalaryPageContent({
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+      <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-          <p className="text-sm font-medium text-sky-300">Deductions</p>
+          <p className="text-sm font-medium text-sky-300">Salary reality</p>
           <h2 className="mt-2 text-2xl font-semibold text-white">
-            Estimated yearly deductions
+            What you really keep from £{salary.toLocaleString("en-GB")}
           </h2>
 
-          <div className="mt-6 space-y-3">
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">Income Tax</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.incomeTaxAnnual)}
-              </span>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+              <p className="text-sm text-slate-400">You keep</p>
+              <p className="mt-2 text-2xl font-semibold text-emerald-400">
+                {keepPercent.toFixed(0)}%
+              </p>
             </div>
 
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">National Insurance</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.nationalInsuranceAnnual)}
-              </span>
+            <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+              <p className="text-sm text-slate-400">Total deducted</p>
+              <p className="mt-2 text-2xl font-semibold text-white">
+                {formatCurrency(totalDeductions)}
+              </p>
             </div>
 
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">Pension</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.pensionAnnual)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">Student Loan</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.studentLoanAnnual)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl border border-sky-400/20 bg-sky-400/10 px-4 py-3">
-              <span className="text-sky-200">Total deductions</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.totalDeductionsAnnual)}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-          <p className="text-sm font-medium text-sky-300">Quick view</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">
-            What £{salary.toLocaleString("en-GB")} looks like
-          </h2>
-
-          <div className="mt-6 space-y-4">
             <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
               <p className="text-sm text-slate-400">Gross per month</p>
               <p className="mt-2 text-2xl font-semibold text-white">
                 {formatCurrency(monthlyGross)}
               </p>
             </div>
+          </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+          <div className="mt-6 space-y-4 text-sm leading-8 text-slate-400">
+            <p>
+              This means a £{salary.toLocaleString("en-GB")} salary turns into
+              around <span className="font-medium text-white">{formatCurrency(result.netMonthly)}</span>{" "}
+              per month after estimated deductions.
+            </p>
+            <p>
+              You lose about{" "}
+              <span className="font-medium text-white">{formatCurrency(totalDeductions)}</span>{" "}
+              per year to tax, National Insurance, pension, and other standard
+              deductions included in this setup.
+            </p>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <p className="text-sm font-medium text-sky-300">Positioning</p>
+          <h2 className="mt-2 text-2xl font-semibold text-white">
+            {salaryPositioning.label}
+          </h2>
+          <p className="mt-4 text-sm leading-8 text-slate-400">
+            {salaryPositioning.copy}
+          </p>
+
+          <div className="mt-6 space-y-3">
+            <div className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-4">
               <p className="text-sm text-slate-400">Gross per week</p>
-              <p className="mt-2 text-2xl font-semibold text-white">
+              <p className="mt-1 text-lg font-semibold text-white">
                 {formatCurrency(weeklyGross)}
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-              <p className="text-sm text-slate-400">Net per month</p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-400">
-                {formatCurrency(result.netMonthly)}
+            <div className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-4">
+              <p className="text-sm text-slate-400">Tax code used</p>
+              <p className="mt-1 text-lg font-semibold text-white">
+                {input.taxCode}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-4">
+              <p className="text-sm text-slate-400">Pension assumption</p>
+              <p className="mt-1 text-lg font-semibold text-white">
+                {input.pensionPercent}%
               </p>
             </div>
           </div>
@@ -173,11 +219,9 @@ export default function SalaryPageContent({
             This page assumes a standard UK-style employee setup using tax code{" "}
             <span className="font-medium text-white">{input.taxCode}</span>, no
             student loan repayment, and a pension contribution of{" "}
-            <span className="font-medium text-white">
-              {input.pensionPercent}%
-            </span>
-            . Your real payslip may differ if your tax code, workplace pension,
-            or deductions are different.
+            <span className="font-medium text-white">{input.pensionPercent}%</span>.
+            Your real payslip may differ if your tax code, workplace pension, or
+            deductions are different.
           </p>
         </div>
       </section>
@@ -234,13 +278,13 @@ export default function SalaryPageContent({
 
       <InternalLinkBlock
         title="Explore nearby salary pages"
-        description="These related salary pages help users compare how take-home pay changes as salary increases or decreases."
+        description="These nearby salaries help users compare whether a small pay change actually creates a meaningful net difference."
         links={relatedSalaryLinks}
       />
 
       <InternalLinkBlock
         title="Explore more salary scenarios"
-        description="These links take users to closely related variations, including monthly intent, student loan pages, and Scotland salary treatment."
+        description="These links take users into related variations like monthly intent, student loan, Scotland treatment, and core tools."
         links={variantLinks}
       />
     </div>

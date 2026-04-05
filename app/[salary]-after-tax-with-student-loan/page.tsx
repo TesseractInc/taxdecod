@@ -3,7 +3,13 @@ import { notFound } from "next/navigation";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
 import SalaryVariantContent from "../../components/seo/salary-variant-content";
-import { parseNumericSalary, getStudentLoanSalaryPageData, getVariantSalaryParams } from "../../components/seo/salary-variants";
+import { TAX_YEAR_LABEL } from "../../lib/tax/config";
+import { buildSeoMetadata } from "../../components/seo/metadata";
+import {
+  parseNumericSalary,
+  getStudentLoanSalaryPageData,
+  getVariantSalaryParams,
+} from "../../components/seo/salary-variants";
 
 type PageProps = {
   params: Promise<{
@@ -15,26 +21,35 @@ export async function generateStaticParams() {
   return getVariantSalaryParams();
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const salary = parseNumericSalary(resolvedParams.salary);
 
   if (!salary) {
-    return { title: "Student Loan Salary Page | TaxDecod" };
+    return buildSeoMetadata({
+      title: "Student Loan Salary Page | TaxDecod",
+      description:
+        "See estimated UK take-home pay with student loan deductions included.",
+      path: "/salary-hub",
+    });
   }
 
-  return {
-    title: `£${salary.toLocaleString("en-GB")} After Tax With Student Loan | TaxDecod`,
+  return buildSeoMetadata({
+    title: `£${salary.toLocaleString(
+      "en-GB"
+    )} After Tax With Student Loan (${TAX_YEAR_LABEL}) – UK Take Home Pay`,
     description: `See estimated UK take-home pay for £${salary.toLocaleString(
       "en-GB"
     )} with student loan deductions included.`,
-    alternates: {
-      canonical: `https://taxdecod.com/${salary}-after-tax-with-student-loan`,
-    },
-  };
+    path: `/${salary}-after-tax-with-student-loan`,
+  });
 }
 
-export default async function SalaryWithStudentLoanPage({ params }: PageProps) {
+export default async function SalaryWithStudentLoanPage({
+  params,
+}: PageProps) {
   const resolvedParams = await params;
   const salary = parseNumericSalary(resolvedParams.salary);
 
@@ -56,11 +71,14 @@ export default async function SalaryWithStudentLoanPage({ params }: PageProps) {
             result={data.result}
             bullets={[
               "Uses a Plan 2 student loan assumption for this page template.",
-              `Estimated monthly take-home pay is ${data.result.netMonthly.toLocaleString("en-GB", {
-                style: "currency",
-                currency: "GBP",
-                maximumFractionDigits: 0,
-              })}.`,
+              `Estimated monthly take-home pay is ${data.result.netMonthly.toLocaleString(
+                "en-GB",
+                {
+                  style: "currency",
+                  currency: "GBP",
+                  maximumFractionDigits: 0,
+                }
+              )}.`,
               "Useful for graduates comparing real net pay rather than headline salary only.",
             ]}
           />

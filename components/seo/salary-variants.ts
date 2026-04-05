@@ -1,22 +1,22 @@
 import { calculateTakeHome } from "../../lib/tax/calculators/take-home";
-import type { CalculatorInput } from "@/types/tax";
+import type { CalculatorInput } from "../../types/tax";
+import { getStandardUkEmployeeInput } from "../../lib/tax/config";
+import { SEO_GROWTH_CONFIG, expandNumericRanges } from "../../components/seo/growth-config";
 
 export function parseNumericSalary(slug: string): number | null {
   const salary = Number(slug);
 
-  if (!Number.isFinite(salary) || salary <= 0) return null;
+  if (!Number.isFinite(salary) || salary < 10000) return null;
   return salary;
 }
 
 export function getBaseSalaryInput(salary: number): CalculatorInput {
-  return {
+  return getStandardUkEmployeeInput({
     salary,
     payPeriod: "yearly",
     region: "uk",
-    pensionPercent: 5,
     studentLoanPlan: "none",
-    taxCode: "1257L",
-  };
+  });
 }
 
 export function getMonthlySalaryPageData(salary: number) {
@@ -61,12 +61,12 @@ export function getScotlandSalaryPageData(salary: number) {
   };
 }
 
-export function getVariantSalaryParams() {
-  const salaries = [
-    20000, 25000, 30000, 35000, 40000, 45000, 50000, 60000,
-  ];
+export function getVariantSalaryNumbers() {
+  return expandNumericRanges(SEO_GROWTH_CONFIG.variantSalarySeo.ranges);
+}
 
-  return salaries.map((salary) => ({
+export function getVariantSalaryParams() {
+  return getVariantSalaryNumbers().map((salary) => ({
     salary: String(salary),
   }));
 }

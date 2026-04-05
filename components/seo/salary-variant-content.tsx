@@ -1,5 +1,5 @@
 import { formatCurrency } from "../../lib/tax/utils/currency";
-import { TakeHomeResult } from "../../types/tax";
+import type { TakeHomeResult } from "../../types/tax";
 import InternalLinkBlock from "./internal-link-block";
 import {
   getRelatedSalaryLinks,
@@ -23,6 +23,9 @@ export default function SalaryVariantContent({
 }: SalaryVariantContentProps) {
   const relatedSalaryLinks = getRelatedSalaryLinks(salary);
   const variantLinks = getVariantLinks(salary);
+
+  const keepPercent =
+    result.grossAnnual > 0 ? (result.netAnnual / result.grossAnnual) * 100 : 0;
 
   return (
     <div className="space-y-8">
@@ -59,9 +62,9 @@ export default function SalaryVariantContent({
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-sm text-slate-400">Total deductions</p>
+          <p className="text-sm text-slate-400">You keep</p>
           <p className="mt-3 text-2xl font-semibold text-white">
-            {formatCurrency(result.totalDeductionsAnnual)}
+            {keepPercent.toFixed(0)}%
           </p>
         </div>
       </section>

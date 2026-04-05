@@ -3,7 +3,13 @@ import { notFound } from "next/navigation";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
 import SalaryVariantContent from "../../components/seo/salary-variant-content";
-import { parseNumericSalary, getMonthlySalaryPageData, getVariantSalaryParams } from "../../components/seo/salary-variants";
+import { TAX_YEAR_LABEL } from "../../lib/tax/config";
+import { buildSeoMetadata } from "../../components/seo/metadata";
+import {
+  parseNumericSalary,
+  getMonthlySalaryPageData,
+  getVariantSalaryParams,
+} from "../../components/seo/salary-variants";
 
 type PageProps = {
   params: Promise<{
@@ -15,23 +21,29 @@ export async function generateStaticParams() {
   return getVariantSalaryParams();
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const salary = parseNumericSalary(resolvedParams.salary);
 
   if (!salary) {
-    return { title: "Monthly Salary Page | TaxDecod" };
+    return buildSeoMetadata({
+      title: "Monthly Salary Page | TaxDecod",
+      description: "See estimated monthly take-home pay for a UK salary.",
+      path: "/salary-hub",
+    });
   }
 
-  return {
-    title: `£${salary.toLocaleString("en-GB")} After Tax Monthly | TaxDecod`,
+  return buildSeoMetadata({
+    title: `£${salary.toLocaleString(
+      "en-GB"
+    )} After Tax Monthly (${TAX_YEAR_LABEL}) – UK Monthly Take Home Pay`,
     description: `See estimated monthly take-home pay for a £${salary.toLocaleString(
       "en-GB"
-    )} salary in the UK.`,
-    alternates: {
-      canonical: `https://taxdecod.com/${salary}-after-tax-monthly`,
-    },
-  };
+    )} salary in the UK, including tax and deduction assumptions.`,
+    path: `/${salary}-after-tax-monthly`,
+  });
 }
 
 export default async function SalaryMonthlyPage({ params }: PageProps) {
@@ -55,11 +67,14 @@ export default async function SalaryMonthlyPage({ params }: PageProps) {
             salary={salary}
             result={data.result}
             bullets={[
-              `Estimated monthly net pay is ${data.result.netMonthly.toLocaleString("en-GB", {
-                style: "currency",
-                currency: "GBP",
-                maximumFractionDigits: 0,
-              })}.`,
+              `Estimated monthly net pay is ${data.result.netMonthly.toLocaleString(
+                "en-GB",
+                {
+                  style: "currency",
+                  currency: "GBP",
+                  maximumFractionDigits: 0,
+                }
+              )}.`,
               "Useful for budgeting, rent planning, and monthly affordability checks.",
               "Helps users who think in monthly cash flow rather than annual gross pay.",
             ]}

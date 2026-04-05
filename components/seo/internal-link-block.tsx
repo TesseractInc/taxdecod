@@ -16,6 +16,8 @@ export default function InternalLinkBlock({
   description,
   links,
 }: InternalLinkBlockProps) {
+  if (!links.length) return null;
+
   return (
     <section className="rounded-3xl border border-white/10 bg-white/5 p-6">
       <p className="text-sm font-medium text-sky-300">Related links</p>

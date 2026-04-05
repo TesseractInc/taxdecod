@@ -1,0 +1,71 @@
+import type { CalculatorInput } from "../../types/tax";
+
+export const TAX_YEAR_LABEL = "2025/26";
+
+export const DEFAULT_UK_TAX_CODE = "1257L";
+export const DEFAULT_PENSION_PERCENT = 5;
+
+export function getStandardUkEmployeeInput(
+  overrides: Partial<CalculatorInput> = {}
+): CalculatorInput {
+  return {
+    salary: 40000,
+    payPeriod: "yearly",
+    region: "uk",
+    pensionPercent: DEFAULT_PENSION_PERCENT,
+    studentLoanPlan: "none",
+    taxCode: DEFAULT_UK_TAX_CODE,
+    ...overrides,
+  };
+}
+
+export const TRUST_COPY = {
+  salaryPage: {
+    description: `This page uses a standard UK employee setup with ${TAX_YEAR_LABEL}-style tax assumptions.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Standard employee setup",
+      "Designed for real take-home understanding",
+    ],
+  },
+  reversePage: {
+    description: `This page is designed around a standard UK employee setup using ${TAX_YEAR_LABEL}-style assumptions for salary planning.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Standard employee setup",
+      "Best used for planning target take-home pay",
+    ],
+  },
+  reverseSeoPage: {
+    description: `This reverse salary page uses a standard UK employee setup with ${TAX_YEAR_LABEL}-style assumptions.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Standard employee setup",
+      "Built for reverse salary planning",
+    ],
+  },
+  comparisonPage: {
+    description: `This comparison uses a standard UK employee setup with ${TAX_YEAR_LABEL}-style assumptions and Plan 2 student loan selected in the current page configuration.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Plan 2 student loan included in this page setup",
+      "Built for real decision-making, not headline salary comparison",
+    ],
+  },
+  comparisonSeoPage: {
+    description: `This salary comparison page uses a standard UK employee setup with ${TAX_YEAR_LABEL}-style assumptions.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Standard employee setup",
+      "Built for real salary decision-making",
+    ],
+  },
+  salaryHub: {
+    description: `Salary hub pages are built around a standard UK employee setup using ${TAX_YEAR_LABEL}-style tax assumptions for consistency.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL}-style UK salary assumptions`,
+      "Built for quick salary discovery",
+      "Connected to reverse and comparison tools",
+    ],
+  },
+} as const;

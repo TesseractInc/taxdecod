@@ -1,5 +1,6 @@
 import { calculateTakeHome } from "../../lib/tax/calculators/take-home";
-import { CalculatorInput } from "../../types/tax";
+import { getStandardUkEmployeeInput, TAX_YEAR_LABEL } from "../../lib/tax/config";
+import { SEO_GROWTH_CONFIG, expandNumericRanges } from "../../components/seo/growth-config";
 
 export function parseSalaryFromSlug(slug: string): number | null {
   const match = slug.match(/^(\d+)-after-tax-uk$/);
@@ -7,23 +8,21 @@ export function parseSalaryFromSlug(slug: string): number | null {
 
   const salary = Number(match[1]);
 
-  if (!Number.isFinite(salary) || salary <= 0) return null;
+  if (!Number.isFinite(salary) || salary < 10000) return null;
   return salary;
 }
 
 export function formatSalaryTitle(salary: number): string {
-  return `£${salary.toLocaleString("en-GB")} After Tax UK`;
+  return `£${salary.toLocaleString("en-GB")} After Tax UK (${TAX_YEAR_LABEL}) – Take Home Pay Breakdown`;
 }
 
-export function getSalaryPageInput(salary: number): CalculatorInput {
-  return {
+export function getSalaryPageInput(salary: number) {
+  return getStandardUkEmployeeInput({
     salary,
     payPeriod: "yearly",
     region: "uk",
-    pensionPercent: 5,
     studentLoanPlan: "none",
-    taxCode: "1257L",
-  };
+  });
 }
 
 export function getSalaryPageData(salary: number) {
@@ -33,6 +32,13 @@ export function getSalaryPageData(salary: number) {
   const monthlyGross = result.grossAnnual / 12;
   const weeklyGross = result.grossAnnual / 52;
   const weeklyNet = result.netAnnual / 52;
+  const totalDeductions =
+    result.incomeTaxAnnual +
+    result.nationalInsuranceAnnual +
+    result.pensionAnnual +
+    result.studentLoanAnnual;
+  const keepPercent =
+    result.grossAnnual > 0 ? (result.netAnnual / result.grossAnnual) * 100 : 0;
 
   return {
     input,
@@ -40,16 +46,17 @@ export function getSalaryPageData(salary: number) {
     monthlyGross,
     weeklyGross,
     weeklyNet,
+    totalDeductions,
+    keepPercent,
   };
 }
 
-export function getPopularSalarySlugs(): { salary: string }[] {
-  const salaries = [
-    12000, 15000, 18000, 20000, 22000, 25000, 27000, 30000, 32000, 35000,
-    38000, 40000, 45000, 50000, 55000, 60000, 65000, 70000, 80000, 100000,
-  ];
+export function getSeoSalaryNumbers() {
+  return expandNumericRanges(SEO_GROWTH_CONFIG.mainSalarySeo.ranges);
+}
 
-  return salaries.map((salary) => ({
+export function getPopularSalarySlugs(): { salary: string }[] {
+  return getSeoSalaryNumbers().map((salary) => ({
     salary: `${salary}-after-tax-uk`,
   }));
 }
