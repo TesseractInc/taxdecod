@@ -105,7 +105,8 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
               Using {TAX_YEAR_LABEL}-style assumptions, you keep{" "}
               <strong>{keepPercent.toFixed(0)}%</strong> of your salary and lose{" "}
               <strong>£{totalDeductions.toLocaleString("en-GB")}</strong> to tax
-              and deductions.
+              and deductions. For most users, the number that actually matters in
+              real life is the monthly take-home figure, not the gross headline.
             </SeoRealityCard>
           </div>
 
@@ -114,21 +115,21 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
               items={[
                 {
                   href: "/compare-salary",
-                  title: "Compare salaries",
+                  title: "Compare this with another salary",
                   description:
-                    "See if a higher salary actually changes your take-home pay.",
+                    "See whether a higher salary really changes your monthly life.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse calculator",
+                  title: "Hit a target monthly income",
                   description:
-                    "Find what you need to earn to reach your target income.",
+                    "Find what you need to earn to reach your ideal take-home pay.",
                 },
                 {
                   href: "/salary-hub",
-                  title: "Explore salaries",
+                  title: "Explore more salary pages",
                   description:
-                    "Browse other salary levels and variations.",
+                    "Jump to nearby salary levels and related scenarios.",
                 },
               ]}
             />

@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import { formatCurrency } from "../../lib/tax/utils/currency";
 import type { TakeHomeResult } from "../../types/tax";
 import InternalLinkBlock from "./internal-link-block";
@@ -24,133 +27,178 @@ export default function SalaryVariantContent({
   const relatedSalaryLinks = getRelatedSalaryLinks(salary);
   const variantLinks = getVariantLinks(salary);
 
+  const totalDeductions =
+    result.incomeTaxAnnual +
+    result.nationalInsuranceAnnual +
+    result.pensionAnnual +
+    result.studentLoanAnnual;
+
   const keepPercent =
     result.grossAnnual > 0 ? (result.netAnnual / result.grossAnnual) * 100 : 0;
 
+  const biggestDeduction = [
+    { label: "Income Tax", value: result.incomeTaxAnnual },
+    { label: "National Insurance", value: result.nationalInsuranceAnnual },
+    { label: "Pension", value: result.pensionAnnual },
+    { label: "Student Loan", value: result.studentLoanAnnual },
+  ]
+    .filter((item) => item.value > 0)
+    .sort((a, b) => b.value - a.value)[0];
+
   return (
-    <div className="space-y-8">
-      <section className="rounded-3xl border border-white/10 bg-white/5 p-8">
-        <p className="text-sm font-medium text-sky-300">UK salary breakdown</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight text-white">
+    <div className="space-y-10">
+      <section className="rounded-[30px] app-card-strong p-7">
+        <p className="text-sm app-accent">Focused salary scenario</p>
+
+        <h2 className="mt-2 text-3xl font-bold tracking-tight app-title sm:text-4xl">
           {title}
-        </h1>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
-          {intro}
-        </p>
+        </h2>
+
+        <p className="mt-4 max-w-3xl text-base leading-8 app-copy">{intro}</p>
+
+        <div className="mt-6 rounded-[24px] app-soft p-5">
+          <p className="text-sm app-subtle">Quick reality</p>
+          <p className="mt-3 text-base leading-8 app-copy">
+            For this salary scenario, you take home around{" "}
+            <strong>{formatCurrency(result.netMonthly)}</strong> per month and
+            keep roughly <strong>{keepPercent.toFixed(0)}%</strong> of your
+            gross pay.
+          </p>
+        </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-sm text-slate-400">Gross annual salary</p>
-          <p className="mt-3 text-2xl font-semibold text-white">
-            {formatCurrency(result.grossAnnual)}
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-sm text-slate-400">Estimated net annual pay</p>
-          <p className="mt-3 text-2xl font-semibold text-emerald-400">
-            {formatCurrency(result.netAnnual)}
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-sm text-slate-400">Estimated net monthly pay</p>
-          <p className="mt-3 text-2xl font-semibold text-white">
-            {formatCurrency(result.netMonthly)}
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
-          <p className="text-sm text-slate-400">You keep</p>
-          <p className="mt-3 text-2xl font-semibold text-white">
-            {keepPercent.toFixed(0)}%
-          </p>
-        </div>
+        {[
+          ["Gross annual salary", formatCurrency(result.grossAnnual)],
+          ["Estimated net annual pay", formatCurrency(result.netAnnual)],
+          ["Estimated net monthly pay", formatCurrency(result.netMonthly)],
+          ["You keep", `${keepPercent.toFixed(0)}%`],
+        ].map(([label, value]) => (
+          <div key={label} className="app-card p-5">
+            <p className="text-sm app-subtle">{label}</p>
+            <p className="mt-3 text-2xl font-semibold app-title">{value}</p>
+          </div>
+        ))}
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-          <p className="text-sm font-medium text-sky-300">Estimated deductions</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">
-            Breakdown for £{salary.toLocaleString("en-GB")}
+      <section className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
+        <div className="app-card p-6">
+          <p className="text-sm font-medium app-accent">Deduction pressure</p>
+          <h2 className="mt-2 text-2xl font-semibold app-title">
+            What shapes this result most
           </h2>
 
           <div className="mt-6 space-y-3">
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">Income Tax</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.incomeTaxAnnual)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">National Insurance</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.nationalInsuranceAnnual)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">Pension</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.pensionAnnual)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3">
-              <span className="text-slate-300">Student Loan</span>
-              <span className="font-semibold text-white">
-                {formatCurrency(result.studentLoanAnnual)}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-          <p className="text-sm font-medium text-sky-300">What this page covers</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">
-            Useful context
-          </h2>
-
-          <div className="mt-6 space-y-3">
-            {bullets.map((bullet) => (
+            {[
+              ["Income Tax", result.incomeTaxAnnual],
+              ["National Insurance", result.nationalInsuranceAnnual],
+              ["Pension", result.pensionAnnual],
+              ["Student Loan", result.studentLoanAnnual],
+            ].map(([label, value]) => (
               <div
-                key={bullet}
-                className="rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-4 text-sm leading-7 text-slate-300"
+                key={label}
+                className="flex items-center justify-between rounded-[20px] app-soft px-4 py-4"
               >
-                {bullet}
+                <span className="text-sm app-copy">{label}</span>
+                <span className="text-base font-semibold app-title">
+                  {formatCurrency(Number(value))}
+                </span>
               </div>
             ))}
           </div>
+
+          <div className="mt-6 rounded-[22px] border p-5 app-soft">
+            <p className="text-sm app-subtle">Biggest deduction</p>
+            <p className="mt-2 text-lg font-semibold app-title">
+              {biggestDeduction?.label ?? "No major deduction"}
+            </p>
+            <p className="mt-2 text-sm leading-7 app-copy">
+              {biggestDeduction
+                ? `${biggestDeduction.label} is currently the strongest drag on this salary result at ${formatCurrency(
+                    biggestDeduction.value
+                  )} per year.`
+                : "This scenario does not currently show a major standout deduction."}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <section className="app-card p-6">
+            <p className="text-sm font-medium app-accent">What this means</p>
+            <h2 className="mt-2 text-2xl font-semibold app-title">
+              Use this page to make a better decision
+            </h2>
+
+            <div className="mt-5 space-y-3">
+              {bullets.map((bullet) => (
+                <div
+                  key={bullet}
+                  className="rounded-[20px] app-soft px-4 py-4 text-sm leading-7 app-copy"
+                >
+                  {bullet}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="app-soft rounded-[24px] p-5">
+            <p className="text-sm app-subtle">Important note</p>
+            <p className="mt-3 text-sm leading-8 app-copy">
+              These are estimated results. Your actual payslip can differ due to
+              tax code changes, pension structure, salary sacrifice, student
+              loan settings, overtime, bonus timing, benefits, or payroll
+              treatment.
+            </p>
+          </section>
         </div>
       </section>
 
-      <section className="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <p className="text-sm font-medium text-sky-300">Important note</p>
-        <h2 className="mt-2 text-2xl font-semibold text-white">
-          These are estimated results
-        </h2>
-        <p className="mt-4 text-sm leading-8 text-slate-400">
-          Your real payslip can differ depending on tax code changes, pension
-          structure, student loan deductions, salary sacrifice, bonus timing,
-          overtime, benefits, and payroll treatment. These pages are designed to
-          help users understand likely take-home pay outcomes, not replace an
-          official payslip.
-        </p>
+      <section className="grid gap-4 md:grid-cols-3">
+        <Link href="/compare-salary" className="app-card p-5 hover-lift">
+          <p className="font-semibold app-title">Compare this salary →</p>
+          <p className="mt-2 text-sm app-copy">
+            See how another salary changes your real take-home pay.
+          </p>
+        </Link>
+
+        <Link href="/reverse-tax" className="app-card p-5 hover-lift">
+          <p className="font-semibold app-title">Reverse your target →</p>
+          <p className="mt-2 text-sm app-copy">
+            Find what you need to earn to hit your desired monthly number.
+          </p>
+        </Link>
+
+        <Link href="/salary-hub" className="app-card p-5 hover-lift">
+          <p className="font-semibold app-title">Explore more salaries →</p>
+          <p className="mt-2 text-sm app-copy">
+            Browse nearby salary pages and related scenarios.
+          </p>
+        </Link>
       </section>
 
       <InternalLinkBlock
         title="Compare nearby salaries"
-        description="Use these nearby salary pages to compare small changes in take-home pay across similar pay levels."
+        description="Use these nearby salary pages to see whether a small change in gross pay makes a meaningful difference."
         links={relatedSalaryLinks}
       />
 
       <InternalLinkBlock
-        title="Explore more related salary pages"
-        description="Jump into related page variations, including monthly, student loan, Scotland, and the full calculator."
+        title="Explore related salary scenarios"
+        description="Jump into monthly, student loan, Scotland, and other linked salary variations."
         links={variantLinks}
       />
+
+      <section className="rounded-[30px] app-card p-6">
+        <p className="text-sm font-medium app-accent">Decision prompt</p>
+        <h2 className="mt-2 text-2xl font-semibold app-title">
+          Don’t stop at this one page
+        </h2>
+        <p className="mt-4 text-sm leading-8 app-copy">
+          The best way to use TaxDecod is to explore more than one scenario.
+          Check the full salary breakdown, compare another salary, or test a
+          target monthly income so you can see what really changes.
+        </p>
+      </section>
     </div>
   );
 }
