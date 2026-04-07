@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import CalculatorForm from "@/components/calculator/calculator-form";
 import ResultPreview from "@/components/calculator/result-preview";
 import ResultsExperience from "@/components/results/results-experience";
+import PdfReportStrip from "@/components/shared/pdf-report-strip";
 import { calculateTakeHome } from "@/lib/tax/calculators/take-home";
 import type { CalculatorInput } from "@/types/tax";
 
@@ -29,7 +30,6 @@ export default function ReverseTaxCalculator() {
     payPeriod: "monthly",
   });
 
-  // 🧠 Core solver
   const calculatedGross = useMemo(() => {
     const targetAnnual =
       reverseInput.payPeriod === "monthly"
@@ -69,10 +69,15 @@ export default function ReverseTaxCalculator() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-[32px] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950">
+      <div className="app-card-strong rounded-[32px] p-6 sm:p-7">
         <h3 className="text-xl font-semibold app-title">
           Target your take-home
         </h3>
+
+        <p className="mt-2 text-sm leading-7 app-copy">
+          Start with the amount you actually want to keep, then let TaxDecod
+          estimate the gross salary required to reach it.
+        </p>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div>
@@ -80,7 +85,7 @@ export default function ReverseTaxCalculator() {
               Desired take-home
             </label>
             <div className="relative mt-2">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold app-title">
                 £
               </span>
               <input
@@ -89,18 +94,16 @@ export default function ReverseTaxCalculator() {
                 onChange={(e) =>
                   setReverseInput({
                     ...reverseInput,
-                    targetNet: Number(e.target.value),
+                    targetNet: Number(e.target.value) || 0,
                   })
                 }
-                className="app-input pl-8"
+                className="app-input pl-10"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium app-copy">
-              Pay period
-            </label>
+            <label className="text-sm font-medium app-copy">Pay period</label>
             <select
               value={reverseInput.payPeriod}
               onChange={(e) =>
@@ -118,28 +121,34 @@ export default function ReverseTaxCalculator() {
         </div>
       </div>
 
-      {/* 🎯 RESULT STATEMENT */}
-      <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-900">
+      <div className="app-card rounded-[28px] p-6 sm:p-7">
         <p className="text-sm app-copy">Required salary</p>
-        <h2 className="mt-2 text-4xl font-bold app-title">
-          £{calculatedGross.toLocaleString()}
+        <h2 className="mt-2 text-4xl font-bold app-title sm:text-5xl">
+          £{calculatedGross.toLocaleString("en-GB")}
         </h2>
-        <p className="mt-2 text-sm text-slate-500">
-          to take home £{reverseInput.targetNet.toLocaleString()}{" "}
+        <p className="mt-2 text-sm app-copy">
+          to take home £{reverseInput.targetNet.toLocaleString("en-GB")}{" "}
           {reverseInput.payPeriod === "monthly" ? "per month" : "per year"}
         </p>
       </div>
 
-      {/* 🔧 reuse your system */}
-      <div className="grid gap-0 xl:grid-cols-[1.05fr_0.95fr]">
-        <div className="border-r p-6">
+      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="app-card-strong rounded-[30px] p-6 sm:p-7">
           <CalculatorForm values={values} onChange={setValues} />
         </div>
 
-        <div className="bg-slate-50 p-6">
+        <div className="app-card-strong rounded-[30px] p-6 sm:p-7">
           <ResultPreview result={result} values={values} />
         </div>
       </div>
+
+      <PdfReportStrip
+        title="Download this reverse salary report"
+        description="Save the estimated salary needed for your target take-home and use it later for planning, applications, or salary negotiations."
+        values={values}
+        result={result}
+        filename="taxdecod-reverse-salary-report.pdf"
+      />
 
       <ResultsExperience result={result} values={values} view="full" />
     </div>

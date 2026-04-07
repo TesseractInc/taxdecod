@@ -31,6 +31,9 @@ import ShareResultCard from "./share-result-card";
 import SalaryScore from "./salary-score";
 import SalaryLeaderboard from "./salary-leaderboard";
 import UnderpaidDetector from "./underpaid-detector";
+import ProRataCalculator from "./pro-rata-calculator";
+import SalarySacrificeCalculator from "./salary-sacrifice-calculator";
+import TaxYearComparison from "./tax-year-comparison";
 import { formatCurrency } from "../../lib/tax/utils/currency";
 
 type ExperienceView =
@@ -51,7 +54,7 @@ const tabs = [
   { id: "overview", label: "Overview", icon: BarChart3 },
   { id: "insights", label: "Insights", icon: Sparkles },
   { id: "payslip", label: "Payslip", icon: Receipt },
-  { id: "tools", label: "Tools", icon: Sparkles },
+  { id: "tools", label: "Tools", icon: TrendingUp },
   { id: "reality", label: "Reality", icon: Wallet2 },
 ] as const;
 
@@ -88,22 +91,27 @@ export default function ResultsExperience({
     .filter((item) => item.value > 0)
     .sort((a, b) => b.value - a.value)[0];
 
+  const salaryPageHref = `/${Math.max(
+    1000,
+    Math.round(result.grossAnnual / 1000) * 1000
+  )}-after-tax-uk`;
+
   const nextActions = [
     {
       title: "Compare another salary",
-      desc: "Check whether a higher salary meaningfully changes your monthly reality.",
+      desc: "Check whether a pay rise actually changes your monthly reality in a meaningful way.",
       href: "/compare-salary",
       icon: ArrowRightLeft,
     },
     {
-      title: "Reverse salary goal",
-      desc: "Find the gross salary needed to hit your target take-home pay.",
+      title: "Reverse your target take-home",
+      desc: "Work backwards from the monthly amount you want to keep after deductions.",
       href: "/reverse-tax",
       icon: Repeat,
     },
     {
-      title: "Open raise simulator",
-      desc: "See what an increase of a few thousand actually does after tax.",
+      title: "Open salary tools",
+      desc: "Use pro-rata, bonus, sacrifice, and comparison tools to test better scenarios.",
       href: "#results-tabs",
       icon: TrendingUp,
       action: () => setActiveTab("tools"),
@@ -111,13 +119,19 @@ export default function ResultsExperience({
     {
       title:
         values.region === "scotland"
-          ? "Compare with UK rules"
-          : "View Scotland scenario",
+          ? "Compare with standard UK rules"
+          : "Check the Scotland version",
       desc:
         values.region === "scotland"
-          ? "See how standard UK treatment differs from your current setup."
-          : "Check how Scotland tax treatment changes this salary.",
-      href: "/30000-after-tax-scotland",
+          ? "See how standard UK tax treatment differs from your current setup."
+          : "Compare this salary with Scotland tax treatment and see the difference.",
+      href:
+        values.region === "scotland"
+          ? salaryPageHref
+          : `/${Math.max(
+              1000,
+              Math.round(result.grossAnnual / 1000) * 1000
+            )}-after-tax-scotland`,
       icon: MapPinned,
     },
   ];
@@ -131,8 +145,8 @@ export default function ResultsExperience({
 
   return (
     <section className="space-y-6">
-      <div className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_28px_90px_-40px_rgba(15,23,42,0.30)] dark:border-slate-800 dark:bg-slate-950">
-        <div className="relative overflow-hidden border-b border-slate-200 px-6 py-7 dark:border-slate-800 sm:px-8 sm:py-8">
+      <div className="overflow-hidden rounded-[34px] border border-[var(--line)] bg-[var(--card-strong)] shadow-[var(--shadow-md)]">
+        <div className="relative overflow-hidden border-b border-[var(--line)] px-6 py-7 sm:px-8 sm:py-8">
           <div
             className="pointer-events-none absolute inset-0"
             style={{
@@ -141,50 +155,62 @@ export default function ResultsExperience({
             }}
           />
 
-          <div className="relative grid gap-6 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
+          <div className="relative grid gap-6 xl:grid-cols-[1.08fr_0.92fr] xl:items-end">
             <div>
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Salary meaning
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] app-accent">
+                Salary reality
               </p>
 
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-                What this salary really means for you
+              <h2 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-4xl">
+                What this salary really means after deductions
               </h2>
 
-              <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
-                Your headline salary becomes{" "}
-                <span className="font-semibold text-slate-900 dark:text-slate-100">
+              <p className="mt-4 max-w-2xl text-sm leading-8 app-copy sm:text-base">
+                Your headline pay becomes{" "}
+                <span className="font-semibold app-title">
                   {formatCurrency(result.netAnnual)}
                 </span>{" "}
                 per year, or{" "}
-                <span className="font-semibold text-slate-900 dark:text-slate-100">
+                <span className="font-semibold app-title">
                   {formatCurrency(result.netMonthly)}
                 </span>{" "}
-                per month after deductions.
+                per month after tax, National Insurance, pension, and any
+                student loan deductions.
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 px-5 py-5 dark:border-emerald-900 dark:bg-emerald-950/30">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
+              <div
+                className="rounded-[24px] border px-5 py-5"
+                style={{
+                  borderColor: "color-mix(in srgb, var(--emerald) 35%, var(--line))",
+                  background:
+                    "color-mix(in srgb, var(--emerald) 10%, var(--card-soft))",
+                }}
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] money-positive">
                   You keep
                 </p>
-                <p className="mt-2 text-3xl font-bold text-emerald-700 dark:text-emerald-300">
+                <p className="mt-2 text-3xl font-bold money-positive">
                   {keepPercent.toFixed(0)}%
                 </p>
-                <p className="mt-2 text-sm text-emerald-800/80 dark:text-emerald-200/80">
-                  of your gross salary
-                </p>
+                <p className="mt-2 text-sm app-copy">of your gross salary</p>
               </div>
 
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-5 dark:border-slate-800 dark:bg-slate-900">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                  Biggest pressure
+              <div
+                className="rounded-[24px] border px-5 py-5"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--card-soft)",
+                }}
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-subtle">
+                  Biggest deduction
                 </p>
-                <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">
+                <p className="mt-2 text-xl font-bold app-title">
                   {biggestDeduction?.label ?? "No major deduction"}
                 </p>
-                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+                <p className="mt-2 text-sm app-copy">
                   {biggestDeduction
                     ? formatCurrency(biggestDeduction.value)
                     : "—"}
@@ -194,23 +220,29 @@ export default function ResultsExperience({
           </div>
         </div>
 
-        <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8 sm:py-7">
-          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div className="rounded-[26px] border border-slate-200 bg-slate-50 px-5 py-5 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className="border-b border-[var(--line)] px-6 py-6 sm:px-8 sm:py-7">
+          <div className="grid gap-4 lg:grid-cols-[1.06fr_0.94fr] lg:items-center">
+            <div
+              className="rounded-[26px] border px-5 py-5"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-soft)",
+              }}
+            >
+              <p className="text-sm font-semibold app-title">
                 Quick reality check
               </p>
-              <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
+              <p className="mt-2 text-sm leading-8 app-copy">
                 You lose{" "}
-                <strong className="text-slate-900 dark:text-slate-100">
+                <strong className="app-title">
                   {formatCurrency(totalDeductions)}
                 </strong>{" "}
-                each year to tax and deductions.
+                per year to deductions.
                 {biggestDeduction ? (
                   <>
                     {" "}
-                    The largest single drag on this salary is{" "}
-                    <strong className="text-slate-900 dark:text-slate-100">
+                    The single biggest drag on this salary is{" "}
+                    <strong className="app-title">
                       {biggestDeduction.label}
                     </strong>
                     .
@@ -227,17 +259,21 @@ export default function ResultsExperience({
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="group rounded-[24px] border border-slate-200 bg-white px-5 py-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-sky-50/40 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                    className="group rounded-[24px] border px-5 py-5 transition hover-lift"
+                    style={{
+                      borderColor: "var(--line)",
+                      background: "var(--card)",
+                    }}
                   >
                     <div className="flex items-start justify-between">
-                      <Icon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                      <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-0.5" />
+                      <Icon className="h-5 w-5 app-accent" />
+                      <ArrowRight className="h-4 w-4 app-subtle transition group-hover:translate-x-0.5" />
                     </div>
 
-                    <h3 className="mt-4 text-base font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className="mt-4 text-base font-semibold app-title">
                       {item.title}
                     </h3>
-                    <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                    <p className="mt-2 text-sm leading-7 app-copy">
                       {item.desc}
                     </p>
                   </Link>
@@ -251,16 +287,22 @@ export default function ResultsExperience({
               const Icon = item.icon;
 
               const content = (
-                <div className="group rounded-[24px] border border-slate-200 bg-slate-50 px-5 py-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800 dark:hover:bg-slate-950">
+                <div
+                  className="group rounded-[24px] border px-5 py-5 transition hover-lift"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--card-soft)",
+                  }}
+                >
                   <div className="flex items-start justify-between">
-                    <Icon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                    <ArrowRight className="h-4 w-4 opacity-60 group-hover:translate-x-0.5" />
+                    <Icon className="h-5 w-5 app-accent" />
+                    <ArrowRight className="h-4 w-4 app-subtle transition group-hover:translate-x-0.5" />
                   </div>
 
-                  <h4 className="mt-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
+                  <h4 className="mt-4 text-lg font-semibold app-title">
                     {item.title}
                   </h4>
-                  <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  <p className="mt-2 text-sm leading-7 app-copy">
                     {item.desc}
                   </p>
                 </div>
@@ -268,7 +310,12 @@ export default function ResultsExperience({
 
               if (item.action) {
                 return (
-                  <button key={item.title} onClick={item.action} type="button">
+                  <button
+                    key={item.title}
+                    onClick={item.action}
+                    type="button"
+                    className="text-left"
+                  >
                     {content}
                   </button>
                 );
@@ -285,11 +332,16 @@ export default function ResultsExperience({
       </div>
 
       {showTabBar && (
-        <div
-          id="results-tabs"
-          className="sticky top-20 z-20 space-y-3"
-        >
-          <div className="rounded-[26px] border border-slate-200 bg-white/92 p-3 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/92">
+        <div id="results-tabs" className="sticky top-20 z-20 space-y-3">
+          <div
+            className="rounded-[26px] border p-3 backdrop-blur"
+            style={{
+              borderColor: "var(--line)",
+              background:
+                "color-mix(in srgb, var(--card-strong) 90%, transparent)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          >
             <div className="flex flex-wrap gap-2">
               {stickyQuickActions.map((item) => {
                 const Icon = item.icon;
@@ -298,9 +350,14 @@ export default function ResultsExperience({
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-700 transition hover:border-sky-200 hover:text-sky-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:text-sky-300"
+                    className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold transition"
+                    style={{
+                      borderColor: "var(--line)",
+                      background: "var(--card-soft)",
+                      color: "var(--text)",
+                    }}
                   >
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-3.5 w-3.5 app-accent" />
                     {item.label}
                   </Link>
                 );
@@ -308,7 +365,15 @@ export default function ResultsExperience({
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-slate-200 bg-white/92 p-3 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/92">
+          <div
+            className="rounded-[28px] border p-3 backdrop-blur"
+            style={{
+              borderColor: "var(--line)",
+              background:
+                "color-mix(in srgb, var(--card-strong) 90%, transparent)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          >
             <div className="grid gap-3 md:grid-cols-5">
               {visibleTabs.map((tab) => {
                 const Icon = tab.icon;
@@ -319,14 +384,18 @@ export default function ResultsExperience({
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     type="button"
-                    className={`rounded-[24px] border px-4 py-4 text-left transition ${
-                      active
-                        ? "border-sky-300 bg-sky-50 shadow-sm dark:border-sky-800 dark:bg-sky-950/30"
-                        : "border-slate-200 bg-slate-50 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800 dark:hover:bg-slate-950"
-                    }`}
+                    className="rounded-[24px] border px-4 py-4 text-left transition"
+                    style={{
+                      borderColor: active
+                        ? "color-mix(in srgb, var(--primary) 28%, var(--line))"
+                        : "var(--line)",
+                      background: active
+                        ? "color-mix(in srgb, var(--primary) 10%, var(--card-soft))"
+                        : "var(--card-soft)",
+                    }}
                   >
-                    <Icon className="mb-2 h-4 w-4 text-sky-600 dark:text-sky-400" />
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                    <Icon className="mb-2 h-4 w-4 app-accent" />
+                    <p className="text-sm font-semibold app-title">
                       {tab.label}
                     </p>
                   </button>
@@ -376,6 +445,9 @@ export default function ResultsExperience({
             <>
               <RaiseSimulator values={values} currentResult={result} />
               <BonusSimulator values={values} currentResult={result} />
+              <SalarySacrificeCalculator values={values} currentResult={result} />
+              <TaxYearComparison values={values} />
+              <ProRataCalculator fullTimeSalary={result.grossAnnual} />
               <SalaryComparison values={values} currentResult={result} />
             </>
           )}

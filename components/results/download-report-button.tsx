@@ -11,6 +11,9 @@ type DownloadReportButtonProps = {
   values: CalculatorInput;
   result: TakeHomeResult;
   filename?: string;
+  label?: string;
+  className?: string;
+  fullWidth?: boolean;
 };
 
 function currency(value: number) {
@@ -25,6 +28,9 @@ export default function DownloadReportButton({
   values,
   result,
   filename = "taxdecod-salary-report.pdf",
+  label = "Download PDF report",
+  className = "",
+  fullWidth = false,
 }: DownloadReportButtonProps) {
   const handleDownload = () => {
     const doc = new jsPDF({
@@ -123,7 +129,7 @@ export default function DownloadReportButton({
     };
 
     const addMetricRow = (
-      label: string,
+      metricLabel: string,
       value: string,
       tone: "default" | "positive" | "negative" | "accent" = "default"
     ) => {
@@ -133,10 +139,10 @@ export default function DownloadReportButton({
         tone === "positive"
           ? colors.emerald
           : tone === "negative"
-          ? colors.rose
-          : tone === "accent"
-          ? colors.skyDark
-          : colors.ink;
+            ? colors.rose
+            : tone === "accent"
+              ? colors.skyDark
+              : colors.ink;
 
       doc.setDrawColor(colors.line);
       doc.setFillColor(colors.soft);
@@ -145,7 +151,7 @@ export default function DownloadReportButton({
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
       doc.setTextColor(colors.muted);
-      doc.text(label, 64, y + 21);
+      doc.text(metricLabel, 64, y + 21);
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
@@ -168,7 +174,7 @@ export default function DownloadReportButton({
       y += lines.length * 15 + 10;
     };
 
-    const addBadgeRow = (label: string, value: string, color: string) => {
+    const addBadgeRow = (badgeLabel: string, value: string, color: string) => {
       const wrapped = doc.splitTextToSize(value, 260);
       const badgeHeight = Math.max(32, wrapped.length * 14 + 16);
 
@@ -180,7 +186,7 @@ export default function DownloadReportButton({
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(colors.white);
-      doc.text(label, 62, y + 20);
+      doc.text(badgeLabel, 62, y + 20);
 
       doc.setTextColor(colors.ink);
       doc.setFont("helvetica", "bold");
@@ -219,8 +225,8 @@ export default function DownloadReportButton({
       underpaid.status === "solid"
         ? colors.emerald
         : underpaid.status === "borderline"
-        ? colors.amber
-        : colors.rose
+          ? colors.amber
+          : colors.rose
     );
     addParagraph(underpaid.summary);
 
@@ -246,14 +252,14 @@ export default function DownloadReportButton({
     <button
       type="button"
       onClick={handleDownload}
-      className="flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-white hover-lift"
+      className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-white hover-lift ${fullWidth ? "w-full" : ""} ${className}`}
       style={{
         background:
           "linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%)",
       }}
     >
       <Download className="h-4 w-4" />
-      Download PDF report
+      {label}
     </button>
   );
 }

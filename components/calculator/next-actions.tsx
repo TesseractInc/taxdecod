@@ -13,7 +13,7 @@ const actions = [
   {
     title: "Compare another salary",
     desc: "Test different income levels and see how take-home pay changes.",
-    href: "/calculator",
+    href: "/compare-salary",
     icon: BarChart3,
   },
   {

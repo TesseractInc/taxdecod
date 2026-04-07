@@ -1,100 +1,69 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  Sparkles,
-  TrendingUp,
+  BadgeCheck,
   ShieldCheck,
-  ScanSearch,
-  CircleDollarSign,
+  Sparkles,
+  WalletCards,
 } from "lucide-react";
 import CalculatorCard from "../calculator/calculator-card";
 
 const heroPills = [
-  "See real take-home pay",
-  "Understand every deduction",
-  "Compare salary scenarios",
-  "Built for payslips, raises, and offers",
+  "Take-home pay clarity",
+  "UK PAYE-style logic",
+  "Pension and student loan aware",
+  "Visual payslip understanding",
 ];
 
-const floatingSignals = [
+const trustStats = [
   {
     icon: ShieldCheck,
-    label: "Built for clear salary decisions",
-    className:
-      "left-2 top-10 md:left-8 md:top-12",
+    title: "Built around UK salary rules",
+    text: "Designed around UK payroll-style deductions, regions and current tax-year assumptions.",
   },
   {
-    icon: TrendingUp,
-    label: "Instant take-home visibility",
-    className:
-      "right-2 top-8 md:right-8 md:top-16",
+    icon: BadgeCheck,
+    title: "Made for decisions",
+    text: "Useful for job offers, pay rises, monthly budgeting and salary reality checks.",
   },
   {
-    icon: ScanSearch,
-    label: "Simple enough to understand fast",
-    className:
-      "left-6 bottom-10 hidden lg:flex",
-  },
-  {
-    icon: CircleDollarSign,
-    label: "Visual salary reality",
-    className:
-      "right-8 bottom-8 hidden lg:flex",
+    icon: WalletCards,
+    title: "More than one number",
+    text: "See what reaches you, what gets deducted, and where to go next.",
   },
 ];
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden pb-14 pt-10 sm:pb-18 sm:pt-14 lg:pb-24 lg:pt-16">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <motion.div
-          animate={{ y: [0, -18, 0], x: [0, 8, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-[-10%] top-[-12%] h-[420px] w-[420px] rounded-full blur-3xl"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(14,165,233,0.22), transparent 72%)",
-          }}
-        />
-        <motion.div
-          animate={{ y: [0, 20, 0], x: [0, -10, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute right-[-12%] top-[8%] h-[420px] w-[420px] rounded-full blur-3xl"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(16,185,129,0.16), transparent 72%)",
-          }}
-        />
-        <motion.div
-          animate={{ scale: [1, 1.06, 1] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-1/2 top-[26%] h-[320px] w-[320px] -translate-x-1/2 rounded-full blur-3xl"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(59,130,246,0.10), transparent 75%)",
-          }}
-        />
-      </div>
+    <section className="relative overflow-hidden pb-10 pt-8 sm:pb-12 sm:pt-10">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(circle at 10% 0%, rgba(14,165,233,0.14), transparent 25%), radial-gradient(circle at 90% 10%, rgba(16,185,129,0.10), transparent 20%), radial-gradient(circle at 50% 35%, rgba(59,130,246,0.08), transparent 30%)",
+        }}
+      />
 
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="mx-auto max-w-5xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium app-chip"
+            className="inline-flex items-center gap-2 rounded-full app-chip px-4 py-2 text-sm font-semibold"
           >
             <Sparkles className="h-4 w-4" />
-            UK Salary Intelligence Platform
+            Welcome to TaxDecod
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.52, delay: 0.05 }}
-            className="mx-auto mt-6 max-w-5xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl xl:text-[4.2rem] app-title"
+            className="mx-auto mt-6 max-w-5xl text-4xl font-bold tracking-tight app-title sm:text-5xl lg:text-6xl xl:text-[4.15rem]"
           >
             Know your salary.
             <br />
@@ -109,9 +78,9 @@ export default function HeroSection() {
             transition={{ duration: 0.52, delay: 0.1 }}
             className="mx-auto mt-6 max-w-3xl text-lg leading-8 app-copy sm:text-xl"
           >
-            See exactly what you take home after tax, NI, pension, and student
-            loan. TaxDecod turns confusing salary numbers into a clear visual
-            experience.
+            TaxDecod is a UK salary intelligence platform built to help you
+            understand take-home pay, deductions, payslips, and salary
+            decisions more clearly than old-style calculator sites.
           </motion.p>
 
           <motion.div
@@ -120,84 +89,91 @@ export default function HeroSection() {
             transition={{ duration: 0.52, delay: 0.14 }}
             className="mt-8 flex flex-wrap items-center justify-center gap-3"
           >
-            {heroPills.map((item, index) => (
-              <motion.div
+            {heroPills.map((item) => (
+              <div
                 key={item}
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.35, delay: 0.18 + index * 0.04 }}
                 className="rounded-full border px-4 py-2 text-sm app-subtle"
                 style={{ borderColor: "var(--line)" }}
               >
                 {item}
-              </motion.div>
+              </div>
             ))}
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.52, delay: 0.2 }}
+            transition={{ duration: 0.52, delay: 0.18 }}
             className="mt-10 flex flex-wrap items-center justify-center gap-4"
           >
-            <a
+            <Link
               href="/calculator"
-              className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-medium text-white hover-lift"
+              className="inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-semibold text-white hover-lift"
               style={{
                 background:
                   "linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%)",
+                boxShadow: "0 18px 40px rgba(14,165,233,0.20)",
               }}
             >
-              Start calculation
+              Start with your salary
               <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
 
-            <a
-              href="#seo-links"
-              className="inline-flex items-center rounded-2xl border px-6 py-3 text-sm font-medium hover-lift"
+            <Link
+              href="/compare-salary"
+              className="inline-flex items-center rounded-2xl border px-6 py-3 text-sm font-semibold hover-lift"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card)",
                 color: "var(--text)",
               }}
             >
-              Explore salary pages
-            </a>
+              Compare two salaries
+            </Link>
           </motion.div>
         </div>
 
         <motion.div
           initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.62, delay: 0.18 }}
-          className="relative mx-auto mt-12 max-w-6xl"
+          transition={{ duration: 0.62, delay: 0.22 }}
+          className="mx-auto mt-12 max-w-6xl"
         >
-          {floatingSignals.map((item, index) => {
+          <div className="rounded-[36px] border p-3 shadow-[0_28px_100px_-40px_rgba(15,23,42,0.30)] app-card-strong sm:p-5">
+            <CalculatorCard mode="compact" />
+          </div>
+        </motion.div>
+
+        <div className="mx-auto mt-8 grid max-w-6xl gap-4 md:grid-cols-3">
+          {trustStats.map((item, index) => {
             const Icon = item.icon;
 
             return (
               <motion.div
-                key={item.label}
-                animate={{ y: [0, -10, 0] }}
-                transition={{
-                  duration: 5 + index,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className={`absolute z-10 rounded-full border px-4 py-3 text-xs shadow-sm app-card ${item.className}`}
+                key={item.title}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.42, delay: 0.28 + index * 0.05 }}
+                className="app-soft rounded-[26px] px-5 py-5"
               >
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 app-accent" />
-                  <span className="app-title font-medium">{item.label}</span>
+                <div className="flex items-start gap-4">
+                  <div className="inline-flex rounded-[18px] p-3 app-chip">
+                    <Icon className="h-5 w-5" />
+                  </div>
+
+                  <div>
+                    <p className="text-base font-semibold app-title">
+                      {item.title}
+                    </p>
+                    <p className="mt-2 text-sm leading-7 app-copy">
+                      {item.text}
+                    </p>
+                  </div>
                 </div>
               </motion.div>
             );
           })}
-
-          <div className="rounded-[36px] border p-3 shadow-[0_24px_90px_-36px_rgba(15,23,42,0.32)] app-card-strong sm:p-5">
-            <CalculatorCard mode="compact" />
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

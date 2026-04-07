@@ -5,6 +5,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/layout/site-header";
 import Container from "@/components/ui/container";
 import TaxYearTrustBar from "@/components/shared/tax-year-trust-bar";
+import PdfReportStrip from "@/components/shared/pdf-report-strip";
 import { calculateTakeHome } from "@/lib/tax/calculators/take-home";
 import { formatCurrency } from "@/lib/tax/utils/currency";
 import { TRUST_COPY, getStandardUkEmployeeInput } from "@/lib/tax/config";
@@ -47,6 +48,12 @@ export default function CompareSalaryPage() {
   const taxLossPercent =
     grossDifference > 0 ? (taxOnIncrease / grossDifference) * 100 : 0;
 
+  const reportInput =
+    salaryB >= salaryA ? inputB : inputA;
+
+  const reportResult =
+    salaryB >= salaryA ? resultB : resultA;
+
   return (
     <main className="app-shell">
       <SiteHeader />
@@ -63,9 +70,9 @@ export default function CompareSalaryPage() {
             </h1>
 
             <p className="mt-4 text-lg leading-8 app-copy">
-              See what actually changes after tax — not just the headline
-              number. This page helps you judge whether a salary jump is
-              genuinely worth it in real monthly terms.
+              See what actually changes after tax, not just the headline number.
+              This page helps you judge whether a salary jump is genuinely worth
+              it in real monthly terms.
             </p>
           </div>
 
@@ -163,26 +170,40 @@ export default function CompareSalaryPage() {
               </div>
             </div>
 
-            <div className="mt-8 max-w-3xl rounded-[24px] border border-white/10 bg-black/10 px-5 py-5">
+            <div className="mt-8 max-w-3xl rounded-[24px] border border-[var(--line)] bg-[var(--card-soft)] px-5 py-5">
               <p className="text-sm leading-8 app-copy">
                 {netDiff > 0 ? (
                   <>
                     Increasing your salary from{" "}
-                    <strong>£{salaryA.toLocaleString("en-GB")}</strong> to{" "}
-                    <strong>£{salaryB.toLocaleString("en-GB")}</strong> gives
-                    you about{" "}
-                    <strong>{formatCurrency(Math.abs(monthlyDiff))}</strong>{" "}
+                    <strong className="app-title">
+                      £{salaryA.toLocaleString("en-GB")}
+                    </strong>{" "}
+                    to{" "}
+                    <strong className="app-title">
+                      £{salaryB.toLocaleString("en-GB")}
+                    </strong>{" "}
+                    gives you about{" "}
+                    <strong className="app-title">
+                      {formatCurrency(Math.abs(monthlyDiff))}
+                    </strong>{" "}
                     extra per month. That means a noticeable part of the gross
                     increase is absorbed by tax and deductions.
                   </>
                 ) : netDiff < 0 ? (
                   <>
                     Moving from{" "}
-                    <strong>£{salaryA.toLocaleString("en-GB")}</strong> to{" "}
-                    <strong>£{salaryB.toLocaleString("en-GB")}</strong> reduces
-                    your take-home pay by about{" "}
-                    <strong>{formatCurrency(Math.abs(monthlyDiff))}</strong> per
-                    month.
+                    <strong className="app-title">
+                      £{salaryA.toLocaleString("en-GB")}
+                    </strong>{" "}
+                    to{" "}
+                    <strong className="app-title">
+                      £{salaryB.toLocaleString("en-GB")}
+                    </strong>{" "}
+                    reduces your take-home pay by about{" "}
+                    <strong className="app-title">
+                      {formatCurrency(Math.abs(monthlyDiff))}
+                    </strong>{" "}
+                    per month.
                   </>
                 ) : (
                   <>
@@ -192,6 +213,16 @@ export default function CompareSalaryPage() {
                 )}
               </p>
             </div>
+          </div>
+
+          <div className="mt-10">
+            <PdfReportStrip
+              title="Download the stronger-side salary report"
+              description="Use the PDF to save the more valuable side of this comparison, then bring it into budgeting or offer decisions."
+              values={reportInput}
+              result={reportResult}
+              filename="taxdecod-compare-salary-report.pdf"
+            />
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-3">

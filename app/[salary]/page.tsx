@@ -1,63 +1,34 @@
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import SiteHeader from "../../components/layout/site-header";
-import Container from "../../components/ui/container";
-import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
-import SeoPageHero from "../../components/seo/seo-page-hero";
-import SeoRealityCard from "../../components/seo/seo-reality-card";
-import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
-import SalaryPageContent from "../../components/seo/salary-page-content";
-import SalaryPageSchema from "../../components/seo/salary-page-schema";
-import { TAX_YEAR_LABEL, TRUST_COPY } from "../../lib/tax/config";
-import { buildSeoMetadata } from "../../components/seo/metadata";
+import SiteHeader from "@/components/layout/site-header";
+import Container from "@/components/ui/container";
+import SalaryPageContent from "@/components/seo/salary-page-content";
+import SeoRealityCard from "@/components/seo/seo-reality-card";
+import SeoCtaCluster from "@/components/seo/seo-cta-cluster";
+import TaxYearTrustBar from "@/components/shared/tax-year-trust-bar";
+import TopSalaryCheckpoints from "@/components/shared/top-salary-checkpoints";
+import PdfReportStrip from "@/components/shared/pdf-report-strip";
 import {
-  formatSalaryTitle,
-  getPopularSalarySlugs,
+  buildSalaryPageMetadata,
+  getSalaryFromParams,
   getSalaryPageData,
-  parseSalaryFromSlug,
-} from "../../components/seo/salary-pages";
+} from "@/lib/tax/seo/salary-page";
+import { TAX_YEAR_LABEL, TRUST_COPY } from "@/lib/tax/config";
 
-type SalaryPageProps = {
-  params: Promise<{
-    salary: string;
-  }>;
+type PageProps = {
+  params: Promise<{ salary: string }>;
 };
-
-export async function generateStaticParams() {
-  return getPopularSalarySlugs();
-}
 
 export async function generateMetadata({
   params,
-}: SalaryPageProps): Promise<Metadata> {
-  const resolvedParams = await params;
-  const salary = parseSalaryFromSlug(resolvedParams.salary);
-
-  if (!salary) {
-    return buildSeoMetadata({
-      title: "Salary Breakdown UK | TaxDecod",
-      description: "UK salary breakdown and take-home pay estimates.",
-      path: "/salary-hub",
-    });
-  }
-
-  return buildSeoMetadata({
-    title: formatSalaryTitle(salary),
-    description: `If you earn £${salary.toLocaleString(
-      "en-GB"
-    )} in the UK, see your estimated take-home pay, monthly net income, tax breakdown, and real salary impact.`,
-    path: `/${salary}-after-tax-uk`,
-  });
+}: PageProps): Promise<Metadata> {
+  const { salary: rawSalary } = await params;
+  const salary = getSalaryFromParams(rawSalary);
+  return buildSalaryPageMetadata(salary);
 }
 
-export default async function SalaryPage({ params }: SalaryPageProps) {
-  const resolvedParams = await params;
-  const salary = parseSalaryFromSlug(resolvedParams.salary);
-
-  if (!salary) {
-    notFound();
-  }
-
+export default async function SalaryPage({ params }: PageProps) {
+  const { salary: rawSalary } = await params;
+  const salary = getSalaryFromParams(rawSalary);
   const data = getSalaryPageData(salary);
 
   const totalDeductions =
@@ -72,26 +43,36 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
       : 0;
 
   return (
-    <main>
-      <SalaryPageSchema
-        salary={salary}
-        netAnnual={data.result.netAnnual}
-        netMonthly={data.result.netMonthly}
-      />
-
+    <main className="app-shell">
       <SiteHeader />
 
-      <section className="py-16 sm:py-20">
+      <section className="py-12 sm:py-14">
         <Container>
-          <SeoPageHero
-            eyebrow="UK salary breakdown"
-            title={`£${salary.toLocaleString("en-GB")} after tax in the UK`}
-            description="Your estimated take-home pay is:"
-            highlightValue={`£${data.result.netAnnual.toLocaleString("en-GB")}`}
-            highlightSubtext={`£${data.result.netMonthly.toLocaleString(
-              "en-GB"
-            )} per month after tax and deductions`}
-          />
+          <div className="max-w-4xl">
+            <p className="text-sm font-medium uppercase tracking-[0.18em] app-accent">
+              Salary breakdown UK
+            </p>
+
+            <h1 className="mt-3 text-4xl font-bold app-title sm:text-5xl">
+              £{salary.toLocaleString("en-GB")} after tax in the UK
+            </h1>
+
+            <p className="mt-4 text-lg leading-8 app-copy">
+              Based on {TAX_YEAR_LABEL}-style assumptions, a salary of{" "}
+              <strong className="app-title">
+                £{salary.toLocaleString("en-GB")}
+              </strong>{" "}
+              gives an estimated take-home of{" "}
+              <strong className="app-title">
+                £{data.result.netAnnual.toLocaleString("en-GB")}
+              </strong>{" "}
+              per year and{" "}
+              <strong className="app-title">
+                £{data.result.netMonthly.toLocaleString("en-GB")}
+              </strong>{" "}
+              per month after tax and deductions.
+            </p>
+          </div>
 
           <div className="mt-8">
             <TaxYearTrustBar
@@ -108,6 +89,20 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
               and deductions. For most users, the number that actually matters in
               real life is the monthly take-home figure, not the gross headline.
             </SeoRealityCard>
+          </div>
+
+          <div className="mt-10">
+            <PdfReportStrip
+              title={`Download the £${salary.toLocaleString("en-GB")} salary report`}
+              description="Save this salary breakdown as a PDF for later, job comparisons, or budgeting discussions."
+              values={data.input}
+              result={data.result}
+              filename={`taxdecod-${salary}-salary-report.pdf`}
+            />
+          </div>
+
+          <div className="mt-10">
+            <TopSalaryCheckpoints currentSalary={salary} />
           </div>
 
           <div className="mt-10">
