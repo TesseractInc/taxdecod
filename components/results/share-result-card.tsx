@@ -32,10 +32,19 @@ export default function ShareResultCard({
   const [savedCount, setSavedCount] = useState(0);
   const [email, setEmail] = useState("");
   const [savedMessage, setSavedMessage] = useState("");
+  const [currentUrl, setCurrentUrl] = useState("");
+  const [canShare, setCanShare] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as SavedScenario[];
+
+    setCurrentUrl(window.location.href);
+    setCanShare(typeof navigator !== "undefined" && "share" in navigator);
+
+    const existing = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    ) as SavedScenario[];
+
     setSavedCount(existing.length);
   }, []);
 
@@ -48,29 +57,48 @@ Tax: ${formatCurrency(result.incomeTaxAnnual)}
 National Insurance: ${formatCurrency(result.nationalInsuranceAnnual)}
 Pension: ${formatCurrency(result.pensionAnnual)}
 Student Loan: ${formatCurrency(result.studentLoanAnnual)}
-Tax Code: ${values.taxCode || "—"}`,
-    [result, values]
+Tax Code: ${values.taxCode || "—"}${currentUrl ? `
+
+Page: ${currentUrl}` : ""}`,
+    [result, values, currentUrl]
   );
 
   const handleCopySummary = async () => {
+    if (typeof navigator === "undefined" || !navigator.clipboard) return;
+
     await navigator.clipboard.writeText(summary);
     setCopied("summary");
     setTimeout(() => setCopied(""), 1800);
   };
 
   const handleCopyLink = async () => {
-    await navigator.clipboard.writeText(window.location.href);
+    if (
+      typeof navigator === "undefined" ||
+      !navigator.clipboard ||
+      !currentUrl
+    ) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(currentUrl);
     setCopied("link");
     setTimeout(() => setCopied(""), 1800);
   };
 
   const handleNativeShare = async () => {
-    if (!navigator.share) return;
+    if (
+      typeof navigator === "undefined" ||
+      !("share" in navigator) ||
+      !currentUrl
+    ) {
+      return;
+    }
+
     try {
       await navigator.share({
         title: "My TaxDecod salary result",
         text: summary,
-        url: window.location.href,
+        url: currentUrl,
       });
     } catch {}
   };
@@ -78,7 +106,9 @@ Tax Code: ${values.taxCode || "—"}`,
   const handleSaveScenario = () => {
     if (typeof window === "undefined") return;
 
-    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]") as SavedScenario[];
+    const existing = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    ) as SavedScenario[];
 
     const nextScenario: SavedScenario = {
       id: `${Date.now()}`,
@@ -98,11 +128,14 @@ Tax Code: ${values.taxCode || "—"}`,
     setTimeout(() => setSavedMessage(""), 1800);
   };
 
-  const emailHref = `mailto:${encodeURIComponent(
-    email || ""
-  )}?subject=${encodeURIComponent(
-    "My TaxDecod salary result"
-  )}&body=${encodeURIComponent(summary + "\n\nPage: " + window.location.href)}`;
+  const emailHref =
+    email && currentUrl
+      ? `mailto:${encodeURIComponent(
+          email
+        )}?subject=${encodeURIComponent(
+          "My TaxDecod salary result"
+        )}&body=${encodeURIComponent(summary)}`
+      : "#";
 
   return (
     <section className="app-card p-6">
@@ -219,14 +252,14 @@ Tax Code: ${values.taxCode || "—"}`,
               />
 
               <a
-                href={email ? emailHref : "#"}
+                href={email && currentUrl ? emailHref : "#"}
                 className="mt-3 flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-medium hover-lift"
                 style={{
                   borderColor: "color-mix(in srgb, var(--primary) 20%, var(--line))",
                   background: "color-mix(in srgb, var(--primary) 10%, transparent)",
                   color: "var(--primary)",
-                  pointerEvents: email ? "auto" : "none",
-                  opacity: email ? 1 : 0.55,
+                  pointerEvents: email && currentUrl ? "auto" : "none",
+                  opacity: email && currentUrl ? 1 : 0.55,
                 }}
               >
                 <Mail className="h-4 w-4" />
@@ -240,7 +273,7 @@ Tax Code: ${values.taxCode || "—"}`,
               </p>
             </div>
 
-            {typeof window !== "undefined" && "share" in navigator ? (
+            {canShare ? (
               <button
                 type="button"
                 onClick={handleNativeShare}
