@@ -1,27 +1,32 @@
-"use client";
-
 import Link from "next/link";
 
-export default function SeoCTACluster() {
+type SeoCtaItem = {
+  href: string;
+  title: string;
+  description: string;
+};
+
+type SeoCtaClusterProps = {
+  items: SeoCtaItem[];
+};
+
+export default function SeoCtaCluster({ items }: SeoCtaClusterProps) {
   return (
-    <section className="mt-10 rounded-[28px] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950">
-      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-        What should you do next?
-      </h3>
-
-      <div className="mt-5 grid gap-4 sm:grid-cols-3">
-        <Link href="/compare-salary" className="seo-card">
-          Compare salaries
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          className="rounded-[22px] border border-slate-200 bg-slate-50/80 p-5 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/72 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+        >
+          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+            {item.title}
+          </p>
+          <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+            {item.description}
+          </p>
         </Link>
-
-        <Link href="/reverse-tax" className="seo-card">
-          Reverse from take-home
-        </Link>
-
-        <Link href="/" className="seo-card">
-          Open calculator
-        </Link>
-      </div>
-    </section>
+      ))}
+    </div>
   );
 }

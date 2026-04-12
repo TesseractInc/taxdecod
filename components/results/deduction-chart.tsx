@@ -62,7 +62,9 @@ export default function DeductionChart({ result }: { result: TakeHomeResult }) {
                 ))}
               </Pie>
               <Tooltip
-                formatter={(value: number) => formatCurrency(value)}
+                formatter={(value) =>
+  typeof value === "number" ? formatCurrency(value) : String(value ?? "")
+}
                 contentStyle={{
                   borderRadius: 16,
                   border: "1px solid rgba(148,163,184,0.18)",

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { CalculatorInput, TakeHomeResult } from "../../types/tax";
 import { formatCurrency } from "../../lib/tax/utils/currency";

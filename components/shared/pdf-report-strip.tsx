@@ -1,35 +1,38 @@
+"use client";
+
 import DownloadReportButton from "../results/download-report-button";
-import type { CalculatorInput, TakeHomeResult } from "../../types/tax";
+
+type CalculatorInput = Record<string, unknown>;
+type TakeHomeResult = Record<string, unknown>;
 
 type PdfReportStripProps = {
-  title?: string;
-  description?: string;
   values: CalculatorInput;
   result: TakeHomeResult;
   filename?: string;
+  title?: string;
+  description?: string;
 };
 
 export default function PdfReportStrip({
-  title = "Take this result with you",
-  description = "Download a polished PDF report for yourself, job comparisons, budgeting, or sharing later.",
   values,
   result,
   filename,
+  title = "Save a clean PDF copy",
+  description = "Download a shareable salary report with your current inputs and result summary.",
 }: PdfReportStripProps) {
   return (
-    <section className="app-card-strong rounded-[30px] p-6 sm:p-7">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+    <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950/94">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] app-accent">
-            PDF report
-          </p>
-          <h2 className="mt-3 text-2xl font-bold tracking-tight app-title sm:text-3xl">
+          <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             {title}
-          </h2>
-          <p className="mt-3 text-sm leading-8 app-copy">{description}</p>
+          </p>
+          <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+            {description}
+          </p>
         </div>
 
-        <div className="w-full lg:w-auto lg:min-w-[280px]">
+        <div className="w-full lg:w-auto lg:min-w-[260px]">
           <DownloadReportButton
             values={values}
             result={result}
@@ -39,6 +42,6 @@ export default function PdfReportStrip({
           />
         </div>
       </div>
-    </section>
+    </div>
   );
 }

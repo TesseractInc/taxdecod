@@ -8,6 +8,10 @@ import {
   WalletCards,
 } from "lucide-react";
 
+type CalculatorCardProps = {
+  mode?: "overview" | "full";
+};
+
 type DeductionItem = {
   label: string;
   value: string;
@@ -52,9 +56,13 @@ const darkCard =
 const darkPanel =
   "rounded-[26px] border border-slate-200 bg-slate-50/70 p-5 dark:border-slate-800 dark:bg-slate-950/88";
 
-export default function CalculatorCard() {
+export default function CalculatorCard({
+  mode = "full",
+}: CalculatorCardProps) {
+  const sectionPadding = mode === "overview" ? "pb-0" : "pb-10";
+
   return (
-    <section className="pb-10">
+    <section className={sectionPadding}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950/94">
           <div className="grid lg:grid-cols-2">
