@@ -115,6 +115,35 @@ export default function BenchmarksHubPage() {
                 <p className="mt-2 text-sm app-copy">
                   Work back from the take-home you want.
                 </p>
+
+                <div className="mt-10 grid gap-4 md:grid-cols-3">
+  <Link href="/calculator" className="app-soft p-4 hover-lift">
+    <p className="text-sm font-semibold app-title">
+      Calculate your take-home
+    </p>
+    <p className="text-xs app-subtle mt-1">
+      See what you actually keep after deductions.
+    </p>
+  </Link>
+
+  <Link href="/compare-salary" className="app-soft p-4 hover-lift">
+    <p className="text-sm font-semibold app-title">
+      Compare salaries
+    </p>
+    <p className="text-xs app-subtle mt-1">
+      Compare two salary offers after tax.
+    </p>
+  </Link>
+
+  <Link href="/reverse-tax" className="app-soft p-4 hover-lift">
+    <p className="text-sm font-semibold app-title">
+      Reverse your income goal
+    </p>
+    <p className="text-xs app-subtle mt-1">
+      Find what salary you need to reach your target.
+    </p>
+  </Link>
+</div>
               </Link>
             </div>
           </div>

@@ -14,6 +14,7 @@ import {
   getScotlandSalaryPageData,
   getVariantSalaryParams,
 } from "../../components/seo/salary-variants";
+import { formatCurrency } from "../../lib/tax/utils/currency";
 
 type PageProps = {
   params: Promise<{
@@ -67,17 +68,11 @@ export default async function SalaryScotlandPage({ params }: PageProps) {
           <SeoPageHero
             eyebrow="Scotland salary view"
             title={`£${salary.toLocaleString("en-GB")} after tax in Scotland`}
-            description="Your estimated Scotland take-home pay is:"
-            highlightValue={data.result.netAnnual.toLocaleString("en-GB", {
-              style: "currency",
-              currency: "GBP",
-              maximumFractionDigits: 0,
-            })}
-            highlightSubtext={`${data.result.netMonthly.toLocaleString("en-GB", {
-              style: "currency",
-              currency: "GBP",
-              maximumFractionDigits: 0,
-            })} per month using Scotland-specific tax treatment`}
+            description="This page focuses on how Scottish income tax treatment can change the real take-home outcome of the same headline salary."
+            highlightValue={formatCurrency(data.result.netAnnual)}
+            highlightSubtext={`${formatCurrency(
+              data.result.netMonthly
+            )} per month using Scotland-specific tax treatment`}
           />
 
           <div className="mt-8">
@@ -89,10 +84,9 @@ export default async function SalaryScotlandPage({ params }: PageProps) {
 
           <div className="mt-10">
             <SeoRealityCard label="Scotland reality">
-              This page helps users understand how Scottish tax treatment can
-              change real take-home pay compared with standard UK rules. It is
-              most useful when you are comparing location-specific salary
-              outcomes.
+              Scottish tax treatment can change the final take-home figure
+              compared with standard UK rules. This page is most useful when
+              users want a location-specific salary reading.
             </SeoRealityCard>
           </div>
 
@@ -115,7 +109,7 @@ export default async function SalaryScotlandPage({ params }: PageProps) {
                   href: "/salary-hub",
                   title: "Explore more salary pages",
                   description:
-                    "Move to nearby salary levels and related scenarios.",
+                    "Move to nearby salary levels and related salary scenarios.",
                 },
               ]}
             />
@@ -124,22 +118,17 @@ export default async function SalaryScotlandPage({ params }: PageProps) {
           <div className="mt-14">
             <SalaryVariantContent
               title={`£${salary.toLocaleString("en-GB")} after tax in Scotland`}
-              intro={`This page estimates take-home pay for a £${salary.toLocaleString(
-                "en-GB"
+              intro={`This page estimates take-home pay for a ${formatCurrency(
+                salary
               )} salary using Scotland-specific income tax treatment.`}
               salary={salary}
               result={data.result}
               bullets={[
-                "Useful for users comparing Scotland against the rest of the UK.",
-                `Estimated monthly take-home pay is ${data.result.netMonthly.toLocaleString(
-                  "en-GB",
-                  {
-                    style: "currency",
-                    currency: "GBP",
-                    maximumFractionDigits: 0,
-                  }
+                "Useful when comparing Scotland against the rest of the UK.",
+                `Estimated monthly take-home pay is ${formatCurrency(
+                  data.result.netMonthly
                 )}.`,
-                "Helps highlight that Scottish income tax treatment can differ from England, Wales, and Northern Ireland.",
+                "Helps reveal how regional tax treatment can change real monthly pay.",
               ]}
             />
           </div>

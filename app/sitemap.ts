@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/calculator",
     "/reverse-tax",
     "/compare-salary",
+    "/payslip-checker",
     "/salary-hub",
   ].map((path) => ({
     url: `${baseUrl}${path}`,

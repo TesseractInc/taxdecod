@@ -1,26 +1,78 @@
+import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
-import PageHero from "../../components/ui/page-hero";
-import ExperiencePager from "../../components/ui/experience-pager";
+import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import SeoPageHero from "../../components/seo/seo-page-hero";
+import SeoRealityCard from "../../components/seo/seo-reality-card";
+import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
 import ResultsExperience from "../../components/results/results-experience";
 import PageSnapshot from "../../components/results/page-snapshot";
+import EmailCapturePanel from "../../components/shared/email-capture-panel";
 import { demoScenarioInput, demoScenarioResult } from "../../lib/tax/demo-scenario";
+import { TAX_YEAR_LABEL } from "../../lib/tax/config";
 
 export default function RealityCheckPage() {
   return (
     <main className="app-shell">
       <SiteHeader />
-      <section className="py-10 sm:py-14">
+
+      <section className="py-16 sm:py-20">
         <Container>
-          <PageHero
+          <SeoPageHero
             eyebrow="Reality check"
-            title="Feel your salary in real life"
-            description="Shift from annual numbers to hourly, daily, and weekly net income, then share a clean result snapshot."
+            title="Feel your salary in real-life terms"
+            description="This page shifts salary away from the annual headline and into weekly, daily, hourly, and practical net-income reality."
           />
 
-          <PageSnapshot values={demoScenarioInput} result={demoScenarioResult} />
-
           <div className="mt-8">
+            <TaxYearTrustBar
+              description={`This page uses a standard UK employee example under ${TAX_YEAR_LABEL}-style assumptions to make salary feel more practical and real-life focused.`}
+              points={[
+                `Using ${TAX_YEAR_LABEL} UK assumptions`,
+                "Built for real-life salary meaning",
+                "Focused on practical take-home context",
+              ]}
+            />
+          </div>
+
+          <div className="mt-10">
+            <SeoRealityCard label="Reality check">
+              Users often understand annual salary on paper but still do not
+              feel what it means in real life. This page helps translate salary
+              into time-based and practical money context.
+            </SeoRealityCard>
+          </div>
+
+          <div className="mt-10">
+            <SeoCtaCluster
+              items={[
+                {
+                  href: "/calculator",
+                  title: "Run your own salary",
+                  description:
+                    "Enter your own number and see a personalised take-home reading.",
+                },
+                {
+                  href: "/compare-salary",
+                  title: "Compare salary jumps",
+                  description:
+                    "See whether another salary meaningfully changes real monthly life.",
+                },
+                {
+                  href: "/salary-pages",
+                  title: "Browse salary pages",
+                  description:
+                    "Move across common salary bands and related after-tax routes.",
+                },
+              ]}
+            />
+          </div>
+
+          <div className="mt-14">
+            <PageSnapshot values={demoScenarioInput} result={demoScenarioResult} />
+          </div>
+
+          <div className="mt-10">
             <ResultsExperience
               result={demoScenarioResult}
               values={demoScenarioInput}
@@ -28,10 +80,49 @@ export default function RealityCheckPage() {
             />
           </div>
 
-          <div className="mt-10">
-            <ExperiencePager
-              previous={{ href: "/salary-tools", label: "Salary tools" }}
-              next={{ href: "/salary-pages", label: "Salary pages hub" }}
+          <section className="mt-14 grid gap-4 md:grid-cols-3">
+            <Link
+              href="/salary-tools"
+              className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+            >
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Salary tools
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                Move into raise, bonus, and decision-focused salary scenarios.
+              </p>
+            </Link>
+
+            <Link
+              href="/compare-salary"
+              className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+            >
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Compare salaries
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                Check whether a bigger gross salary really feels better after tax.
+              </p>
+            </Link>
+
+            <Link
+              href="/salary-pages"
+              className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+            >
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Browse salary pages
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                Explore common salary levels and linked take-home paths.
+              </p>
+            </Link>
+          </section>
+
+          <div className="mt-14">
+            <EmailCapturePanel
+              title="Send your salary reality view to your email"
+              description="Save the practical salary view so you can compare it later against another option."
+              buttonLabel="Send reality report"
             />
           </div>
         </Container>

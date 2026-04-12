@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
@@ -26,6 +27,30 @@ export default function PayslipExplainedPage() {
               values={demoScenarioInput}
               view="payslip"
             />
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <Link href="/payslip-checker" className="app-card p-6">
+              <p className="font-semibold app-title">Check your payslip to date</p>
+              <p className="mt-2 text-sm app-copy">
+                Use gross pay to date, tax paid to date, and NI paid to date for
+                a quick first-check against your current payslip pattern.
+              </p>
+            </Link>
+
+            <Link href="/calculator" className="app-card p-6">
+              <p className="font-semibold app-title">Open calculator</p>
+              <p className="mt-2 text-sm app-copy">
+                Personalise the full salary reading with your own exact inputs.
+              </p>
+            </Link>
+
+            <Link href="/salary-tools" className="app-card p-6">
+              <p className="font-semibold app-title">Explore salary tools</p>
+              <p className="mt-2 text-sm app-copy">
+                Move into raise, bonus, and salary comparison scenarios.
+              </p>
+            </Link>
           </div>
 
           <div className="mt-10">

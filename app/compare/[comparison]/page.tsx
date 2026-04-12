@@ -79,7 +79,7 @@ export default async function ComparisonSeoPage({
             title={`£${salaryA.toLocaleString("en-GB")} vs £${salaryB.toLocaleString(
               "en-GB"
             )} after tax`}
-            description="Your estimated real annual gain is:"
+            description="This page shows the real gain after deductions so users can judge a salary jump by monthly reality, not gross headline alone."
             highlightValue={formatCurrency(data.netAnnualDifference)}
             highlightSubtext={`${formatCurrency(
               data.netMonthlyDifference
@@ -110,21 +110,21 @@ export default async function ComparisonSeoPage({
               items={[
                 {
                   href: "/compare-salary",
-                  title: "Interactive comparison tool",
+                  title: "Use the interactive comparison tool",
                   description:
-                    "Enter your own salary pair and compare live.",
+                    "Enter your own salary pair and compare live in a more flexible way.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse calculator",
+                  title: "Reverse from a monthly target",
                   description:
-                    "Find the salary needed to hit a target monthly take-home.",
+                    "Work backwards from the number you want to keep each month.",
                 },
                 {
                   href: "/salary-hub",
-                  title: "Explore salary hub",
+                  title: "Explore more salary pages",
                   description:
-                    "Browse more salary levels and linked take-home pages.",
+                    "Browse more salary bands, variants, and take-home scenarios.",
                 },
               ]}
             />

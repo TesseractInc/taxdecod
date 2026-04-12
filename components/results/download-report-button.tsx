@@ -11,9 +11,6 @@ type DownloadReportButtonProps = {
   values: CalculatorInput;
   result: TakeHomeResult;
   filename?: string;
-  label?: string;
-  className?: string;
-  fullWidth?: boolean;
 };
 
 function currency(value: number) {
@@ -28,9 +25,6 @@ export default function DownloadReportButton({
   values,
   result,
   filename = "taxdecod-salary-report.pdf",
-  label = "Download PDF report",
-  className = "",
-  fullWidth = false,
 }: DownloadReportButtonProps) {
   const handleDownload = () => {
     const doc = new jsPDF({
@@ -62,7 +56,7 @@ export default function DownloadReportButton({
 
     const addHeader = () => {
       doc.setFillColor(colors.sky);
-      doc.rect(0, 0, pageWidth, 112, "F");
+      doc.rect(0, 0, pageWidth, 114, "F");
 
       doc.setTextColor(colors.white);
       doc.setFont("helvetica", "bold");
@@ -71,17 +65,17 @@ export default function DownloadReportButton({
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
-      doc.text("Decode your salary. Understand every deduction.", 48, 70);
+      doc.text("Know your salary. Not just the number — the reality.", 48, 70);
 
       doc.setDrawColor(255, 255, 255);
       doc.setLineWidth(0.5);
-      doc.line(48, 84, pageWidth - 48, 84);
+      doc.line(48, 85, pageWidth - 48, 85);
 
       doc.setFontSize(10);
       doc.text(
         `Generated for ${currency(result.grossAnnual)} salary • Tax code ${values.taxCode || "—"}`,
         48,
-        100
+        101
       );
 
       y = 145;
@@ -129,7 +123,7 @@ export default function DownloadReportButton({
     };
 
     const addMetricRow = (
-      metricLabel: string,
+      label: string,
       value: string,
       tone: "default" | "positive" | "negative" | "accent" = "default"
     ) => {
@@ -139,10 +133,10 @@ export default function DownloadReportButton({
         tone === "positive"
           ? colors.emerald
           : tone === "negative"
-            ? colors.rose
-            : tone === "accent"
-              ? colors.skyDark
-              : colors.ink;
+          ? colors.rose
+          : tone === "accent"
+          ? colors.skyDark
+          : colors.ink;
 
       doc.setDrawColor(colors.line);
       doc.setFillColor(colors.soft);
@@ -151,7 +145,7 @@ export default function DownloadReportButton({
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
       doc.setTextColor(colors.muted);
-      doc.text(metricLabel, 64, y + 21);
+      doc.text(label, 64, y + 21);
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(11);
@@ -174,7 +168,7 @@ export default function DownloadReportButton({
       y += lines.length * 15 + 10;
     };
 
-    const addBadgeRow = (badgeLabel: string, value: string, color: string) => {
+    const addBadgeRow = (label: string, value: string, color: string) => {
       const wrapped = doc.splitTextToSize(value, 260);
       const badgeHeight = Math.max(32, wrapped.length * 14 + 16);
 
@@ -186,7 +180,7 @@ export default function DownloadReportButton({
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(colors.white);
-      doc.text(badgeLabel, 62, y + 20);
+      doc.text(label, 62, y + 20);
 
       doc.setTextColor(colors.ink);
       doc.setFont("helvetica", "bold");
@@ -225,8 +219,8 @@ export default function DownloadReportButton({
       underpaid.status === "solid"
         ? colors.emerald
         : underpaid.status === "borderline"
-          ? colors.amber
-          : colors.rose
+        ? colors.amber
+        : colors.rose
     );
     addParagraph(underpaid.summary);
 
@@ -252,14 +246,10 @@ export default function DownloadReportButton({
     <button
       type="button"
       onClick={handleDownload}
-      className={`flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-white hover-lift ${fullWidth ? "w-full" : ""} ${className}`}
-      style={{
-        background:
-          "linear-gradient(135deg, var(--primary-2) 0%, var(--primary) 100%)",
-      }}
+      className="inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[22px] border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-700 transition hover:border-sky-300 hover:bg-white dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:border-sky-800 dark:hover:bg-slate-950"
     >
       <Download className="h-4 w-4" />
-      {label}
+      Download PDF report
     </button>
   );
 }

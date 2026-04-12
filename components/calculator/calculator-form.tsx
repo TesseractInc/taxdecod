@@ -1,6 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  GraduationCap,
+  Landmark,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { CalculatorInput, Region, StudentLoanPlan } from "../../types/tax";
 
 type CalculatorFormProps = {
@@ -18,7 +26,7 @@ export default function CalculatorForm({
 
   const updateField = <K extends keyof CalculatorInput>(
     key: K,
-    value: CalculatorInput[K]
+    value: CalculatorInput[K],
   ) => {
     onChange({
       ...values,
@@ -26,106 +34,118 @@ export default function CalculatorForm({
     });
   };
 
-  const salaryPlaceholder = useMemo(() => {
-    return values.payPeriod === "monthly" ? "3000" : "40000";
-  }, [values.payPeriod]);
-
-  const assumptionLabel = useMemo(() => {
-    const regionLabel =
-      values.region === "scotland" ? "Scotland" : "England, Wales, NI";
-
-    const loanLabel =
-      values.studentLoanPlan === "none"
-        ? "No student loan"
-        : values.studentLoanPlan === "postgrad"
-          ? "Postgraduate loan"
-          : values.studentLoanPlan.toUpperCase();
-
-    return `${regionLabel} • ${loanLabel} • ${values.pensionPercent}% pension`;
-  }, [values.region, values.studentLoanPlan, values.pensionPercent]);
-
   return (
-    <div className="space-y-6">
-      <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/60">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-5">
+      <div
+        className="rounded-[26px] border p-5"
+        style={{
+          borderColor: "var(--line)",
+          background: "var(--surface-1)",
+        }}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
-              Start here
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
+              Input
             </p>
-            <h4 className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Enter your headline pay
+            <h4 className="mt-2 text-2xl font-semibold app-title">
+              Enter your salary
             </h4>
-            <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
-              Enter your gross {values.payPeriod === "monthly" ? "monthly" : "annual"} salary before tax.
+            <p className="mt-2 text-sm app-copy">
+              Type your amount or choose a common salary.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {quickSalaryPresets.map((salary) => (
-              <button
-                key={salary}
-                type="button"
-                onClick={() => updateField("salary", salary)}
-                className={`rounded-full border px-3 py-2 text-xs font-semibold transition ${
-                  values.salary === salary
-                    ? "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/40 dark:text-sky-300"
-                    : "border-slate-200 bg-white text-slate-700 hover:border-sky-200 hover:text-sky-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:text-sky-300"
-                }`}
-              >
-                £{salary.toLocaleString()}
-              </button>
-            ))}
+          <div
+            className="inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium"
+            style={{
+              borderColor: "var(--line)",
+              background: "var(--surface-2)",
+              color: "var(--muted)",
+            }}
+          >
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+            UK PAYE logic
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-subtle">
+            Quick amounts
+          </p>
+
+          <div className="mt-3 flex flex-wrap gap-2.5">
+            {quickSalaryPresets.map((salary) => {
+              const isActive = values.salary === salary;
+
+              return (
+                <button
+                  key={salary}
+                  type="button"
+                  onClick={() => updateField("salary", salary)}
+                  className="rounded-full border px-4 py-2.5 text-sm font-medium transition"
+                  style={{
+                    borderColor: isActive
+                      ? "color-mix(in srgb, var(--primary) 34%, var(--line))"
+                      : "var(--line)",
+                    background: isActive
+                      ? "color-mix(in srgb, var(--primary) 8%, var(--surface-1))"
+                      : "var(--surface-1)",
+                    color: isActive ? "var(--primary)" : "var(--text)",
+                  }}
+                >
+                  £{salary.toLocaleString()}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div className="mt-5">
-          <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-            Salary
+          <label className="mb-3 block text-sm font-medium app-title">
+            Salary amount
           </label>
-
-          <div className="relative">
-            <div className="pointer-events-none absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-[14px] border border-slate-200 bg-white text-sm font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200">
-              £
-            </div>
-
-            <input
-              type="number"
-              inputMode="numeric"
-              value={Number.isFinite(values.salary) ? values.salary : ""}
-              onChange={(e) =>
-                updateField("salary", Number(e.target.value || 0))
-              }
-              className="app-input pl-[4.35rem] pr-4 text-lg font-semibold tracking-[-0.02em]"
-              placeholder={salaryPlaceholder}
-            />
-          </div>
-
-          <p className="mt-3 text-xs leading-6 text-slate-500 dark:text-slate-400">
-            Use gross {values.payPeriod === "monthly" ? "monthly" : "annual"} salary, not your take-home pay.
+          <input
+            type="number"
+            inputMode="numeric"
+            value={values.salary}
+            onChange={(e) => updateField("salary", Number(e.target.value))}
+            className="app-input"
+            placeholder={values.payPeriod === "monthly" ? "3000" : "40000"}
+          />
+          <p className="mt-3 text-xs app-subtle">
+            Gross annual pay before deductions.
           </p>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <div className="app-chip px-4 py-2 text-xs font-semibold">
-          Updated for UK 2025/26 assumptions
-        </div>
-        <div className="app-soft px-4 py-2 text-xs app-subtle">
-          {assumptionLabel}
-        </div>
-      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div
+          className="rounded-[24px] border p-5"
+          style={{
+            borderColor: "var(--line)",
+            background: "var(--surface-1)",
+          }}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-[14px]"
+              style={{
+                background: "var(--surface-2)",
+                border: "1px solid var(--line)",
+              }}
+            >
+              <Sparkles className="h-4 w-4 app-accent" />
+            </div>
+            <label className="text-sm font-medium app-title">Pay period</label>
+          </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950/70">
-          <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-            Pay period
-          </label>
           <select
             value={values.payPeriod}
             onChange={(e) =>
               updateField(
                 "payPeriod",
-                e.target.value as CalculatorInput["payPeriod"]
+                e.target.value as CalculatorInput["payPeriod"],
               )
             }
             className="app-input"
@@ -133,60 +153,95 @@ export default function CalculatorForm({
             <option value="yearly">Yearly salary</option>
             <option value="monthly">Monthly salary</option>
           </select>
-          <p className="mt-2 text-xs leading-6 text-slate-500 dark:text-slate-400">
-            Choose whether your input is annual or monthly.
+
+          <p className="mt-3 text-xs app-subtle">
+            Choose whether the amount is annual or monthly.
           </p>
         </div>
 
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950/70">
-          <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-            Region
-          </label>
+        <div
+          className="rounded-[24px] border p-5"
+          style={{
+            borderColor: "var(--line)",
+            background: "var(--surface-1)",
+          }}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-[14px]"
+              style={{
+                background: "var(--surface-2)",
+                border: "1px solid var(--line)",
+              }}
+            >
+              <Landmark className="h-4 w-4 app-accent" />
+            </div>
+            <label className="text-sm font-medium app-title">Region</label>
+          </div>
+
           <select
             value={values.region}
             onChange={(e) => updateField("region", e.target.value as Region)}
             className="app-input"
           >
-            <option value="uk">England, Wales, NI</option>
+            <option value="uk">England, Wales & Northern Ireland</option>
             <option value="scotland">Scotland</option>
           </select>
-          <p className="mt-2 text-xs leading-6 text-slate-500 dark:text-slate-400">
-            Region changes tax band treatment and final deductions.
+
+          <p className="mt-3 text-xs app-subtle">
+            Region affects the tax treatment.
           </p>
         </div>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950/70">
-          <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+        <div
+          className="rounded-[24px] border p-5"
+          style={{
+            borderColor: "var(--line)",
+            background: "var(--surface-1)",
+          }}
+        >
+          <label className="mb-3 block text-sm font-medium app-title">
             Pension contribution (%)
           </label>
           <input
             type="number"
             inputMode="decimal"
-            value={Number.isFinite(values.pensionPercent) ? values.pensionPercent : ""}
+            value={values.pensionPercent}
             onChange={(e) =>
-              updateField("pensionPercent", Number(e.target.value || 0))
+              updateField("pensionPercent", Number(e.target.value))
             }
             className="app-input"
             placeholder="5"
           />
-          <p className="mt-2 text-xs leading-6 text-slate-500 dark:text-slate-400">
-            Pension lowers immediate take-home but supports longer-term savings.
+          <p className="mt-3 text-xs app-subtle">
+            Pension reduces current take-home pay.
           </p>
         </div>
 
-        <div className="rounded-[24px] border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950/70">
-          <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
-            Student loan
-          </label>
+        <div
+          className="rounded-[24px] border p-5"
+          style={{
+            borderColor: "var(--line)",
+            background: "var(--surface-1)",
+          }}
+        >
+          <div className="mb-3 flex items-center gap-2">
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-[14px]"
+              style={{
+                background: "var(--surface-2)",
+                border: "1px solid var(--line)",
+              }}
+            >
+              <GraduationCap className="h-4 w-4 app-accent" />
+            </div>
+            <label className="text-sm font-medium app-title">Student loan</label>
+          </div>
+
           <select
             value={values.studentLoanPlan}
             onChange={(e) =>
-              updateField(
-                "studentLoanPlan",
-                e.target.value as StudentLoanPlan
-              )
+              updateField("studentLoanPlan", e.target.value as StudentLoanPlan)
             }
             className="app-input"
           >
@@ -194,37 +249,57 @@ export default function CalculatorForm({
             <option value="plan1">Plan 1</option>
             <option value="plan2">Plan 2</option>
             <option value="plan4">Plan 4</option>
-            <option value="postgrad">Postgraduate</option>
+            <option value="postgrad">Postgraduate loan</option>
           </select>
-          <p className="mt-2 text-xs leading-6 text-slate-500 dark:text-slate-400">
-            Loan repayments can materially change monthly take-home pay.
+
+          <p className="mt-3 text-xs app-subtle">
+            Loan repayments can materially change net pay.
           </p>
         </div>
       </div>
 
-      <div className="rounded-[24px] border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950/70">
-        <div className="flex items-center justify-between gap-4">
+      <div
+        className="rounded-[24px] border p-5"
+        style={{
+          borderColor: "var(--line)",
+          background: "var(--surface-1)",
+        }}
+      >
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-              Advanced settings
-            </p>
-            <p className="mt-1 text-xs leading-6 text-slate-500 dark:text-slate-400">
-              Only open this if your payslip or employer setup differs from the standard assumptions.
+            <p className="text-sm font-medium app-title">Tax code</p>
+            <p className="mt-1 text-xs app-subtle">
+              Leave the standard code unless your payslip shows a different one.
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => setShowAdvanced((prev) => !prev)}
-            className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:text-sky-300"
+            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-medium"
+            style={{
+              borderColor: "var(--line)",
+              background: "var(--surface-2)",
+              color: "var(--muted)",
+            }}
           >
-            {showAdvanced ? "Hide advanced" : "Show advanced"}
+            {showAdvanced ? (
+              <>
+                Hide
+                <ChevronUp className="h-3.5 w-3.5" />
+              </>
+            ) : (
+              <>
+                Show
+                <ChevronDown className="h-3.5 w-3.5" />
+              </>
+            )}
           </button>
         </div>
 
-        {showAdvanced ? (
-          <div className="mt-5">
-            <label className="mb-2 block text-sm font-semibold text-slate-900 dark:text-slate-100">
+        <AnimatePresenceWrapper show={showAdvanced}>
+          <div className="mt-5 border-t pt-5" style={{ borderColor: "var(--line)" }}>
+            <label className="mb-3 block text-sm font-medium app-title">
               Tax code
             </label>
             <input
@@ -234,12 +309,22 @@ export default function CalculatorForm({
               className="app-input"
               placeholder="1257L"
             />
-            <p className="mt-2 text-xs leading-6 text-slate-500 dark:text-slate-400">
-              Most standard UK employee payslips use 1257L unless your employer or HMRC has applied something different.
+            <p className="mt-3 text-xs app-subtle">
+              Standard UK tax code is often 1257L.
             </p>
           </div>
-        ) : null}
+        </AnimatePresenceWrapper>
       </div>
     </div>
   );
+}
+
+function AnimatePresenceWrapper({
+  show,
+  children,
+}: {
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  return show ? <>{children}</> : null;
 }

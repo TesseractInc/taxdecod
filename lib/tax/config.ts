@@ -68,4 +68,13 @@ export const TRUST_COPY = {
       "Connected to reverse and comparison tools",
     ],
   },
+  payslipChecker: {
+    description: `This payslip checker uses ${TAX_YEAR_LABEL}-style UK salary assumptions and annualised pay to estimate whether your year-to-date Income Tax and National Insurance look broadly on track.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Annualised year-to-date estimate",
+      "Best with payslip YTD values",
+      "Built for first-check PAYE clarity",
+    ],
+  },
 } as const;

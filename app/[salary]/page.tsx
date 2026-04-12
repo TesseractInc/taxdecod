@@ -1,34 +1,64 @@
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import SiteHeader from "@/components/layout/site-header";
-import Container from "@/components/ui/container";
-import SalaryPageContent from "@/components/seo/salary-page-content";
-import SeoRealityCard from "@/components/seo/seo-reality-card";
-import SeoCtaCluster from "@/components/seo/seo-cta-cluster";
-import TaxYearTrustBar from "@/components/shared/tax-year-trust-bar";
-import TopSalaryCheckpoints from "@/components/shared/top-salary-checkpoints";
-import PdfReportStrip from "@/components/shared/pdf-report-strip";
+import SiteHeader from "../../components/layout/site-header";
+import Container from "../../components/ui/container";
+import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import SeoPageHero from "../../components/seo/seo-page-hero";
+import SeoRealityCard from "../../components/seo/seo-reality-card";
+import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
+import SalaryPageContent from "../../components/seo/salary-page-content";
+import SalaryPageSchema from "../../components/seo/salary-page-schema";
+import { TAX_YEAR_LABEL, TRUST_COPY } from "../../lib/tax/config";
+import { buildSeoMetadata } from "../../components/seo/metadata";
 import {
-  buildSalaryPageMetadata,
-  getSalaryFromParams,
+  formatSalaryTitle,
+  getPopularSalarySlugs,
   getSalaryPageData,
-} from "@/lib/tax/seo/salary-page";
-import { TAX_YEAR_LABEL, TRUST_COPY } from "@/lib/tax/config";
+  parseSalaryFromSlug,
+} from "../../components/seo/salary-pages";
+import { formatCurrency } from "../../lib/tax/utils/currency";
 
-type PageProps = {
-  params: Promise<{ salary: string }>;
+type SalaryPageProps = {
+  params: Promise<{
+    salary: string;
+  }>;
 };
+
+export async function generateStaticParams() {
+  return getPopularSalarySlugs();
+}
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
-  const { salary: rawSalary } = await params;
-  const salary = getSalaryFromParams(rawSalary);
-  return buildSalaryPageMetadata(salary);
+}: SalaryPageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const salary = parseSalaryFromSlug(resolvedParams.salary);
+
+  if (!salary) {
+    return buildSeoMetadata({
+      title: "Salary Breakdown UK | TaxDecod",
+      description: "UK salary breakdown and take-home pay estimates.",
+      path: "/salary-hub",
+    });
+  }
+
+  return buildSeoMetadata({
+    title: formatSalaryTitle(salary),
+    description: `If you earn £${salary.toLocaleString(
+      "en-GB"
+    )} in the UK, see your estimated take-home pay, monthly net income, tax breakdown, and real salary impact.`,
+    path: `/${salary}-after-tax-uk`,
+  });
 }
 
-export default async function SalaryPage({ params }: PageProps) {
-  const { salary: rawSalary } = await params;
-  const salary = getSalaryFromParams(rawSalary);
+export default async function SalaryPage({ params }: SalaryPageProps) {
+  const resolvedParams = await params;
+  const salary = parseSalaryFromSlug(resolvedParams.salary);
+
+  if (!salary) {
+    notFound();
+  }
+
   const data = getSalaryPageData(salary);
 
   const totalDeductions =
@@ -43,36 +73,26 @@ export default async function SalaryPage({ params }: PageProps) {
       : 0;
 
   return (
-    <main className="app-shell">
+    <main>
+      <SalaryPageSchema
+        salary={salary}
+        netAnnual={data.result.netAnnual}
+        netMonthly={data.result.netMonthly}
+      />
+
       <SiteHeader />
 
-      <section className="py-12 sm:py-14">
+      <section className="py-16 sm:py-20">
         <Container>
-          <div className="max-w-4xl">
-            <p className="text-sm font-medium uppercase tracking-[0.18em] app-accent">
-              Salary breakdown UK
-            </p>
-
-            <h1 className="mt-3 text-4xl font-bold app-title sm:text-5xl">
-              £{salary.toLocaleString("en-GB")} after tax in the UK
-            </h1>
-
-            <p className="mt-4 text-lg leading-8 app-copy">
-              Based on {TAX_YEAR_LABEL}-style assumptions, a salary of{" "}
-              <strong className="app-title">
-                £{salary.toLocaleString("en-GB")}
-              </strong>{" "}
-              gives an estimated take-home of{" "}
-              <strong className="app-title">
-                £{data.result.netAnnual.toLocaleString("en-GB")}
-              </strong>{" "}
-              per year and{" "}
-              <strong className="app-title">
-                £{data.result.netMonthly.toLocaleString("en-GB")}
-              </strong>{" "}
-              per month after tax and deductions.
-            </p>
-          </div>
+          <SeoPageHero
+            eyebrow="UK salary breakdown"
+            title={`£${salary.toLocaleString("en-GB")} after tax in the UK`}
+            description="This page turns a gross UK salary into a clearer take-home reading, monthly reality, and deduction picture."
+            highlightValue={formatCurrency(data.result.netAnnual)}
+            highlightSubtext={`${formatCurrency(
+              data.result.netMonthly
+            )} per month after tax and deductions`}
+          />
 
           <div className="mt-8">
             <TaxYearTrustBar
@@ -82,27 +102,14 @@ export default async function SalaryPage({ params }: PageProps) {
           </div>
 
           <div className="mt-10">
-            <SeoRealityCard>
-              Using {TAX_YEAR_LABEL}-style assumptions, you keep{" "}
-              <strong>{keepPercent.toFixed(0)}%</strong> of your salary and lose{" "}
-              <strong>£{totalDeductions.toLocaleString("en-GB")}</strong> to tax
-              and deductions. For most users, the number that actually matters in
-              real life is the monthly take-home figure, not the gross headline.
+            <SeoRealityCard label="Salary reality">
+              Using {TAX_YEAR_LABEL}-style assumptions, this salary keeps about{" "}
+              <strong>{keepPercent.toFixed(0)}%</strong> of gross pay and loses{" "}
+              <strong>{formatCurrency(totalDeductions)}</strong> to tax and
+              deductions each year. For most users, the most important number is{" "}
+              <strong>{formatCurrency(data.result.netMonthly)}</strong> per
+              month.
             </SeoRealityCard>
-          </div>
-
-          <div className="mt-10">
-            <PdfReportStrip
-              title={`Download the £${salary.toLocaleString("en-GB")} salary report`}
-              description="Save this salary breakdown as a PDF for later, job comparisons, or budgeting discussions."
-              values={data.input}
-              result={data.result}
-              filename={`taxdecod-${salary}-salary-report.pdf`}
-            />
-          </div>
-
-          <div className="mt-10">
-            <TopSalaryCheckpoints currentSalary={salary} />
           </div>
 
           <div className="mt-10">
@@ -112,19 +119,19 @@ export default async function SalaryPage({ params }: PageProps) {
                   href: "/compare-salary",
                   title: "Compare this with another salary",
                   description:
-                    "See whether a higher salary really changes your monthly life.",
+                    "See whether a higher salary really changes your monthly life after deductions.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Hit a target monthly income",
+                  title: "Reverse from a target monthly income",
                   description:
-                    "Find what you need to earn to reach your ideal take-home pay.",
+                    "Find the gross salary needed to hit the monthly number you actually want.",
                 },
                 {
                   href: "/salary-hub",
                   title: "Explore more salary pages",
                   description:
-                    "Jump to nearby salary levels and related scenarios.",
+                    "Move into nearby salary levels, scenario pages, and related take-home routes.",
                 },
               ]}
             />

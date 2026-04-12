@@ -14,6 +14,7 @@ import {
   getStudentLoanSalaryPageData,
   getVariantSalaryParams,
 } from "../../components/seo/salary-variants";
+import { formatCurrency } from "../../lib/tax/utils/currency";
 
 type PageProps = {
   params: Promise<{
@@ -70,17 +71,11 @@ export default async function SalaryWithStudentLoanPage({
           <SeoPageHero
             eyebrow="Student loan salary view"
             title={`£${salary.toLocaleString("en-GB")} after tax with student loan`}
-            description="Your estimated take-home pay with student loan included is:"
-            highlightValue={data.result.netAnnual.toLocaleString("en-GB", {
-              style: "currency",
-              currency: "GBP",
-              maximumFractionDigits: 0,
-            })}
-            highlightSubtext={`${data.result.netMonthly.toLocaleString("en-GB", {
-              style: "currency",
-              currency: "GBP",
-              maximumFractionDigits: 0,
-            })} per month after tax, NI, pension, and loan deductions`}
+            description="This page is designed for graduates and borrowers who want to see the real monthly impact of student loan deductions."
+            highlightValue={formatCurrency(data.result.netAnnual)}
+            highlightSubtext={`${formatCurrency(
+              data.result.netMonthly
+            )} per month after tax, NI, pension, and student loan deductions`}
           />
 
           <div className="mt-8">
@@ -92,9 +87,9 @@ export default async function SalaryWithStudentLoanPage({
 
           <div className="mt-10">
             <SeoRealityCard label="Student loan reality">
-              This page is designed for graduates and borrowers who want to see
-              real take-home pay rather than headline gross salary. Student loan
-              repayments can make a noticeable difference to monthly cash flow.
+              Student loan repayments can create a meaningful drag on monthly
+              take-home pay. This page is useful for graduates comparing real
+              net pay rather than gross salary only.
             </SeoRealityCard>
           </div>
 
@@ -105,19 +100,19 @@ export default async function SalaryWithStudentLoanPage({
                   href: `/${salary}-after-tax-uk`,
                   title: "View without student loan",
                   description:
-                    "Compare the same salary with standard deductions only.",
+                    "Compare the same salary under standard deductions only.",
                 },
                 {
                   href: "/compare-salary",
                   title: "Compare salary jumps",
                   description:
-                    "See whether a higher salary outweighs student loan drag.",
+                    "See whether a higher salary meaningfully outweighs student loan drag.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Target a better monthly number",
+                  title: "Reverse a better monthly target",
                   description:
-                    "Find what salary you need to offset deductions and reach your goal.",
+                    "Find the gross salary needed to offset deductions and reach a stronger monthly outcome.",
                 },
               ]}
             />
@@ -126,22 +121,17 @@ export default async function SalaryWithStudentLoanPage({
           <div className="mt-14">
             <SalaryVariantContent
               title={`£${salary.toLocaleString("en-GB")} after tax with student loan`}
-              intro={`This page estimates take-home pay for a £${salary.toLocaleString(
-                "en-GB"
-              )} salary in the UK with a student loan repayment included.`}
+              intro={`This page estimates take-home pay for a ${formatCurrency(
+                salary
+              )} salary in the UK with student loan repayment included.`}
               salary={salary}
               result={data.result}
               bullets={[
-                "Uses a Plan 2 student loan assumption for this page template.",
-                `Estimated monthly take-home pay is ${data.result.netMonthly.toLocaleString(
-                  "en-GB",
-                  {
-                    style: "currency",
-                    currency: "GBP",
-                    maximumFractionDigits: 0,
-                  }
+                "Uses a Plan 2 student loan assumption for this template.",
+                `Estimated monthly take-home pay is ${formatCurrency(
+                  data.result.netMonthly
                 )}.`,
-                "Useful for graduates comparing real net pay rather than headline salary only.",
+                "Useful for graduates who want a more realistic net-pay reading before making salary decisions.",
               ]}
             />
           </div>

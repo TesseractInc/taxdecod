@@ -2,6 +2,7 @@
 
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ReactNode } from "react";
+import SupabaseAuthProvider from "../auth/supabase-auth-provider";
 
 type ThemeProviderProps = {
   children: ReactNode;
@@ -15,7 +16,7 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
       enableSystem
       disableTransitionOnChange
     >
-      {children}
+      <SupabaseAuthProvider>{children}</SupabaseAuthProvider>
     </NextThemesProvider>
   );
 }

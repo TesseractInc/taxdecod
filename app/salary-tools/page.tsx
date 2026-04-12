@@ -1,69 +1,78 @@
 import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
-import PageHero from "../../components/ui/page-hero";
-import ExperiencePager from "../../components/ui/experience-pager";
+import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import SeoPageHero from "../../components/seo/seo-page-hero";
+import SeoRealityCard from "../../components/seo/seo-reality-card";
+import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
 import ResultsExperience from "../../components/results/results-experience";
 import PageSnapshot from "../../components/results/page-snapshot";
+import EmailCapturePanel from "../../components/shared/email-capture-panel";
 import { demoScenarioInput, demoScenarioResult } from "../../lib/tax/demo-scenario";
-
-const toolLaunchCards = [
-  {
-    title: "Leave pay calculators",
-    description:
-      "Estimate statutory maternity, paternity, and sick pay using current GOV.UK-style rates and assumptions.",
-    href: "/leave-pay",
-    eyebrow: "New cluster",
-  },
-  {
-    title: "Salary benchmarks",
-    description:
-      "Explore the benchmark layer for role, region, and city comparison pages powered by ONS earnings data.",
-    href: "/benchmarks",
-    eyebrow: "Data layer",
-  },
-];
+import { TAX_YEAR_LABEL } from "../../lib/tax/config";
 
 export default function SalaryToolsPage() {
   return (
     <main className="app-shell">
       <SiteHeader />
-      <section className="py-10 sm:py-14">
+
+      <section className="py-16 sm:py-20">
         <Container>
-          <PageHero
+          <SeoPageHero
             eyebrow="Salary tools"
-            title="Test pro-rata, bonus, sacrifice, tax-year and leave-pay scenarios"
-            description="This is the practical decision layer of TaxDecod. Use it to test real-world salary situations beyond the core calculator."
+            title="Test raises, bonuses, and salary moves"
+            description="This page is for the practical salary questions users care about most after they have seen the first take-home answer."
           />
 
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {toolLaunchCards.map((card) => (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="app-card-strong rounded-[28px] p-6 transition hover-lift"
-              >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] app-accent">
-                  {card.eyebrow}
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold app-title">
-                  {card.title}
-                </h2>
-                <p className="mt-3 text-sm leading-8 app-copy">
-                  {card.description}
-                </p>
-                <p className="mt-5 text-sm font-semibold app-accent">
-                  Open now →
-                </p>
-              </Link>
-            ))}
+          <div className="mt-8">
+            <TaxYearTrustBar
+              description={`This page uses a standard UK employee example under ${TAX_YEAR_LABEL}-style assumptions to explore salary decisions more clearly.`}
+              points={[
+                `Using ${TAX_YEAR_LABEL} UK assumptions`,
+                "Built for salary decisions",
+                "Focused on raises, bonuses, and comparison logic",
+              ]}
+            />
           </div>
 
-          <div className="mt-8">
+          <div className="mt-10">
+            <SeoRealityCard label="Decision layer">
+              This is where salary moves from explanation into action. Users can
+              test whether a raise, bonus, or salary change actually improves
+              take-home pay in a meaningful way.
+            </SeoRealityCard>
+          </div>
+
+          <div className="mt-10">
+            <SeoCtaCluster
+              items={[
+                {
+                  href: "/compare-salary",
+                  title: "Compare two salaries",
+                  description:
+                    "Test a job move or raise against another salary side by side.",
+                },
+                {
+                  href: "/reverse-tax",
+                  title: "Reverse from a target income",
+                  description:
+                    "Find the gross salary needed to reach a stronger monthly number.",
+                },
+                {
+                  href: "/reality-check",
+                  title: "Open the reality-check view",
+                  description:
+                    "See salary through weekly, daily, and practical net-income meaning.",
+                },
+              ]}
+            />
+          </div>
+
+          <div className="mt-14">
             <PageSnapshot values={demoScenarioInput} result={demoScenarioResult} />
           </div>
 
-          <div className="mt-8">
+          <div className="mt-10">
             <ResultsExperience
               result={demoScenarioResult}
               values={demoScenarioInput}
@@ -71,10 +80,49 @@ export default function SalaryToolsPage() {
             />
           </div>
 
-          <div className="mt-10">
-            <ExperiencePager
-              previous={{ href: "/payslip-explained", label: "Payslip explained" }}
-              next={{ href: "/reality-check", label: "Reality check" }}
+          <section className="mt-14 grid gap-4 md:grid-cols-3">
+            <Link
+              href="/compare-salary"
+              className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+            >
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Compare salary outcomes
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                See whether a higher salary really creates a stronger monthly result.
+              </p>
+            </Link>
+
+            <Link
+              href="/reality-check"
+              className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+            >
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Reality-check the salary
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                Translate the result into a more real-life money view.
+              </p>
+            </Link>
+
+            <Link
+              href="/salary-hub"
+              className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+            >
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                Browse more salary pages
+              </p>
+              <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                Explore more salary bands and linked decision routes.
+              </p>
+            </Link>
+          </section>
+
+          <div className="mt-14">
+            <EmailCapturePanel
+              title="Send your salary tools view to your email"
+              description="Save your raise, bonus, or scenario reading so you can revisit the decision later."
+              buttonLabel="Send tools report"
             />
           </div>
         </Container>

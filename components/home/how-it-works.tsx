@@ -1,79 +1,90 @@
 "use client";
 
-import { Calculator, CircleDollarSign, ReceiptText } from "lucide-react";
-import { motion } from "framer-motion";
+import { Calculator, ClipboardList, MoveRight, Sparkles } from "lucide-react";
 import Reveal from "../ui/reveal";
 
 const steps = [
   {
+    title: "Enter the salary signal",
+    body: "Start with gross pay, then add region, pension, tax code, and student loan only when needed.",
     icon: Calculator,
-    title: "Start with your salary",
-    desc: "Enter salary, region, pension, tax code, and student loan details.",
-    tone: "text-sky-600 dark:text-sky-400",
-    bg: "bg-sky-50 dark:bg-sky-950/40",
+    step: "Step 1",
+    tone: "border-sky-200 bg-sky-50/55 dark:border-sky-900/70 dark:bg-sky-950/18",
   },
   {
-    icon: CircleDollarSign,
-    title: "See real take-home pay",
-    desc: "Understand yearly net pay, monthly net pay, and total deductions immediately.",
-    tone: "text-emerald-600 dark:text-emerald-400",
-    bg: "bg-emerald-50 dark:bg-emerald-950/40",
+    title: "Read what actually reaches you",
+    body: "See yearly and monthly take-home pay immediately, with a cleaner reading of what is kept.",
+    icon: Sparkles,
+    step: "Step 2",
+    tone: "border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/70 dark:bg-emerald-950/18",
   },
   {
-    icon: ReceiptText,
-    title: "Make a better decision",
-    desc: "Compare salaries, reverse target income, and decode what your number really means.",
-    tone: "text-cyan-600 dark:text-cyan-400",
-    bg: "bg-cyan-50 dark:bg-cyan-950/40",
+    title: "Understand why the number changed",
+    body: "Turn income tax, NI, pension, and loan deductions into something more readable than raw payroll lines.",
+    icon: ClipboardList,
+    step: "Step 3",
+    tone: "border-cyan-200 bg-cyan-50/50 dark:border-cyan-900/70 dark:bg-cyan-950/18",
+  },
+  {
+    title: "Move into the next salary decision",
+    body: "Compare salaries, check a refund, or explore what a raise, bonus, or offer really means.",
+    icon: MoveRight,
+    step: "Step 4",
+    tone: "border-violet-200 bg-violet-50/48 dark:border-violet-900/70 dark:bg-violet-950/18",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="py-16">
-      <div className="mx-auto max-w-7xl px-6">
+    <section className="pt-14 pb-10 sm:pt-16 sm:pb-11">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal>
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-              How it works
-            </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-              From headline salary to real money clarity
-            </h2>
-            <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-400">
-              TaxDecod is not built to give you just one number. It is built to
-              help you understand what actually reaches you and what to do next.
-            </p>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                How TaxDecod works
+              </p>
+
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                From salary input to real money understanding
+              </h2>
+
+              <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600 dark:text-slate-300">
+                The goal is to guide users from gross salary to a clearer reading of what reaches them and what to do next.
+              </p>
+            </div>
+
+            <div className="inline-flex items-center rounded-full bg-slate-100 px-4 py-2 text-xs font-medium text-slate-700 dark:bg-slate-900 dark:text-slate-300">
+              Structured for clarity
+            </div>
           </div>
         </Reveal>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {steps.map((step, index) => {
+        <div className="mt-7 grid gap-4 lg:grid-cols-4">
+          {steps.map((step) => {
             const Icon = step.icon;
 
             return (
-              <Reveal key={step.title} delay={index * 0.06}>
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  className="app-card rounded-[30px] p-6"
-                >
-                  <div
-                    className={`mb-5 inline-flex rounded-[22px] p-3 ${step.bg} ${step.tone}`}
-                  >
-                    <Icon className="h-6 w-6" />
+              <Reveal key={step.title}>
+                <div className={`rounded-[26px] border p-5 ${step.tone}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="inline-flex rounded-[18px] bg-white p-3 shadow-sm dark:bg-slate-900">
+                      <Icon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                    </div>
+
+                    <div className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600 shadow-sm dark:bg-slate-900 dark:text-slate-400">
+                      {step.step}
+                    </div>
                   </div>
 
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] app-accent">
-                    Step {index + 1}
-                  </p>
-
-                  <h3 className="mt-3 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                  <h3 className="mt-5 text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
                     {step.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                    {step.desc}
+
+                  <p className="mt-3 text-sm leading-8 text-slate-600 dark:text-slate-300">
+                    {step.body}
                   </p>
-                </motion.div>
+                </div>
               </Reveal>
             );
           })}

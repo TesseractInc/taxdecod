@@ -35,19 +35,19 @@ export default function RealPayCheck({ result }: RealPayCheckProps) {
       label: "Take-home per hour",
       value: formatCurrency(calculations.hourlyTakeHome),
       icon: Clock3,
-      tone: "money-positive",
+      valueClass: "text-emerald-600 dark:text-emerald-400",
     },
     {
       label: "Take-home per week",
       value: formatCurrency(calculations.weeklyTakeHome),
       icon: Wallet,
-      tone: "app-title",
+      valueClass: "text-slate-900 dark:text-slate-100",
     },
     {
       label: "Take-home per day",
       value: formatCurrency(calculations.dailyTakeHome),
       icon: Coins,
-      tone: "app-title",
+      valueClass: "text-slate-900 dark:text-slate-100",
     },
     {
       label: "Work hours per year",
@@ -55,27 +55,31 @@ export default function RealPayCheck({ result }: RealPayCheckProps) {
         maximumFractionDigits: 0,
       }),
       icon: CalendarDays,
-      tone: "app-title",
+      valueClass: "text-slate-900 dark:text-slate-100",
     },
   ];
 
   return (
-    <section className="app-card p-6">
-      <div className="max-w-3xl">
-        <p className="text-sm font-medium app-accent">Reality check</p>
-        <h2 className="mt-2 text-2xl font-semibold app-title">
-          What your salary feels like in real life
-        </h2>
-        <p className="mt-3 text-sm leading-7 app-copy">
-          This converts annual pay into weekly, daily, and hourly net income so
-          users can feel what the salary actually means.
-        </p>
+    <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
+      <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-7">
+        <div className="max-w-3xl">
+          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+            Reality check
+          </p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+            What your salary feels like in real life
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
+            This view translates annual pay into weekly, daily, and hourly
+            take-home money so the salary feels more practical and immediate.
+          </p>
+        </div>
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-        <div className="app-soft p-5">
+      <div className="grid gap-6 p-6 xl:grid-cols-[0.84fr_1.16fr] sm:p-7">
+        <div className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-900/70">
           <div>
-            <label className="mb-2 block text-sm font-medium app-title">
+            <label className="mb-2 block text-sm font-medium text-slate-900 dark:text-slate-100">
               Hours worked per week
             </label>
             <input
@@ -90,7 +94,7 @@ export default function RealPayCheck({ result }: RealPayCheckProps) {
           </div>
 
           <div className="mt-5">
-            <label className="mb-2 block text-sm font-medium app-title">
+            <label className="mb-2 block text-sm font-medium text-slate-900 dark:text-slate-100">
               Days worked per week
             </label>
             <input
@@ -112,7 +116,9 @@ export default function RealPayCheck({ result }: RealPayCheckProps) {
                 type="button"
                 onClick={() => setHoursPerWeek(hours)}
                 className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${
-                  hoursPerWeek === hours ? "tab-active" : "tab-inactive"
+                  hoursPerWeek === hours
+                    ? "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-300"
+                    : "border-slate-200 bg-white text-slate-700 hover:border-sky-200 hover:text-sky-700 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:text-sky-300"
                 }`}
               >
                 {hours} hours / week
@@ -125,12 +131,19 @@ export default function RealPayCheck({ result }: RealPayCheckProps) {
           {stats.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="app-soft p-5">
+              <div
+                key={item.label}
+                className="rounded-[26px] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-800 dark:bg-slate-900/70"
+              >
                 <div className="flex items-center justify-between">
-                  <p className="text-sm app-subtle">{item.label}</p>
-                  <Icon className="h-5 w-5 app-accent" />
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    {item.label}
+                  </p>
+                  <div className="rounded-xl bg-white p-2 shadow-sm dark:bg-slate-950">
+                    <Icon className="h-4.5 w-4.5 text-sky-600 dark:text-sky-400" />
+                  </div>
                 </div>
-                <p className={`mt-3 text-2xl font-semibold ${item.tone}`}>
+                <p className={`mt-3 text-2xl font-semibold ${item.valueClass}`}>
                   {item.value}
                 </p>
               </div>

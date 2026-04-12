@@ -72,7 +72,7 @@ export default async function ReverseSeoPage({
           <SeoPageHero
             eyebrow="Reverse salary breakdown"
             title={`Salary needed for ${formatCurrency(amount)} a month after tax`}
-            description="Your estimated required gross salary is:"
+            description="This page starts from a target monthly take-home figure and works backwards to the gross salary needed to reach it."
             highlightValue={formatCurrency(data.grossAnnual)}
             highlightSubtext={`${formatCurrency(
               data.result.netMonthly
@@ -102,21 +102,21 @@ export default async function ReverseSeoPage({
               items={[
                 {
                   href: "/reverse-tax",
-                  title: "Interactive reverse calculator",
+                  title: "Use the interactive reverse calculator",
                   description:
-                    "Enter your own target monthly net pay and adjust assumptions live.",
+                    "Enter your own monthly target and adjust assumptions live.",
                 },
                 {
                   href: "/compare-salary",
-                  title: "Compare salaries",
+                  title: "Compare salary outcomes",
                   description:
                     "Test whether a higher salary really improves monthly take-home pay.",
                 },
                 {
                   href: "/salary-hub",
-                  title: "Explore salary hub",
+                  title: "Explore more salary pages",
                   description:
-                    "Browse gross-salary pages and related take-home breakdowns.",
+                    "Browse more gross-salary pages and linked take-home routes.",
                 },
               ]}
             />

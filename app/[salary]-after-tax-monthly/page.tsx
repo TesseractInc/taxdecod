@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
 import SalaryVariantContent from "../../components/seo/salary-variant-content";
@@ -15,6 +14,7 @@ import {
   getMonthlySalaryPageData,
   getVariantSalaryParams,
 } from "../../components/seo/salary-variants";
+import { formatCurrency } from "../../lib/tax/utils/currency";
 
 type PageProps = {
   params: Promise<{
@@ -68,14 +68,10 @@ export default async function SalaryMonthlyPage({ params }: PageProps) {
           <SeoPageHero
             eyebrow="Monthly salary view"
             title={`£${salary.toLocaleString("en-GB")} after tax monthly`}
-            description="Your estimated monthly take-home pay is:"
-            highlightValue={data.result.netMonthly.toLocaleString("en-GB", {
-              style: "currency",
-              currency: "GBP",
-              maximumFractionDigits: 0,
-            })}
-            highlightSubtext={`Based on a yearly salary of £${salary.toLocaleString(
-              "en-GB"
+            description="This page is built for users who think in monthly cash flow, bills, rent, savings, and real affordability."
+            highlightValue={formatCurrency(data.result.netMonthly)}
+            highlightSubtext={`Based on a yearly salary of ${formatCurrency(
+              salary
             )} under standard UK assumptions`}
           />
 
@@ -88,9 +84,9 @@ export default async function SalaryMonthlyPage({ params }: PageProps) {
 
           <div className="mt-10">
             <SeoRealityCard label="Monthly reality">
-              This page is for users who think in monthly cash flow, rent,
-              bills, and real affordability. The monthly take-home figure is the
-              most useful number for day-to-day planning.
+              Monthly take-home pay is usually the most practical salary number
+              for real-life planning. This page focuses on what lands with you
+              each month rather than just the yearly gross figure.
             </SeoRealityCard>
           </div>
 
@@ -101,19 +97,19 @@ export default async function SalaryMonthlyPage({ params }: PageProps) {
                   href: `/${salary}-after-tax-uk`,
                   title: "View the full yearly breakdown",
                   description:
-                    "See the annual version, deductions, and deeper salary context.",
+                    "See the annual version, deduction mix, and deeper salary context.",
                 },
                 {
                   href: "/compare-salary",
                   title: "Compare monthly outcomes",
                   description:
-                    "See whether another salary creates a meaningful monthly difference.",
+                    "Check whether another salary creates a meaningful monthly difference.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Work backwards from a target",
+                  title: "Reverse from a monthly goal",
                   description:
-                    "Find the gross salary needed to hit your ideal monthly income.",
+                    "Find the gross salary needed to reach your target monthly take-home.",
                 },
               ]}
             />
@@ -122,22 +118,17 @@ export default async function SalaryMonthlyPage({ params }: PageProps) {
           <div className="mt-14">
             <SalaryVariantContent
               title={`£${salary.toLocaleString("en-GB")} after tax monthly`}
-              intro={`This page focuses on the estimated monthly take-home pay for a £${salary.toLocaleString(
-                "en-GB"
-              )} yearly salary in the UK, using a standard employee setup.`}
+              intro={`This page focuses on the estimated monthly take-home pay for a ${formatCurrency(
+                salary
+              )} yearly salary in the UK using a standard employee setup.`}
               salary={salary}
               result={data.result}
               bullets={[
-                `Estimated monthly net pay is ${data.result.netMonthly.toLocaleString(
-                  "en-GB",
-                  {
-                    style: "currency",
-                    currency: "GBP",
-                    maximumFractionDigits: 0,
-                  }
+                `Estimated monthly take-home pay is ${formatCurrency(
+                  data.result.netMonthly
                 )}.`,
-                "Useful for budgeting, rent planning, and monthly affordability checks.",
-                "Helps users who think in monthly cash flow rather than annual gross pay.",
+                "Useful for budgeting, rent decisions, savings planning, and day-to-day affordability.",
+                "Helps users think in real monthly income instead of the bigger gross yearly headline.",
               ]}
             />
           </div>
