@@ -4,11 +4,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
+  BadgePoundSterling,
   BriefcaseBusiness,
+  Compass,
   Mail,
   Receipt,
   RefreshCcw,
-  Sparkles,
+  Target,
 } from "lucide-react";
 import Reveal from "../ui/reveal";
 
@@ -18,38 +20,38 @@ const links = [
     desc: "See whether a higher salary actually improves monthly life or mainly increases deductions.",
     href: "/compare-salary",
     tag: "Decision tool",
-    icon: Sparkles,
+    icon: Compass,
   },
   {
-    title: "Check a payslip to date",
-    desc: "Use year-to-date values to see if payroll looks roughly on track.",
+    title: "Reverse from a monthly target",
+    desc: "Work backwards from the amount you actually want to keep and find the salary behind it.",
+    href: "/reverse-tax",
+    tag: "Planning",
+    icon: Target,
+  },
+  {
+    title: "Explore hourly and monthly routes",
+    desc: "Use faster entry points when the question is about hourly pay or a target take-home figure.",
+    href: "/salary-hub",
+    tag: "Intent hub",
+    icon: BadgePoundSterling,
+  },
+  {
+    title: "Check a payslip or refund route",
+    desc: "Move into payroll validation when the question is no longer just about gross salary.",
     href: "/payslip-checker",
-    tag: "Payslip check",
+    tag: "Verification",
     icon: Receipt,
-  },
-  {
-    title: "Estimate a tax refund",
-    desc: "Sense-check whether you may have paid too much tax.",
-    href: "/tax-refund-calculator",
-    tag: "Refund tool",
-    icon: RefreshCcw,
-  },
-  {
-    title: "Explore services or contact",
-    desc: "Find business services, support routes, and ways to reach the team.",
-    href: "/services",
-    tag: "Business",
-    icon: BriefcaseBusiness,
     featured: true,
   },
 ];
 
 const supportCards = [
   {
-    title: "Services",
-    desc: "See wider offerings, business-facing support, and connected tools.",
-    href: "/services",
-    icon: BriefcaseBusiness,
+    title: "Benchmarks",
+    desc: "Add role and city salary context before moving into take-home comparison.",
+    href: "/benchmarks",
+    icon: BadgePoundSterling,
   },
   {
     title: "Contact",
@@ -57,22 +59,30 @@ const supportCards = [
     href: "/contact",
     icon: Mail,
   },
+  {
+    title: "Services",
+    desc: "See wider offerings, business-facing support, and connected tools.",
+    href: "/services",
+    icon: BriefcaseBusiness,
+  },
 ];
 
 export default function ExploreNext() {
   return (
-    <section className="pt-12 pb-12 sm:pt-14 sm:pb-14">
+    <section className="pb-12 pt-12 sm:pb-14 sm:pt-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <Reveal>
           <div className="max-w-3xl">
             <p className="text-sm font-medium app-accent">What to do next</p>
 
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-              Keep moving with the right next step
+              Move into the right next salary route
             </h2>
 
             <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600 dark:text-slate-300">
-              After the first result, TaxDecod should guide users into comparison, payslip checks, refund exploration, or support routes.
+              TaxDecod works best when users move from the first result into the
+              next route that matches the real question: compare, reverse, benchmark,
+              payslip check, or refund exploration.
             </p>
           </div>
         </Reveal>
@@ -127,16 +137,17 @@ export default function ExploreNext() {
         </div>
 
         <Reveal>
-          <div className="mt-7 grid gap-4 lg:grid-cols-[1.16fr_0.84fr_0.84fr]">
+          <div className="mt-7 grid gap-4 lg:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
             <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/78">
-              <p className="text-sm app-subtle">Important</p>
+              <p className="text-sm app-subtle">Platform logic</p>
 
               <p className="mt-3 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                Salary estimate and payslip check are not the same question
+                Different salary questions need different routes
               </p>
 
               <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-600 dark:text-slate-400">
-                A salary calculation shows what should happen. A payslip check helps judge whether payroll looks roughly right.
+                A salary estimate, a city judgment page, a benchmark page, and a payslip
+                check are not the same question. TaxDecod should make that journey obvious.
               </p>
             </div>
 

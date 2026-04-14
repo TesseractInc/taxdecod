@@ -65,6 +65,9 @@ const iconMap: Record<HeaderIconKey, React.ComponentType<{ className?: string }>
     contact: ContactRound,
     salaryhub: Gauge,
     reverse: RefreshCcw,
+    benchmark: BadgePoundSterling,
+    hourly: BadgePoundSterling,
+    monthly: Wallet,
   };
 
 function ToolChip({

@@ -1,35 +1,40 @@
-"use client";
-
 import Link from "next/link";
-import { BriefcaseBusiness, LifeBuoy, Mail, Orbit } from "lucide-react";
+import { BriefcaseBusiness, LifeBuoy, Mail, Orbit, ShieldCheck } from "lucide-react";
 
 const coreLinks = [
   { label: "Salary calculator", href: "/calculator" },
   { label: "Compare salaries", href: "/compare-salary" },
+  { label: "Reverse salary tool", href: "/reverse-tax" },
   { label: "Payslip checker", href: "/payslip-checker" },
   { label: "Tax refund calculator", href: "/tax-refund-calculator" },
-  { label: "Salary tools", href: "/salary-tools" },
+  { label: "Salary hub", href: "/salary-hub" },
 ];
 
 const exploreLinks = [
-  { label: "Leaderboard", href: "/leaderboard" },
-  { label: "Reality check", href: "/reality-check" },
-  { label: "Salary hub", href: "/salary-hub" },
   { label: "Payslip explained", href: "/payslip-explained" },
-  { label: "Methodology", href: "/methodology" },
+  { label: "Reality check", href: "/reality-check" },
+  { label: "Salary tools", href: "/salary-tools" },
+  { label: "Benchmarks", href: "/benchmarks" },
+  { label: "Leaderboard", href: "/leaderboard" },
+  { label: "Services", href: "/services" },
 ];
 
-const supportLinks = [
-  { label: "Services", href: "/services" },
+const trustLinks = [
+  { label: "Methodology", href: "/methodology" },
+  { label: "Assumptions", href: "/assumptions" },
+  { label: "Disclaimer", href: "/disclaimer" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms", href: "/terms" },
   { label: "Contact", href: "/contact" },
-  { label: "More salary tools", href: "/tools" },
 ];
 
 const trustPills = [
-  "Based on UK PAYE logic",
-  "Current tax-year assumptions",
-  "Built for salary decisions",
+  "Built for UK salary decisions",
+  "Based on current UK tax-year logic",
+  "Methodology and assumptions visible",
 ];
+
+const lastReviewedLabel = "Reviewed April 2026";
 
 export default function SiteFooter() {
   return (
@@ -48,13 +53,14 @@ export default function SiteFooter() {
                     TaxDecod
                   </p>
                   <p className="mt-1 text-lg text-slate-500 dark:text-slate-400">
-                    UK salary clarity engine
+                    UK salary intelligence platform
                   </p>
                 </div>
               </div>
 
               <p className="mt-8 max-w-md text-base leading-10 text-slate-600 dark:text-slate-300">
-                TaxDecod is a UK salary intelligence platform built to make take-home pay, deductions, payslips, and tax refund direction clearer for real salary decisions.
+                TaxDecod is built to make UK salary, take-home pay, deductions,
+                and payslip understanding clearer for real financial decisions.
               </p>
 
               <div className="mt-7 flex max-w-xl flex-wrap gap-3">
@@ -70,21 +76,6 @@ export default function SiteFooter() {
 
               <div className="mt-7 grid max-w-xl gap-4 sm:grid-cols-2">
                 <Link
-                  href="/services"
-                  className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/72 dark:hover:border-sky-800 dark:hover:bg-slate-900"
-                >
-                  <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-950">
-                    <BriefcaseBusiness className="h-5 w-5 app-accent" />
-                  </div>
-                  <p className="mt-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    Services
-                  </p>
-                  <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                    Business support and wider offerings.
-                  </p>
-                </Link>
-
-                <Link
                   href="/contact"
                   className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/72 dark:hover:border-sky-800 dark:hover:bg-slate-900"
                 >
@@ -95,13 +86,32 @@ export default function SiteFooter() {
                     Contact
                   </p>
                   <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                    Support, partnerships, or enquiries.
+                    Support, partnerships, editorial, or commercial enquiries.
+                  </p>
+                </Link>
+
+                <Link
+                  href="/methodology"
+                  className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/72 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                >
+                  <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-950">
+                    <BriefcaseBusiness className="h-5 w-5 app-accent" />
+                  </div>
+                  <p className="mt-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                    Methodology
+                  </p>
+                  <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
+                    See how TaxDecod approaches salary logic, assumptions, and
+                    result framing.
                   </p>
                 </Link>
               </div>
 
               <p className="mt-7 max-w-xl text-sm leading-8 text-slate-500 dark:text-slate-400">
-                TaxDecod is not HMRC and does not provide legal or tax advice. Results are estimates and can vary based on tax code, salary sacrifice, pension arrangement, payroll timing, employer setup, region, and student loan plan.
+                TaxDecod is not HMRC and does not provide tax, financial, or
+                legal advice. Results are estimates and may vary depending on
+                tax code, payroll timing, pension arrangement, salary sacrifice,
+                region, employer setup, and student loan status.
               </p>
             </div>
 
@@ -141,11 +151,11 @@ export default function SiteFooter() {
 
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-400">
-                Business & support
+                Trust & legal
               </p>
 
               <div className="mt-5 space-y-4">
-                {supportLinks.map((link) => (
+                {trustLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -164,10 +174,12 @@ export default function SiteFooter() {
                     </div>
                     <div>
                       <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                        Need help choosing?
+                        Transparent by default
                       </p>
                       <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                        Start with the salary calculator, then move into payslip, refund, or comparison tools.
+                        Methodology, assumptions, disclaimer, and legal pages
+                        are visible so users can understand how results should
+                        be interpreted.
                       </p>
                     </div>
                   </div>
@@ -176,14 +188,15 @@ export default function SiteFooter() {
                 <div className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 dark:border-slate-800 dark:bg-slate-900/72">
                   <div className="flex items-start gap-3">
                     <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-950">
-                      <Orbit className="h-5 w-5 app-accent" />
+                      <ShieldCheck className="h-5 w-5 app-accent" />
                     </div>
                     <div>
                       <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                        Growing ecosystem
+                        {lastReviewedLabel}
                       </p>
                       <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                        More salary, tax, and decision tools will continue to be added as the platform expands.
+                        Trust pages and platform-level explanatory copy reviewed
+                        for clarity and interpretation.
                       </p>
                     </div>
                   </div>
@@ -193,9 +206,23 @@ export default function SiteFooter() {
           </div>
 
           <div className="border-t border-slate-200 px-7 py-5 dark:border-slate-800 md:px-8">
-            <div className="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-              <span>© 2026 TaxDecod. All rights reserved.</span>
-              <span>Built for salary decisions, not just raw numbers.</span>
+            <div className="flex flex-col gap-4 text-sm text-slate-500 dark:text-slate-400 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-wrap gap-x-5 gap-y-2">
+                <span>© 2026 TaxDecod. All rights reserved.</span>
+                <span>Built for salary decisions, not just raw numbers.</span>
+              </div>
+
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                {trustLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="transition hover:text-slate-900 dark:hover:text-slate-100"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>

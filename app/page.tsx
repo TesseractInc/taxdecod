@@ -13,32 +13,64 @@ import ExploreNext from "../components/home/explore-next";
 import EmailCapturePanel from "../components/shared/email-capture-panel";
 
 export const metadata: Metadata = {
-  title: "TaxDecod | UK Salary & Take-Home Pay Calculator",
+  title: "TaxDecod | UK Salary Intelligence Platform",
   description:
-    "See what you really keep after tax, National Insurance, pension, and student loan. TaxDecod turns UK salary into a clearer, more visual take-home pay reading.",
+    "TaxDecod helps people in the UK understand take-home pay, compare salaries, reverse-plan target income, and judge salary decisions with clearer context.",
 };
 
-const popularSalaryPages = [
+const popularRoutes = [
   { label: "£30,000 after tax", href: "/30000-after-tax-uk" },
   { label: "£40,000 after tax", href: "/40000-after-tax-uk" },
   { label: "£50,000 after tax", href: "/50000-after-tax-uk" },
   { label: "£60,000 after tax", href: "/60000-after-tax-uk" },
+  { label: "£15 an hour after tax", href: "/hourly/15" },
+  { label: "What salary gives £2,500/month?", href: "/monthly-take-home/2500" },
+];
+
+const platformClusters = [
+  {
+    title: "Compare and reverse",
+    description:
+      "Move beyond one salary result and test whether the next salary band or monthly target changes the decision.",
+    links: [
+      { label: "Compare salaries", href: "/compare-salary" },
+      { label: "Reverse from target", href: "/reverse-tax" },
+    ],
+  },
+  {
+    title: "Browse and benchmark",
+    description:
+      "Explore salary pages, role-city benchmark context, and newer intent routes like city salary judgement pages.",
+    links: [
+      { label: "Salary hub", href: "/salary-hub" },
+      { label: "Benchmarks hub", href: "/benchmarks" },
+    ],
+  },
+  {
+    title: "Decode and verify",
+    description:
+      "Use payslip and refund tools when the question is about payroll correctness, not just salary estimate.",
+    links: [
+      { label: "Payslip checker", href: "/payslip-checker" },
+      { label: "Tax refund calculator", href: "/tax-refund-calculator" },
+    ],
+  },
 ];
 
 const trustLinks = [
   {
     title: "Methodology",
-    description: "See how the site approaches salary logic and assumptions.",
+    description: "See how TaxDecod approaches salary logic and interpretation.",
     href: "/methodology",
   },
   {
-    title: "Services",
-    description: "Explore wider services and business-facing tools.",
-    href: "/services",
+    title: "Assumptions",
+    description: "Understand what the calculator assumes before reading the result.",
+    href: "/assumptions",
   },
   {
     title: "Contact",
-    description: "Reach out for support, partnerships, or commercial questions.",
+    description: "Use the contact page for support, partnerships, or editorial questions.",
     href: "/contact",
   },
 ];
@@ -49,71 +81,37 @@ export default function HomePage() {
       <SiteHeader />
 
       <HeroSection />
-      <CalculatorCard />
 
-      <section className="pb-8 pt-2 sm:pb-9">
+      <section id="calculator-section" className="pb-8">
         <Container>
-          <div className="rounded-[28px] border border-slate-200 bg-white/88 p-4 shadow-[0_18px_50px_-40px_rgba(15,23,42,0.18)] backdrop-blur dark:border-slate-800 dark:bg-slate-950/86">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="max-w-3xl">
-                <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-                  Advertisement
-                </div>
-
-                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                  This area can hold a clearly labelled sponsored placement or ad
-                  unit without overlapping with navigation or calculator controls.
-                </p>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[420px]">
-                <div className="rounded-[20px] border border-slate-200 bg-slate-50/90 px-4 py-4 dark:border-slate-800 dark:bg-slate-900/70">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    Clear separation
-                  </p>
-                  <p className="mt-1 text-xs leading-6 text-slate-500 dark:text-slate-400">
-                    Distinct from navigation, CTAs, and tools.
-                  </p>
-                </div>
-
-                <div className="rounded-[20px] border border-slate-200 bg-slate-50/90 px-4 py-4 dark:border-slate-800 dark:bg-slate-900/70">
-                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    Monetization-ready
-                  </p>
-                  <p className="mt-1 text-xs leading-6 text-slate-500 dark:text-slate-400">
-                    Keeps sponsored content visibly separate.
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="rounded-[30px] border p-2 shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)] app-card-strong sm:p-3">
+            <CalculatorCard mode="overview" />
           </div>
         </Container>
       </section>
 
-      <JourneyCards />
-      <MoneyExplainer />
-      <HowItWorks />
-
       <section className="pb-9">
         <Container>
           <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950/94">
-            <div className="grid gap-6 p-6 md:p-7 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
+            <div className="grid gap-6 p-6 md:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
               <div className="max-w-2xl">
                 <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                  Popular salary lookups
+                  Fast entry points
                 </p>
 
                 <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-                  Check common salary levels quickly
+                  Enter the platform from the route that matches your question
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-300">
-                  Useful when someone wants a fast answer first, then moves into comparison, payslip checks, or refund exploration.
+                  Some users know their salary. Some know their hourly rate. Some
+                  care about a monthly target. Some want city context. TaxDecod
+                  should support all of those entry points cleanly.
                 </p>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                {popularSalaryPages.map((item) => (
+                {popularRoutes.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -123,7 +121,7 @@ export default function HomePage() {
                       {item.label}
                     </span>
                     <span className="mt-3 block leading-7 text-slate-600 dark:text-slate-400">
-                      Open the breakdown, deductions, and next useful actions.
+                      Open the relevant decision route directly.
                     </span>
                   </Link>
                 ))}
@@ -133,7 +131,47 @@ export default function HomePage() {
         </Container>
       </section>
 
+      <JourneyCards />
+      <MoneyExplainer />
+      <HowItWorks />
       <UseCases />
+
+      <section className="pb-9">
+        <Container>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {platformClusters.map((cluster) => (
+              <div
+                key={cluster.title}
+                className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950"
+              >
+                <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                  Platform cluster
+                </p>
+
+                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                  {cluster.title}
+                </h2>
+
+                <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  {cluster.description}
+                </p>
+
+                <div className="mt-5 grid gap-3">
+                  {cluster.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
 
       <section className="pb-9">
         <Container>
@@ -145,11 +183,12 @@ export default function HomePage() {
                 </p>
 
                 <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-                  Reassure users without repeating the same message everywhere
+                  Keep trust visible without turning the homepage into a brochure
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-300">
-                  Keep trust, methodology, and support routes in one cleaner place near the lower decision stage.
+                  Trust pages, methodology, and support routes should be easy to find,
+                  but the homepage should still prioritize calculation and decision flow.
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-2.5">
@@ -160,7 +199,7 @@ export default function HomePage() {
                     Methodology visibility
                   </div>
                   <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-                    Support routes
+                    Contact legitimacy
                   </div>
                 </div>
               </div>
@@ -192,9 +231,9 @@ export default function HomePage() {
       <section className="pb-10">
         <Container>
           <EmailCapturePanel
-            title="Get your salary breakdown sent to you"
-            description="Save your result, revisit it later, or keep track when you compare multiple salary scenarios."
-            buttonLabel="Send my salary report"
+            title="Save your salary journey across tools"
+            description="Use your email sign-in to come back to saved salary routes, comparison paths, and monthly-target planning later."
+            buttonLabel="Continue with email"
           />
         </Container>
       </section>

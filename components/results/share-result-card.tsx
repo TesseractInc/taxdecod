@@ -1,23 +1,31 @@
 "use client";
 
 import Link from "next/link";
-
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CalculatorInput, TakeHomeResult } from "../../types/tax";
 import { formatCurrency } from "../../lib/tax/utils/currency";
-import { Copy, Link2, Mail, Share2 } from "lucide-react";
+import { Copy, Link2, Mail, Save, Share2 } from "lucide-react";
 import DownloadReportButton from "./download-report-button";
+import {
+  getRememberedEmail,
+  saveScenario,
+} from "../../lib/tax/utils/scenario-storage";
 
 type ShareResultCardProps = {
   values: CalculatorInput;
   result: TakeHomeResult;
 };
 
+function isValidEmail(email: string) {
+  return /\S+@\S+\.\S+/.test(email);
+}
+
 export default function ShareResultCard({
   values,
   result,
 }: ShareResultCardProps) {
   const [copied, setCopied] = useState<"" | "summary" | "link">("");
+  const [saved, setSaved] = useState(false);
 
   const totalDeductions =
     result.totalDeductionsAnnual ||
@@ -26,7 +34,8 @@ export default function ShareResultCard({
       result.pensionAnnual +
       result.studentLoanAnnual;
 
-  const summary = `My TaxDecod result:
+  const summary = useMemo(
+    () => `My TaxDecod result:
 Gross salary: ${formatCurrency(result.grossAnnual)}
 Estimated take-home: ${formatCurrency(result.netAnnual)} per year
 Estimated monthly take-home: ${formatCurrency(result.netMonthly)}
@@ -35,7 +44,9 @@ Income Tax: ${formatCurrency(result.incomeTaxAnnual)}
 National Insurance: ${formatCurrency(result.nationalInsuranceAnnual)}
 Pension: ${formatCurrency(result.pensionAnnual)}
 Student Loan: ${formatCurrency(result.studentLoanAnnual)}
-Tax code: ${values.taxCode || "—"}`;
+Tax code: ${values.taxCode || "—"}`,
+    [result, totalDeductions, values.taxCode]
+  );
 
   const handleCopySummary = async () => {
     await navigator.clipboard.writeText(summary);
@@ -51,6 +62,7 @@ Tax code: ${values.taxCode || "—"}`;
 
   const handleNativeShare = async () => {
     if (!navigator.share) return;
+
     try {
       await navigator.share({
         title: "My TaxDecod salary result",
@@ -58,6 +70,22 @@ Tax code: ${values.taxCode || "—"}`;
         url: window.location.href,
       });
     } catch {}
+  };
+
+  const handleSaveScenario = () => {
+    saveScenario(values, result, "calculator");
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1800);
+  };
+
+  const rememberedEmail = getRememberedEmail();
+
+  const handleEmailToSelf = () => {
+    const recipient = isValidEmail(rememberedEmail) ? rememberedEmail : "";
+    const subject = encodeURIComponent("My TaxDecod salary result");
+    const body = encodeURIComponent(summary);
+
+    window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -74,8 +102,8 @@ Tax code: ${values.taxCode || "—"}`;
             Keep this salary result useful beyond one visit
           </h2>
           <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
-            Save the reading, share it, or send it elsewhere so you can compare
-            salary decisions with more context later.
+            Save the result locally, send it to yourself, copy it, or download a
+            clean report so you can compare salary decisions later with proper context.
           </p>
         </div>
       </div>
@@ -96,7 +124,7 @@ Tax code: ${values.taxCode || "—"}`;
             </div>
 
             <div className="rounded-full border border-slate-200 bg-white/85 px-4 py-2 text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-950/80 dark:text-slate-300">
-              Shareable view
+              Retention-ready view
             </div>
           </div>
 
@@ -123,9 +151,8 @@ Tax code: ${values.taxCode || "—"}`;
 
           <div className="mt-5 rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
             <p className="text-sm leading-7 text-slate-600 dark:text-slate-400">
-              This summary is designed to make salary comparison, offer review,
-              or later recall much easier than trying to remember raw payslip
-              numbers.
+              Saved scenarios stay in this browser so you can come back, reopen
+              them in the calculator, and compare multiple salary paths more easily.
             </p>
           </div>
         </div>
@@ -137,6 +164,23 @@ Tax code: ${values.taxCode || "—"}`;
 
           <div className="mt-5 grid gap-3">
             <DownloadReportButton values={values} result={result} />
+
+            <button
+              type="button"
+              onClick={handleSaveScenario}
+              className="flex items-center justify-center gap-2 rounded-[22px] border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-700 transition hover:bg-white dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-slate-950"
+            >
+              <Save className="h-4 w-4" />
+              {saved ? "Scenario saved" : "Save scenario in this browser"}
+            </button>
+
+            <Link
+              href="/saved-scenarios"
+              className="flex items-center justify-center gap-2 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-white hover:text-sky-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950 dark:hover:text-sky-300"
+            >
+              <Link2 className="h-4 w-4" />
+              Open saved scenarios
+            </Link>
 
             <button
               type="button"
@@ -160,20 +204,21 @@ Tax code: ${values.taxCode || "—"}`;
               <button
                 type="button"
                 onClick={handleNativeShare}
-                className="flex items-center justify-center gap-2 rounded-[22px] border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-700 transition hover:bg-white dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-slate-950"
+                className="flex items-center justify-center gap-2 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-white hover:text-sky-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950 dark:hover:text-sky-300"
               >
                 <Share2 className="h-4 w-4" />
                 Share result
               </button>
             ) : null}
 
-            <Link
-              href="/contact"
+            <button
+              type="button"
+              onClick={handleEmailToSelf}
               className="flex items-center justify-center gap-2 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-white hover:text-sky-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950 dark:hover:text-sky-300"
             >
               <Mail className="h-4 w-4" />
-              Send to email
-            </Link>
+              Draft email summary
+            </button>
           </div>
         </div>
       </div>

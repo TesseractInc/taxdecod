@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import SiteHeader from "../../components/layout/site-header";
+import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../components/seo/seo-page-hero";
@@ -17,6 +18,7 @@ import {
   parseSalaryFromSlug,
 } from "../../components/seo/salary-pages";
 import { formatCurrency } from "../../lib/tax/utils/currency";
+import { getProgrammaticSalaryContent } from "../../components/seo/programmatic-salary-content";
 
 type SalaryPageProps = {
   params: Promise<{
@@ -42,11 +44,25 @@ export async function generateMetadata({
     });
   }
 
+  const data = getSalaryPageData(salary);
+  const keepPercent =
+    data.result.grossAnnual > 0
+      ? (data.result.netAnnual / data.result.grossAnnual) * 100
+      : 0;
+
+  const contentPack = getProgrammaticSalaryContent({
+    salary,
+    netMonthly: data.result.netMonthly,
+    netAnnual: data.result.netAnnual,
+    keepPercent,
+  });
+
   return buildSeoMetadata({
     title: formatSalaryTitle(salary),
-    description: `If you earn £${salary.toLocaleString(
-      "en-GB"
-    )} in the UK, see your estimated take-home pay, monthly net income, tax breakdown, and real salary impact.`,
+    description: `${contentPack.summary} ${contentPack.thresholdNote}`.slice(
+      0,
+      155
+    ),
     path: `/${salary}-after-tax-uk`,
   });
 }
@@ -72,12 +88,20 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
       ? (data.result.netAnnual / data.result.grossAnnual) * 100
       : 0;
 
+  const contentPack = getProgrammaticSalaryContent({
+    salary,
+    netMonthly: data.result.netMonthly,
+    netAnnual: data.result.netAnnual,
+    keepPercent,
+  });
+
   return (
-    <main>
+    <main className="app-shell">
       <SalaryPageSchema
         salary={salary}
         netAnnual={data.result.netAnnual}
         netMonthly={data.result.netMonthly}
+        faqItems={contentPack.faqItems}
       />
 
       <SiteHeader />
@@ -87,7 +111,7 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
           <SeoPageHero
             eyebrow="UK salary breakdown"
             title={`£${salary.toLocaleString("en-GB")} after tax in the UK`}
-            description="This page turns a gross UK salary into a clearer take-home reading, monthly reality, and deduction picture."
+            description={contentPack.summary}
             highlightValue={formatCurrency(data.result.netAnnual)}
             highlightSubtext={`${formatCurrency(
               data.result.netMonthly
@@ -106,9 +130,7 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
               Using {TAX_YEAR_LABEL}-style assumptions, this salary keeps about{" "}
               <strong>{keepPercent.toFixed(0)}%</strong> of gross pay and loses{" "}
               <strong>{formatCurrency(totalDeductions)}</strong> to tax and
-              deductions each year. For most users, the most important number is{" "}
-              <strong>{formatCurrency(data.result.netMonthly)}</strong> per
-              month.
+              deductions each year. {contentPack.thresholdNote}
             </SeoRealityCard>
           </div>
 
@@ -149,6 +171,8 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

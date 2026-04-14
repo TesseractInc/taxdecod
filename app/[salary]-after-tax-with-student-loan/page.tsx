@@ -1,22 +1,24 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import SiteHeader from "../../components/layout/site-header";
+import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
-import SalaryVariantContent from "../../components/seo/salary-variant-content";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
-import { TAX_YEAR_LABEL, TRUST_COPY } from "../../lib/tax/config";
+import SalaryVariantContent from "../../components/seo/salary-variant-content";
+import PageSchema from "../../components/seo/page-schema";
 import { buildSeoMetadata } from "../../components/seo/metadata";
+import { formatCurrency } from "../../lib/tax/utils/currency";
+import { TAX_YEAR_LABEL, TRUST_COPY } from "../../lib/tax/config";
 import {
-  parseNumericSalary,
   getStudentLoanSalaryPageData,
   getVariantSalaryParams,
+  parseNumericSalary,
 } from "../../components/seo/salary-variants";
-import { formatCurrency } from "../../lib/tax/utils/currency";
 
-type PageProps = {
+type StudentLoanVariantPageProps = {
   params: Promise<{
     salary: string;
   }>;
@@ -28,15 +30,15 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: StudentLoanVariantPageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const salary = parseNumericSalary(resolvedParams.salary);
 
   if (!salary) {
     return buildSeoMetadata({
-      title: "Student Loan Salary Page | TaxDecod",
+      title: "Salary After Tax With Student Loan UK | TaxDecod",
       description:
-        "See estimated UK take-home pay with student loan deductions included.",
+        "See salary take-home pay with student loan deductions in the UK.",
       path: "/salary-hub",
     });
   }
@@ -44,38 +46,80 @@ export async function generateMetadata({
   return buildSeoMetadata({
     title: `£${salary.toLocaleString(
       "en-GB"
-    )} After Tax With Student Loan (${TAX_YEAR_LABEL}) – UK Take Home Pay`,
-    description: `See estimated UK take-home pay for £${salary.toLocaleString(
+    )} after tax with student loan UK (${TAX_YEAR_LABEL})`,
+    description: `See how much £${salary.toLocaleString(
       "en-GB"
-    )} with student loan deductions included.`,
+    )} salary becomes after tax with student loan deductions in the UK, including estimated monthly take-home pay.`,
     path: `/${salary}-after-tax-with-student-loan`,
   });
 }
 
-export default async function SalaryWithStudentLoanPage({
+export default async function StudentLoanSalaryVariantPage({
   params,
-}: PageProps) {
+}: StudentLoanVariantPageProps) {
   const resolvedParams = await params;
   const salary = parseNumericSalary(resolvedParams.salary);
 
-  if (!salary) notFound();
+  if (!salary) {
+    notFound();
+  }
 
   const data = getStudentLoanSalaryPageData(salary);
 
   return (
-    <main>
+    <main className="app-shell">
+      <PageSchema
+        pageUrl={`https://taxdecod.com/${salary}-after-tax-with-student-loan`}
+        title={`£${salary.toLocaleString(
+          "en-GB"
+        )} after tax with student loan | TaxDecod`}
+        description={`Student-loan-adjusted take-home pay view for £${salary.toLocaleString(
+          "en-GB"
+        )} salary in the UK.`}
+        breadcrumbs={[
+          { name: "Home", url: "https://taxdecod.com" },
+          { name: "Salary hub", url: "https://taxdecod.com/salary-hub" },
+          {
+            name: `£${salary.toLocaleString(
+              "en-GB"
+            )} after tax with student loan`,
+            url: `https://taxdecod.com/${salary}-after-tax-with-student-loan`,
+          },
+        ]}
+        faqItems={[
+          {
+            question: `How much is £${salary.toLocaleString(
+              "en-GB"
+            )} after tax with student loan deductions?`,
+            answer: `Estimated monthly take-home pay is about ${formatCurrency(
+              data.result.netMonthly
+            )} under this student loan salary view.`,
+          },
+          {
+            question: "Why does student loan reduce take-home pay?",
+            answer:
+              "Because student loan repayments are deducted from earnings above the relevant threshold, reducing the money that reaches you as net pay.",
+          },
+          {
+            question: "Is this page useful for comparing student loan impact?",
+            answer:
+              "Yes. It helps users compare the same salary with and without student loan deductions to understand the real drag on monthly take-home pay.",
+          },
+        ]}
+      />
+
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
         <Container>
           <SeoPageHero
-            eyebrow="Student loan salary view"
-            title={`£${salary.toLocaleString("en-GB")} after tax with student loan`}
-            description="This page is designed for graduates and borrowers who want to see the real monthly impact of student loan deductions."
-            highlightValue={formatCurrency(data.result.netAnnual)}
-            highlightSubtext={`${formatCurrency(
-              data.result.netMonthly
-            )} per month after tax, NI, pension, and student loan deductions`}
+            eyebrow="Student loan salary breakdown"
+            title={`£${salary.toLocaleString(
+              "en-GB"
+            )} after tax with student loan`}
+            description="This page isolates the student-loan-adjusted view so users can see how loan repayments affect take-home pay."
+            highlightValue={formatCurrency(data.result.netMonthly)}
+            highlightSubtext="estimated monthly take-home with student loan"
           />
 
           <div className="mt-8">
@@ -87,9 +131,11 @@ export default async function SalaryWithStudentLoanPage({
 
           <div className="mt-10">
             <SeoRealityCard label="Student loan reality">
-              Student loan repayments can create a meaningful drag on monthly
-              take-home pay. This page is useful for graduates comparing real
-              net pay rather than gross salary only.
+              Using {TAX_YEAR_LABEL}-style assumptions with a{" "}
+              <strong>Plan 2 student loan</strong>, a salary of{" "}
+              <strong>£{salary.toLocaleString("en-GB")}</strong> becomes about{" "}
+              <strong>{formatCurrency(data.result.netMonthly)}</strong> per
+              month after tax and deductions.
             </SeoRealityCard>
           </div>
 
@@ -98,21 +144,21 @@ export default async function SalaryWithStudentLoanPage({
               items={[
                 {
                   href: `/${salary}-after-tax-uk`,
-                  title: "View without student loan",
+                  title: "Compare against the main salary reading",
                   description:
-                    "Compare the same salary under standard deductions only.",
+                    "See how the same gross salary differs without the student loan variant applied.",
                 },
                 {
                   href: "/compare-salary",
-                  title: "Compare salary jumps",
+                  title: "Compare salary outcomes",
                   description:
-                    "See whether a higher salary meaningfully outweighs student loan drag.",
+                    "Test whether nearby salaries meaningfully improve take-home after deductions.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse a better monthly target",
+                  title: "Reverse from a monthly target",
                   description:
-                    "Find the gross salary needed to offset deductions and reach a stronger monthly outcome.",
+                    "Work backwards from the monthly amount you actually want to keep.",
                 },
               ]}
             />
@@ -120,23 +166,24 @@ export default async function SalaryWithStudentLoanPage({
 
           <div className="mt-14">
             <SalaryVariantContent
-              title={`£${salary.toLocaleString("en-GB")} after tax with student loan`}
-              intro={`This page estimates take-home pay for a ${formatCurrency(
-                salary
-              )} salary in the UK with student loan repayment included.`}
               salary={salary}
+              input={data.input}
               result={data.result}
-              bullets={[
-                "Uses a Plan 2 student loan assumption for this template.",
-                `Estimated monthly take-home pay is ${formatCurrency(
-                  data.result.netMonthly
-                )}.`,
-                "Useful for graduates who want a more realistic net-pay reading before making salary decisions.",
-              ]}
+              variant="student-loan"
+              title={`£${salary.toLocaleString(
+                "en-GB"
+              )} after tax with student loan`}
+              intro={`Estimated monthly take-home pay for a salary of £${salary.toLocaleString(
+                "en-GB"
+              )} with a Plan 2 student loan is about ${formatCurrency(
+                data.result.netMonthly
+              )}. This page helps users understand how student loan deductions change the real monthly outcome of the same gross salary.`}
             />
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

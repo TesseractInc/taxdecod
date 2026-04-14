@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import SiteHeader from "../../../components/layout/site-header";
+import SiteFooter from "../../../components/layout/site-footer";
 import Container from "../../../components/ui/container";
 import TaxYearTrustBar from "../../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../../components/seo/seo-page-hero";
@@ -69,7 +70,7 @@ export default async function ComparisonSeoPage({
   const data = getComparisonPageData(salaryA, salaryB);
 
   return (
-    <main>
+    <main className="app-shell">
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
@@ -146,6 +147,8 @@ export default async function ComparisonSeoPage({
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

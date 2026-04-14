@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "../components/ui/theme-provider";
+import SupabaseAuthProvider from "../components/auth/supabase-auth-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -52,7 +53,9 @@ export default function RootLayout({
       className={`${inter.variable} ${manrope.variable}`}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <SupabaseAuthProvider>{children}</SupabaseAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

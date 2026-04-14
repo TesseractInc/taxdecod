@@ -1,46 +1,69 @@
 "use client";
 
-import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 
 export default function HeroSection() {
+  const [salary, setSalary] = useState("");
+
+  const handleCalculate = () => {
+    const value = Number(salary.replace(/,/g, ""));
+
+    if (!value || value < 1000) return;
+
+    const calculatorSection = document.getElementById("calculator-section");
+
+    if (calculatorSection) {
+      calculatorSection.scrollIntoView({ behavior: "smooth" });
+
+      // dispatch event so calculator can pick it up
+      window.dispatchEvent(
+        new CustomEvent("prefillSalary", { detail: value })
+      );
+    }
+  };
+
   return (
-    <section className="relative overflow-hidden pb-12 pt-10 sm:pb-14 sm:pt-12 lg:pb-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex flex-col items-center text-center">
-          <div
-            className="inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-medium"
-            style={{
-              borderColor: "color-mix(in srgb, var(--primary) 12%, var(--line))",
-              background: "color-mix(in srgb, var(--surface-1) 92%, transparent)",
-              color: "var(--text)",
-            }}
+    <section className="pb-6 pt-6 sm:pb-8 sm:pt-8">
+      <div className="mx-auto max-w-5xl px-4 text-center">
+        {/* Headline */}
+        <h1 className="text-[clamp(2.4rem,5vw,4rem)] font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
+          Know exactly what your salary really pays
+        </h1>
+
+        <p className="mt-3 text-base text-slate-600 dark:text-slate-300">
+          Accurate UK take-home pay, deductions, and real salary insights — instantly.
+        </p>
+
+        {/* 🔥 CORE INPUT (NEW) */}
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <div className="flex items-center rounded-xl border border-slate-300 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
+            <span className="mr-2 text-slate-500">£</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="Enter salary (e.g. 30000)"
+              value={salary}
+              onChange={(e) => setSalary(e.target.value)}
+              className="w-[180px] bg-transparent outline-none text-slate-900 dark:text-white"
+            />
+          </div>
+
+          <button
+            onClick={handleCalculate}
+            className="rounded-xl bg-sky-600 px-6 py-3 font-semibold text-white transition hover:bg-sky-700"
           >
-            <Sparkles className="h-4 w-4 app-accent" />
-            UK Salary Intelligence Platform
-          </div>
+            Calculate
+          </button>
+        </div>
 
-          <h1 className="mt-8 max-w-5xl text-balance text-[clamp(3.35rem,7vw,6.25rem)] font-black leading-[0.95] tracking-[-0.06em]">
-            <span className="block text-slate-950 dark:text-white">
-              Know your salary.
-            </span>
-            <span className="mt-2 block bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">
-              Not just the number — the reality.
-            </span>
-          </h1>
-
-          <p className="mt-7 max-w-3xl text-balance text-[1.08rem] leading-9 text-slate-600 dark:text-slate-300">
-            See what you actually keep after income tax, National Insurance, pension, and student loan deductions.
-          </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="/calculator" className="app-button-primary">
-              Open calculator
-            </Link>
-            <Link href="/compare-salary" className="app-button-secondary">
-              Compare salaries
-            </Link>
-          </div>
+        {/* TRUST */}
+        <div className="mt-4 flex justify-center gap-4 text-sm text-slate-500">
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            Updated for 2025/26
+          </span>
+          <span>UK tax logic</span>
         </div>
       </div>
     </section>

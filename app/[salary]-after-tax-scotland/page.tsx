@@ -1,22 +1,24 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import SiteHeader from "../../components/layout/site-header";
+import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
-import SalaryVariantContent from "../../components/seo/salary-variant-content";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
-import { TAX_YEAR_LABEL, TRUST_COPY } from "../../lib/tax/config";
+import SalaryVariantContent from "../../components/seo/salary-variant-content";
+import PageSchema from "../../components/seo/page-schema";
 import { buildSeoMetadata } from "../../components/seo/metadata";
+import { formatCurrency } from "../../lib/tax/utils/currency";
+import { TAX_YEAR_LABEL, TRUST_COPY } from "../../lib/tax/config";
 import {
-  parseNumericSalary,
   getScotlandSalaryPageData,
   getVariantSalaryParams,
+  parseNumericSalary,
 } from "../../components/seo/salary-variants";
-import { formatCurrency } from "../../lib/tax/utils/currency";
 
-type PageProps = {
+type ScotlandVariantPageProps = {
   params: Promise<{
     salary: string;
   }>;
@@ -28,51 +30,88 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: ScotlandVariantPageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const salary = parseNumericSalary(resolvedParams.salary);
 
   if (!salary) {
     return buildSeoMetadata({
-      title: "Scotland Salary Page | TaxDecod",
-      description: "See estimated take-home pay in Scotland for a UK salary.",
+      title: "Scotland Salary Breakdown UK | TaxDecod",
+      description:
+        "See Scotland-specific take-home pay for UK salaries after tax and deductions.",
       path: "/salary-hub",
     });
   }
 
   return buildSeoMetadata({
-    title: `£${salary.toLocaleString(
+    title: `£${salary.toLocaleString("en-GB")} after tax in Scotland (${TAX_YEAR_LABEL})`,
+    description: `See how much £${salary.toLocaleString(
       "en-GB"
-    )} After Tax Scotland (${TAX_YEAR_LABEL}) – Take Home Pay`,
-    description: `See estimated take-home pay in Scotland for a £${salary.toLocaleString(
-      "en-GB"
-    )} salary, using Scotland-specific income tax treatment.`,
+    )} salary becomes after tax in Scotland, including estimated monthly take-home pay and Scottish tax context.`,
     path: `/${salary}-after-tax-scotland`,
   });
 }
 
-export default async function SalaryScotlandPage({ params }: PageProps) {
+export default async function ScotlandSalaryVariantPage({
+  params,
+}: ScotlandVariantPageProps) {
   const resolvedParams = await params;
   const salary = parseNumericSalary(resolvedParams.salary);
 
-  if (!salary) notFound();
+  if (!salary) {
+    notFound();
+  }
 
   const data = getScotlandSalaryPageData(salary);
 
   return (
-    <main>
+    <main className="app-shell">
+      <PageSchema
+        pageUrl={`https://taxdecod.com/${salary}-after-tax-scotland`}
+        title={`£${salary.toLocaleString("en-GB")} after tax in Scotland | TaxDecod`}
+        description={`Scotland-specific take-home pay view for £${salary.toLocaleString(
+          "en-GB"
+        )} salary.`}
+        breadcrumbs={[
+          { name: "Home", url: "https://taxdecod.com" },
+          { name: "Salary hub", url: "https://taxdecod.com/salary-hub" },
+          {
+            name: `£${salary.toLocaleString("en-GB")} after tax in Scotland`,
+            url: `https://taxdecod.com/${salary}-after-tax-scotland`,
+          },
+        ]}
+        faqItems={[
+          {
+            question: `How much is £${salary.toLocaleString(
+              "en-GB"
+            )} after tax in Scotland?`,
+            answer: `Estimated monthly take-home pay is about ${formatCurrency(
+              data.result.netMonthly
+            )} under Scotland-specific tax assumptions.`,
+          },
+          {
+            question: "Why can Scotland salary results differ from the rest of the UK?",
+            answer:
+              "Because Scotland uses different income tax bands and rates from England, Wales, and Northern Ireland.",
+          },
+          {
+            question: "Is the Scotland after-tax reading useful for salary comparison?",
+            answer:
+              "Yes. It is especially useful when users want to compare Scottish tax treatment against the main UK reading for the same gross salary.",
+          },
+        ]}
+      />
+
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
         <Container>
           <SeoPageHero
-            eyebrow="Scotland salary view"
+            eyebrow="Scotland salary breakdown"
             title={`£${salary.toLocaleString("en-GB")} after tax in Scotland`}
-            description="This page focuses on how Scottish income tax treatment can change the real take-home outcome of the same headline salary."
-            highlightValue={formatCurrency(data.result.netAnnual)}
-            highlightSubtext={`${formatCurrency(
-              data.result.netMonthly
-            )} per month using Scotland-specific tax treatment`}
+            description="This page isolates the Scotland-specific salary view so users can judge the same gross salary under Scottish tax treatment."
+            highlightValue={formatCurrency(data.result.netMonthly)}
+            highlightSubtext="estimated monthly take-home in Scotland"
           />
 
           <div className="mt-8">
@@ -83,10 +122,11 @@ export default async function SalaryScotlandPage({ params }: PageProps) {
           </div>
 
           <div className="mt-10">
-            <SeoRealityCard label="Scotland reality">
-              Scottish tax treatment can change the final take-home figure
-              compared with standard UK rules. This page is most useful when
-              users want a location-specific salary reading.
+            <SeoRealityCard label="Scotland salary reality">
+              Using {TAX_YEAR_LABEL}-style Scottish tax assumptions, a salary of{" "}
+              <strong>£{salary.toLocaleString("en-GB")}</strong> becomes about{" "}
+              <strong>{formatCurrency(data.result.netMonthly)}</strong> per
+              month after tax and deductions in Scotland.
             </SeoRealityCard>
           </div>
 
@@ -95,21 +135,21 @@ export default async function SalaryScotlandPage({ params }: PageProps) {
               items={[
                 {
                   href: `/${salary}-after-tax-uk`,
-                  title: "Compare with standard UK rules",
+                  title: "Compare against the main UK salary reading",
                   description:
-                    "See how England, Wales, and Northern Ireland treatment differs.",
+                    "See how the same gross salary differs under the standard UK route.",
                 },
                 {
                   href: "/compare-salary",
-                  title: "Compare salary levels",
+                  title: "Compare salary outcomes",
                   description:
-                    "Test whether another salary is worth more in real take-home terms.",
+                    "See whether a nearby salary band changes monthly life enough.",
                 },
                 {
-                  href: "/salary-hub",
-                  title: "Explore more salary pages",
+                  href: "/reverse-tax",
+                  title: "Reverse from a monthly target",
                   description:
-                    "Move to nearby salary levels and related salary scenarios.",
+                    "Work backwards from the monthly amount you actually want to keep.",
                 },
               ]}
             />
@@ -117,23 +157,22 @@ export default async function SalaryScotlandPage({ params }: PageProps) {
 
           <div className="mt-14">
             <SalaryVariantContent
-              title={`£${salary.toLocaleString("en-GB")} after tax in Scotland`}
-              intro={`This page estimates take-home pay for a ${formatCurrency(
-                salary
-              )} salary using Scotland-specific income tax treatment.`}
               salary={salary}
+              input={data.input}
               result={data.result}
-              bullets={[
-                "Useful when comparing Scotland against the rest of the UK.",
-                `Estimated monthly take-home pay is ${formatCurrency(
-                  data.result.netMonthly
-                )}.`,
-                "Helps reveal how regional tax treatment can change real monthly pay.",
-              ]}
+              variant="scotland"
+              title={`£${salary.toLocaleString("en-GB")} after tax in Scotland`}
+              intro={`Estimated monthly take-home pay for a salary of £${salary.toLocaleString(
+                "en-GB"
+              )} in Scotland is about ${formatCurrency(
+                data.result.netMonthly
+              )}. This page is useful when comparing Scotland-specific tax treatment against the main UK reading for the same gross salary.`}
             />
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

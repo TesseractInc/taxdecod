@@ -1,7 +1,11 @@
 import { calculateTakeHome } from "../../lib/tax/calculators/take-home";
 import type { CalculatorInput } from "../../types/tax";
 import { getStandardUkEmployeeInput } from "../../lib/tax/config";
-import { SEO_GROWTH_CONFIG } from "../../components/seo/growth-config";
+import {
+  SEO_GROWTH_CONFIG,
+  dedupePairs,
+  expandComparisonLadders,
+} from "../../components/seo/growth-config";
 
 export function parseComparisonSlug(
   slug: string
@@ -23,6 +27,7 @@ export function parseComparisonSlug(
   }
 
   if (salaryA === salaryB) return null;
+  if (salaryA > salaryB) return null;
 
   return { salaryA, salaryB };
 }
@@ -37,7 +42,10 @@ export function getComparisonBaseInput(salary: number): CalculatorInput {
 }
 
 export function getComparisonSeoPairs() {
-  return [...SEO_GROWTH_CONFIG.comparisonSeo.pairs];
+  return dedupePairs([
+    ...expandComparisonLadders(SEO_GROWTH_CONFIG.comparisonSeo.ladders),
+    ...SEO_GROWTH_CONFIG.comparisonSeo.featuredPairs,
+  ]);
 }
 
 export function getComparisonSeoSlugs() {

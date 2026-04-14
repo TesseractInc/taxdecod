@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { formatCurrency } from "../../lib/tax/utils/currency";
 import type { CalculatorInput, TakeHomeResult } from "../../types/tax";
@@ -13,28 +15,65 @@ type ReversePageContentProps = {
   keepPercent: number;
 };
 
-function getNearbyReverseLinks(targetMonthlyNet: number) {
-  const nearby = [
-    targetMonthlyNet - 300,
+function getPrimaryAction(grossAnnual: number, targetMonthlyNet: number) {
+  if (grossAnnual >= 45000) {
+    return {
+      label: "Compare this required salary against a nearby salary band",
+      href: "/compare-salary",
+    };
+  }
+
+  if (targetMonthlyNet >= 2500) {
+    return {
+      label: "Open the full salary calculator for this result",
+      href: `/${Math.round(grossAnnual)}-after-tax-uk`,
+    };
+  }
+
+  return {
+    label: "Use the interactive reverse calculator",
+    href: "/reverse-tax",
+  };
+}
+
+function getAdjacentLinks(targetMonthlyNet: number) {
+  const nearbyTargets = [
     targetMonthlyNet - 200,
     targetMonthlyNet - 100,
     targetMonthlyNet + 100,
     targetMonthlyNet + 200,
-    targetMonthlyNet + 300,
   ].filter((value) => value >= 1000);
 
-  const seen = new Set<number>();
+  return nearbyTargets.slice(0, 4).map((amount) => ({
+    label: `What salary gives £${amount.toLocaleString("en-GB")} take-home per month?`,
+    href: `/monthly-take-home/${amount}`,
+  }));
+}
 
-  return nearby
-    .filter((value) => {
-      if (seen.has(value)) return false;
-      seen.add(value);
-      return true;
-    })
-    .map((value) => ({
-      label: `Salary needed for ${formatCurrency(value)} per month`,
-      href: `/take-home-${value}-month-uk`,
-    }));
+function getUnderstandingLinks(grossAnnual: number, targetMonthlyNet: number) {
+  return [
+    {
+      label: `See £${Math.round(grossAnnual).toLocaleString("en-GB")} after tax`,
+      href: `/${Math.round(grossAnnual)}-after-tax-uk`,
+    },
+    {
+      label: "Use the interactive reverse calculator",
+      href: "/reverse-tax",
+    },
+    {
+      label: "Compare salary outcomes",
+      href: "/compare-salary",
+    },
+  ];
+}
+
+function getRetentionAction(targetMonthlyNet: number) {
+  return {
+    label: `Save or revisit the £${targetMonthlyNet.toLocaleString(
+      "en-GB"
+    )}/month planning route`,
+    href: "/reverse-tax",
+  };
 }
 
 export default function ReversePageContent({
@@ -46,28 +85,54 @@ export default function ReversePageContent({
   totalDeductions,
   keepPercent,
 }: ReversePageContentProps) {
-  const nearbyReverseLinks = getNearbyReverseLinks(targetMonthlyNet);
+  const primaryAction = getPrimaryAction(grossAnnual, targetMonthlyNet);
+  const adjacentLinks = getAdjacentLinks(targetMonthlyNet);
+  const understandingLinks = getUnderstandingLinks(
+    grossAnnual,
+    targetMonthlyNet
+  );
+  const retentionAction = getRetentionAction(targetMonthlyNet);
+
+  const targetTone =
+    targetMonthlyNet >= 4000
+      ? "higher-target"
+      : targetMonthlyNet >= 2500
+      ? "mid-target"
+      : "entry-target";
+
+  const regionLabel =
+    input.region === "scotland"
+      ? "Scotland rules"
+      : "England, Wales & Northern Ireland rules";
 
   return (
     <div className="space-y-10">
       <section className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
         <div className="border-b border-slate-200 px-6 py-7 dark:border-slate-800 sm:px-8">
-          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-            Reverse salary reality
-          </p>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                Reverse salary outcome
+              </p>
 
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-            How much gross salary sits behind {formatCurrency(targetMonthlyNet)} a month?
-          </h2>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
+                What salary you need for £{targetMonthlyNet.toLocaleString("en-GB")} a month
+              </h2>
 
-          <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600 dark:text-slate-400">
-            This page works backwards from a target monthly take-home figure so
-            users can think in real-life income first, then understand the gross
-            salary needed to reach it.
-          </p>
+              <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-400">
+                Reverse salary planning starts from the amount you actually want to
+                keep each month, then works backwards to the gross salary needed
+                after tax and deductions.
+              </p>
+            </div>
+
+            <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+              {regionLabel}
+            </div>
+          </div>
         </div>
 
-        <div className="grid gap-6 p-6 xl:grid-cols-[1.05fr_0.95fr] sm:p-8">
+        <div className="grid gap-6 p-6 xl:grid-cols-[1.02fr_0.98fr] sm:p-8">
           <div className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-900/70">
             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
               Required gross salary
@@ -77,17 +142,8 @@ export default function ReversePageContent({
               {formatCurrency(grossAnnual)}
             </h3>
 
-            <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-400">
-              To reach around{" "}
-              <strong className="text-slate-900 dark:text-slate-100">
-                {formatCurrency(targetMonthlyNet)}
-              </strong>{" "}
-              per month after deductions, the model estimates a gross annual
-              salary of{" "}
-              <strong className="text-slate-900 dark:text-slate-100">
-                {formatCurrency(grossAnnual)}
-              </strong>
-              .
+            <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+              estimated gross salary needed
             </p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -95,7 +151,7 @@ export default function ReversePageContent({
                 <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
                   Target monthly take-home
                 </p>
-                <p className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
+                <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
                   {formatCurrency(targetMonthlyNet)}
                 </p>
               </div>
@@ -108,224 +164,161 @@ export default function ReversePageContent({
                   {formatCurrency(targetAnnualNet)}
                 </p>
               </div>
+
+              <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                  Estimated keep rate
+                </p>
+                <p className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
+                  {keepPercent.toFixed(0)}%
+                </p>
+              </div>
+
+              <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                  Total deductions
+                </p>
+                <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                  {formatCurrency(totalDeductions)}
+                </p>
+              </div>
             </div>
           </div>
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950/80">
             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-              Salary pressure
+              Decision reading
             </p>
 
-            <div className="mt-5 space-y-3">
-              <div className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                <span className="text-sm text-slate-600 dark:text-slate-400">
-                  Estimated monthly net
-                </span>
-                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  {formatCurrency(result.netMonthly)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                <span className="text-sm text-slate-600 dark:text-slate-400">
-                  Gross per month
-                </span>
-                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  {formatCurrency(grossAnnual / 12)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                <span className="text-sm text-slate-600 dark:text-slate-400">
-                  Total deductions
-                </span>
-                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                  {formatCurrency(totalDeductions)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                <span className="text-sm text-slate-600 dark:text-slate-400">
-                  You keep
-                </span>
-                <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                  {keepPercent.toFixed(0)}%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-            What this means
-          </p>
-
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-            Reverse thinking is often more useful than gross salary thinking
-          </h2>
-
-          <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
-            <p>
-              Most people start with the job advert or gross salary figure.
-              This page flips that logic and starts with the monthly amount a
-              person actually wants to keep.
-            </p>
-
-            <p>
-              To reach around{" "}
-              <strong className="text-slate-900 dark:text-slate-100">
-                {formatCurrency(targetMonthlyNet)}
-              </strong>{" "}
-              per month, the model estimates a gross salary of{" "}
-              <strong className="text-slate-900 dark:text-slate-100">
-                {formatCurrency(grossAnnual)}
-              </strong>
-              , with about{" "}
-              <strong className="text-slate-900 dark:text-slate-100">
-                {formatCurrency(totalDeductions)}
-              </strong>{" "}
-              lost to deductions each year.
-            </p>
-
-            <p>
-              That makes this page useful for reverse budgeting, job targeting,
-              raise planning, and monthly affordability decisions.
-            </p>
-          </div>
-        </div>
-
-        <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-            Standard assumptions
-          </p>
-
-          <div className="mt-6 space-y-3">
-            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
-                Tax code
+            <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
+              <p>
+                To take home about{" "}
+                <strong>{formatCurrency(targetMonthlyNet)}</strong> a month, you
+                need an estimated gross salary of{" "}
+                <strong>{formatCurrency(grossAnnual)}</strong>.
               </p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                {input.taxCode}
+
+              <p>
+                That means around <strong>{formatCurrency(totalDeductions)}</strong>{" "}
+                is lost each year to tax and deductions before the money becomes
+                usable net income.
+              </p>
+
+              <p>
+                This looks like a{" "}
+                <strong>
+                  {targetTone === "higher-target"
+                    ? "more ambitious monthly target"
+                    : targetTone === "mid-target"
+                    ? "mid-range planning target"
+                    : "foundational monthly target"}
+                </strong>{" "}
+                in practical salary-planning terms.
+              </p>
+
+              <p>
+                Reverse planning is strongest when users care more about monthly
+                affordability, savings, rent, and daily life than about gross
+                salary as a headline number.
               </p>
             </div>
 
-            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
-                Pension assumption
-              </p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                {input.pensionPercent}%
-              </p>
+            <div className="mt-6 grid gap-3">
+              <Link
+                href={`/${Math.round(grossAnnual)}-after-tax-uk`}
+                className="rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+              >
+                View the full salary breakdown
+              </Link>
+
+              <Link
+                href="/compare-salary"
+                className="rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+              >
+                Compare this against another salary
+              </Link>
             </div>
-
-            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
-                Student loan
-              </p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                No student loan included
-              </p>
-            </div>
-
-            <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
-                Region
-              </p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                England, Wales & Northern Ireland
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-        <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-          Common reverse questions
-        </p>
-
-        <div className="mt-6 space-y-4">
-          <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-5 py-5 dark:border-slate-800 dark:bg-slate-900">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              What salary do I need for {formatCurrency(targetMonthlyNet)} a month?
-            </h3>
-            <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
-              On this estimate, about{" "}
-              <strong className="text-slate-900 dark:text-slate-100">
-                {formatCurrency(grossAnnual)}
-              </strong>{" "}
-              per year.
-            </p>
-          </div>
-
-          <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-5 py-5 dark:border-slate-800 dark:bg-slate-900">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Why is the required salary higher than the monthly target?
-            </h3>
-            <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
-              Because the gross salary is reduced by income tax, National
-              Insurance, pension deductions, and other payroll pressure before
-              it becomes take-home pay.
-            </p>
-          </div>
-
-          <div className="rounded-[22px] border border-slate-200 bg-slate-50 px-5 py-5 dark:border-slate-800 dark:bg-slate-900">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Why can my real payslip differ?
-            </h3>
-            <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
-              Your actual result can change based on tax code, pension scheme,
-              salary sacrifice, benefits, overtime, bonus timing, or region.
-            </p>
           </div>
         </div>
       </section>
 
       <InternalLinkBlock
-        title="Explore nearby take-home targets"
-        description="These nearby reverse salary pages help users compare whether a slightly higher or lower monthly target creates a meaningful change in required gross salary."
-        links={nearbyReverseLinks}
+        title="Move deeper from this reverse salary result"
+        description="The smartest next step is usually to compare this required salary with nearby salary bands, inspect the salary breakdown in full, or test a slightly different monthly target."
+        primaryAction={primaryAction}
+        adjacentLinks={adjacentLinks}
+        understandingLinks={understandingLinks}
+        retentionAction={retentionAction}
       />
 
       <section className="grid gap-4 md:grid-cols-3">
         <Link
           href="/reverse-tax"
-          className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+          className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
         >
           <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Use the reverse calculator
+            Use the interactive reverse calculator
           </p>
           <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Enter your own target and adjust assumptions interactively.
+            Change your monthly target and assumptions in a more flexible way.
           </p>
         </Link>
 
         <Link
           href="/compare-salary"
-          className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+          className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
         >
           <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Compare salary jumps
+            Compare salary outcomes
           </p>
           <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Test whether a higher salary meaningfully improves monthly take-home.
+            See whether nearby salary bands make a meaningful monthly difference.
           </p>
         </Link>
 
         <Link
           href="/salary-hub"
-          className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+          className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
         >
           <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Explore salary hub
+            Explore more salary routes
           </p>
           <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Move into more salary levels, breakdowns, and scenario pages.
+            Browse salary pages, hourly routes, benchmark pages, and monthly targets.
           </p>
         </Link>
+      </section>
+
+      <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
+        <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+          Underlying salary result
+        </p>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-2">
+          <div className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-800 dark:bg-slate-900/70">
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Estimated monthly take-home
+            </p>
+            <p className="mt-3 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+              {formatCurrency(result.netMonthly)}
+            </p>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+              under the current reverse-planning assumptions
+            </p>
+          </div>
+
+          <div className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-800 dark:bg-slate-900/70">
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              Estimated annual take-home
+            </p>
+            <p className="mt-3 text-2xl font-semibold text-slate-900 dark:text-slate-100">
+              {formatCurrency(result.netAnnual)}
+            </p>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+              after tax and deductions
+            </p>
+          </div>
+        </div>
       </section>
     </div>
   );

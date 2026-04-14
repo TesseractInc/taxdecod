@@ -2,14 +2,47 @@ type SalaryPageSchemaProps = {
   salary: number;
   netAnnual: number;
   netMonthly: number;
+  faqItems?: {
+    question: string;
+    answer: string;
+  }[];
 };
 
 export default function SalaryPageSchema({
   salary,
   netAnnual,
   netMonthly,
+  faqItems = [],
 }: SalaryPageSchemaProps) {
   const pageUrl = `https://taxdecod.com/${salary}-after-tax-uk`;
+
+  const fallbackFaq = [
+    {
+      question: `How much is £${salary.toLocaleString(
+        "en-GB"
+      )} after tax per month in the UK?`,
+      answer: `Estimated monthly take-home pay is £${netMonthly.toLocaleString(
+        "en-GB",
+        { maximumFractionDigits: 0 }
+      )}.`,
+    },
+    {
+      question: `How much is £${salary.toLocaleString(
+        "en-GB"
+      )} after tax per year in the UK?`,
+      answer: `Estimated annual take-home pay is £${netAnnual.toLocaleString(
+        "en-GB",
+        { maximumFractionDigits: 0 }
+      )}.`,
+    },
+    {
+      question: "Why can my actual payslip be different from this estimate?",
+      answer:
+        "Actual payslips can differ because of tax code changes, pension setup, student loan deductions, bonuses, overtime, salary sacrifice, benefits, and payroll timing.",
+    },
+  ];
+
+  const finalFaq = faqItems.length > 0 ? faqItems : fallbackFaq;
 
   const schema = {
     "@context": "https://schema.org",
@@ -41,44 +74,40 @@ export default function SalaryPageSchema({
         },
       },
       {
-        "@type": "FAQPage",
-        "@id": `${pageUrl}#faq`,
-        mainEntity: [
+        "@type": "BreadcrumbList",
+        "@id": `${pageUrl}#breadcrumbs`,
+        itemListElement: [
           {
-            "@type": "Question",
-            name: `How much is £${salary.toLocaleString(
-              "en-GB"
-            )} after tax per month in the UK?`,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: `Estimated monthly take-home pay is £${netMonthly.toLocaleString(
-                "en-GB",
-                { maximumFractionDigits: 0 }
-              )}.`,
-            },
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://taxdecod.com",
           },
           {
-            "@type": "Question",
-            name: `How much is £${salary.toLocaleString(
-              "en-GB"
-            )} after tax per year in the UK?`,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: `Estimated annual take-home pay is £${netAnnual.toLocaleString(
-                "en-GB",
-                { maximumFractionDigits: 0 }
-              )}.`,
-            },
+            "@type": "ListItem",
+            position: 2,
+            name: "Salary hub",
+            item: "https://taxdecod.com/salary-hub",
           },
           {
-            "@type": "Question",
-            name: "Why can my actual payslip be different from this estimate?",
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: "Actual payslips can differ because of tax code changes, pension setup, student loan deductions, bonuses, overtime, salary sacrifice, benefits, and payroll timing.",
-            },
+            "@type": "ListItem",
+            position: 3,
+            name: `£${salary.toLocaleString("en-GB")} after tax in the UK`,
+            item: pageUrl,
           },
         ],
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${pageUrl}#faq`,
+        mainEntity: finalFaq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
       },
       {
         "@type": "Organization",

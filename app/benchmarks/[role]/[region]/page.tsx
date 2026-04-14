@@ -1,197 +1,234 @@
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import SiteHeader from "../../../../components/layout/site-header";
+import SiteFooter from "../../../../components/layout/site-footer";
 import Container from "../../../../components/ui/container";
-import BenchmarkJsonLd from "../../../../components/benchmarks/benchmark-json-ld";
-import CompareWithBenchmarkCard from "../../../../components/benchmarks/compare-with-benchmark-card";
-import { benchmarkData } from "../../../../lib/benchmarks/benchmark-data";
+import TaxYearTrustBar from "../../../../components/shared/tax-year-trust-bar";
+import SeoPageHero from "../../../../components/seo/seo-page-hero";
+import SeoRealityCard from "../../../../components/seo/seo-reality-card";
+import SeoCtaCluster from "../../../../components/seo/seo-cta-cluster";
+import PageSchema from "../../../../components/seo/page-schema";
+import { buildSeoMetadata } from "../../../../components/seo/metadata";
+import { formatCurrency } from "../../../../lib/tax/utils/currency";
+import { TRUST_COPY } from "../../../../lib/tax/config";
 import {
-  getBenchmarkEntry,
-  getRegionName,
-  getRelatedRegionBenchmarks,
-  getRelatedRoleBenchmarks,
-  getRoleTitle,
-} from "../../../../lib/benchmarks/benchmark-helpers";
+  formatCitySlug,
+  formatRoleSlug,
+  getBenchmarkParams,
+  parseBenchmark,
+} from "../../../../components/seo/role-region-benchmarks";
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
+type BenchmarkPageProps = {
+  params: Promise<{
+    role: string;
+    region: string;
+  }>;
+};
 
-export function generateStaticParams() {
-  return benchmarkData.map((entry) => ({
-    role: entry.role,
-    region: entry.region,
+export async function generateStaticParams() {
+  return getBenchmarkParams().map(({ role, city }) => ({
+    role,
+    region: city,
   }));
 }
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ role: string; region: string }>;
-}): Promise<Metadata> {
-  const { role, region } = await params;
+}: BenchmarkPageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const benchmark = parseBenchmark(resolvedParams.role, resolvedParams.region);
 
-  const data = getBenchmarkEntry(role, region);
-  const roleTitle = getRoleTitle(role);
-  const regionName = getRegionName(region);
-
-  if (!data) {
-    return {
-      title: "Benchmark page not found | TaxDecod",
-    };
+  if (!benchmark) {
+    return buildSeoMetadata({
+      title: "Salary Benchmarks UK | TaxDecod",
+      description: "Role and region salary benchmark pages for UK salary decisions.",
+      path: "/benchmarks",
+    });
   }
 
-  return {
-    title: `${roleTitle} salary in ${regionName} | TaxDecod`,
-    description: `See the benchmark ${roleTitle.toLowerCase()} salary in ${regionName}, including lower range, median and upper range, with TaxDecod benchmark context.`,
-  };
+  const roleLabel = formatRoleSlug(benchmark.role);
+  const regionLabel = formatCitySlug(benchmark.city);
+
+  return buildSeoMetadata({
+    title: `${roleLabel} salary ${regionLabel} after tax context`,
+    description: `See ${roleLabel} salary context in ${regionLabel}, including lower, median, and upper benchmark ranges for salary decision support.`,
+    path: `/benchmarks/${benchmark.role}/${benchmark.city}`,
+  });
 }
 
 export default async function BenchmarkPage({
   params,
-}: {
-  params: Promise<{ role: string; region: string }>;
-}) {
-  const { role, region } = await params;
+}: BenchmarkPageProps) {
+  const resolvedParams = await params;
+  const benchmark = parseBenchmark(resolvedParams.role, resolvedParams.region);
 
-  const data = getBenchmarkEntry(role, region);
+  if (!benchmark) notFound();
 
-  if (!data) return notFound();
-
-  const roleTitle = getRoleTitle(role);
-  const regionName = getRegionName(region);
-
-  const relatedRolePages = getRelatedRoleBenchmarks(role, region).slice(0, 4);
-  const relatedRegionPages = getRelatedRegionBenchmarks(role, region).slice(0, 4);
-
-  const pageTitle = `${roleTitle} salary in ${regionName} | TaxDecod`;
-  const pageDescription = `See the benchmark ${roleTitle.toLowerCase()} salary in ${regionName}, including lower range, median and upper range, with TaxDecod benchmark context.`;
+  const roleLabel = formatRoleSlug(benchmark.role);
+  const regionLabel = formatCitySlug(benchmark.city);
 
   return (
     <main className="app-shell">
-      <SiteHeader />
-      <BenchmarkJsonLd
-        title={pageTitle}
-        description={pageDescription}
-        url={`https://taxdecod.com/benchmarks/${role}/${region}`}
+      <PageSchema
+        pageUrl={`https://taxdecod.com/benchmarks/${benchmark.role}/${benchmark.city}`}
+        title={`${roleLabel} salary ${regionLabel} after tax context | TaxDecod`}
+        description={`Salary benchmark context for ${roleLabel} in ${regionLabel}.`}
+        breadcrumbs={[
+          { name: "Home", url: "https://taxdecod.com" },
+          { name: "Benchmarks", url: "https://taxdecod.com/benchmarks" },
+          {
+            name: `${roleLabel} ${regionLabel}`,
+            url: `https://taxdecod.com/benchmarks/${benchmark.role}/${benchmark.city}`,
+          },
+        ]}
+        faqItems={[
+          {
+            question: `What is a typical ${roleLabel} salary in ${regionLabel}?`,
+            answer: `A rough benchmark range is ${formatCurrency(
+              benchmark.low
+            )} to ${formatCurrency(benchmark.high)}, with a median around ${formatCurrency(
+              benchmark.median
+            )}.`,
+          },
+          {
+            question: `Why does role and region salary context matter?`,
+            answer:
+              "Because a salary only becomes useful when judged against market level, living costs, progression, and the monthly take-home that actually reaches you.",
+          },
+        ]}
       />
 
-      <section className="py-12 sm:py-14">
+      <SiteHeader />
+
+      <section className="py-16 sm:py-20">
         <Container>
-          <div className="max-w-3xl">
-            <p className="text-sm app-accent">Salary benchmark</p>
-
-            <h1 className="mt-3 text-4xl font-bold app-title sm:text-5xl">
-              {roleTitle} salary in {regionName}
-            </h1>
-
-            <p className="mt-4 text-base leading-8 app-copy">
-              The median salary for a {roleTitle.toLowerCase()} in {regionName} is{" "}
-              <strong>{formatCurrency(data.median)}</strong> per year.
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            <div className="app-soft p-5">
-              <p className="text-xs app-subtle">Lower range</p>
-              <p className="text-xl font-semibold app-title">
-                {formatCurrency(data.lower)}
-              </p>
-            </div>
-
-            <div className="app-soft p-5">
-              <p className="text-xs app-subtle">Median</p>
-              <p className="text-xl font-semibold app-title">
-                {formatCurrency(data.median)}
-              </p>
-            </div>
-
-            <div className="app-soft p-5">
-              <p className="text-xs app-subtle">Upper range</p>
-              <p className="text-xl font-semibold app-title">
-                {formatCurrency(data.upper)}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-8 app-card p-6">
-            <p className="text-sm app-copy">
-              Source: {data.source} • Updated: {data.updated}
-            </p>
-
-            <p className="mt-4 text-sm leading-8 app-copy">
-              This is based on employee earnings data and should be used as a
-              benchmark reference. Your actual salary may vary based on
-              experience, employer, employer type, and role specifics.
-            </p>
-          </div>
+          <SeoPageHero
+            eyebrow="Role + region salary benchmark"
+            title={`${roleLabel} salary in ${regionLabel}`}
+            description="This page adds role and region context to salary decisions so users can judge whether a salary is weak, typical, or strong before moving into after-tax comparison."
+            highlightValue={formatCurrency(benchmark.median)}
+            highlightSubtext="approx median benchmark"
+          />
 
           <div className="mt-8">
-            <CompareWithBenchmarkCard
-              roleTitle={roleTitle}
-              regionName={regionName}
-              median={data.median}
+            <TaxYearTrustBar
+              description={TRUST_COPY.salaryHub.description}
+              points={[...TRUST_COPY.salaryHub.points]}
             />
           </div>
 
-          {relatedRolePages.length > 0 ? (
-            <div className="mt-8 app-card rounded-[30px] p-6 sm:p-7">
-              <p className="text-sm font-medium app-accent">Same role, other regions</p>
-              <h2 className="mt-2 text-2xl font-semibold app-title">
-                Explore more {roleTitle.toLowerCase()} benchmark pages
-              </h2>
+          <div className="mt-10">
+            <SeoRealityCard label="Benchmark reality">
+              A benchmark is not just about the headline salary. The real decision is
+              whether the role-level pay in <strong>{regionLabel}</strong> creates a
+              monthly take-home strong enough for the life and cost structure users
+              actually face there.
+            </SeoRealityCard>
+          </div>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {relatedRolePages.map((item) => (
-                  <Link
-                    key={`${item.role}-${item.region}`}
-                    href={`/benchmarks/${item.role}/${item.region}`}
-                    className="app-soft rounded-[22px] p-5 hover-lift"
-                  >
-                    <p className="font-semibold app-title">
-                      {roleTitle} in {getRegionName(item.region)}
-                    </p>
-                    <p className="mt-2 text-sm app-copy">
-                      Median {formatCurrency(item.median)}
-                    </p>
-                  </Link>
-                ))}
+          <div className="mt-10">
+            <SeoCtaCluster
+              items={[
+                {
+                  href: "/calculator",
+                  title: "Check a salary after tax",
+                  description: "Move from benchmark context into real take-home numbers.",
+                },
+                {
+                  href: "/compare-salary",
+                  title: "Compare two salary outcomes",
+                  description: "Useful when deciding between current pay and a new offer.",
+                },
+                {
+                  href: "/reverse-tax",
+                  title: "Reverse from a monthly target",
+                  description: "Start from the income you actually want to keep.",
+                },
+              ]}
+            />
+          </div>
+
+          <section className="mt-14 grid gap-6 lg:grid-cols-[1fr_1fr]">
+            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                Benchmark range
+              </p>
+
+              <div className="mt-5 space-y-3">
+                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Lower range</p>
+                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                    {formatCurrency(benchmark.low)}
+                  </p>
+                </div>
+
+                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Median range</p>
+                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                    {formatCurrency(benchmark.median)}
+                  </p>
+                </div>
+
+                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Upper range</p>
+                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                    {formatCurrency(benchmark.high)}
+                  </p>
+                </div>
               </div>
             </div>
-          ) : null}
 
-          {relatedRegionPages.length > 0 ? (
-            <div className="mt-8 app-card rounded-[30px] p-6 sm:p-7">
-              <p className="text-sm font-medium app-accent">Same region, other roles</p>
-              <h2 className="mt-2 text-2xl font-semibold app-title">
-                Explore more benchmark pages in {regionName}
-              </h2>
+            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                How to use this page
+              </p>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                {relatedRegionPages.map((item) => (
-                  <Link
-                    key={`${item.role}-${item.region}`}
-                    href={`/benchmarks/${item.role}/${item.region}`}
-                    className="app-soft rounded-[22px] p-5 hover-lift"
-                  >
-                    <p className="font-semibold app-title">
-                      {getRoleTitle(item.role)}
-                    </p>
-                    <p className="mt-2 text-sm app-copy">
-                      Median {formatCurrency(item.median)}
-                    </p>
-                  </Link>
-                ))}
+              <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
+                <p>
+                  Benchmark pages are for context, not final answers. They help users
+                  judge whether a role-level salary looks weak, median, or strong in a
+                  specific region.
+                </p>
+                <p>
+                  The real next step is to take a salary from this range and check the
+                  after-tax outcome. That is where benchmark context becomes decision
+                  quality.
+                </p>
+                <p>
+                  For example, a median benchmark of{" "}
+                  <strong>{formatCurrency(benchmark.median)}</strong> may still feel
+                  very different after tax depending on student loan, pension, and
+                  housing cost.
+                </p>
+              </div>
+
+              <div className="mt-6 grid gap-3">
+                <Link
+                  href="/calculator"
+                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+                >
+                  Check a benchmark salary after tax
+                </Link>
+                <Link
+                  href="/compare-salary"
+                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+                >
+                  Compare current salary vs benchmark
+                </Link>
+                <Link
+                  href="/salary-hub"
+                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+                >
+                  Explore more salary routes
+                </Link>
               </div>
             </div>
-          ) : null}
+          </section>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

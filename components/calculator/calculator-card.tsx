@@ -1,252 +1,178 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-  Building2,
-  GraduationCap,
-  Sparkles,
-  WalletCards,
-} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { ArrowDownRight, ShieldCheck } from "lucide-react";
+import CalculatorForm from "./calculator-form";
+import ResultPreview from "./result-preview";
+import { calculateTakeHome } from "../../lib/tax/calculators/take-home";
+import type { CalculatorInput } from "../../types/tax";
 
 type CalculatorCardProps = {
   mode?: "overview" | "full";
+  values?: CalculatorInput;
+  onValuesChange?: (values: CalculatorInput) => void;
 };
 
-type DeductionItem = {
-  label: string;
-  value: string;
-  percent: number;
-  colorClass: string;
-  helper?: string;
+const defaultValues: CalculatorInput = {
+  salary: 30000,
+  payPeriod: "yearly",
+  region: "uk",
+  pensionPercent: 5,
+  studentLoanPlan: "none",
+  taxCode: "1257L",
 };
-
-const deductionItems: DeductionItem[] = [
-  {
-    label: "Income Tax",
-    value: "£5,486",
-    percent: 34,
-    colorClass: "bg-sky-500",
-    helper: "Usually the largest deduction pressure",
-  },
-  {
-    label: "National Insurance",
-    value: "£2,194",
-    percent: 16,
-    colorClass: "bg-cyan-500",
-    helper: "A second layer that changes the final take-home",
-  },
-  {
-    label: "Pension",
-    value: "£2,000",
-    percent: 14,
-    colorClass: "bg-emerald-500",
-    helper: "Good long term, but it reduces what you keep now",
-  },
-  {
-    label: "Student Loan",
-    value: "£1,038",
-    percent: 10,
-    colorClass: "bg-violet-500",
-    helper: "Loan repayments can materially shape real monthly pay",
-  },
-];
-
-const darkCard =
-  "rounded-[24px] border border-slate-200 bg-slate-50/70 p-5 dark:border-slate-800 dark:bg-slate-950/86";
-const darkPanel =
-  "rounded-[26px] border border-slate-200 bg-slate-50/70 p-5 dark:border-slate-800 dark:bg-slate-950/88";
 
 export default function CalculatorCard({
   mode = "full",
+  values,
+  onValuesChange,
 }: CalculatorCardProps) {
-  const sectionPadding = mode === "overview" ? "pb-0" : "pb-10";
+  const resultRef = useRef<HTMLDivElement | null>(null);
+  const [internalValues, setInternalValues] =
+    useState<CalculatorInput>(defaultValues);
+
+  useEffect(() => {
+    if (values) {
+      setInternalValues(values);
+    }
+  }, [values]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const customEvent = event as CustomEvent<number>;
+      const value = Number(customEvent.detail);
+
+      if (!Number.isFinite(value) || value < 1000) return;
+
+      const nextValues = {
+        ...(values ?? internalValues),
+        salary: value,
+      };
+
+      if (!values) {
+        setInternalValues(nextValues);
+      }
+
+      onValuesChange?.(nextValues);
+
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }, 120);
+    };
+
+    window.addEventListener("prefillSalary", handler);
+
+    return () => {
+      window.removeEventListener("prefillSalary", handler);
+    };
+  }, [internalValues, onValuesChange, values]);
+
+  const currentValues = values ?? internalValues;
+
+  const result = useMemo(() => {
+    return calculateTakeHome(currentValues);
+  }, [currentValues]);
+
+  const isOverview = mode === "overview";
 
   return (
-    <section className={sectionPadding}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950/94">
-          <div className="grid lg:grid-cols-2">
-            <div className="border-b border-slate-200 p-7 dark:border-slate-800 lg:border-b-0 lg:border-r">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] app-accent">
-                Step 1
-              </p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                Salary details
-              </h2>
-              <p className="mt-3 text-base leading-8 text-slate-600 dark:text-slate-300">
-                Start with your gross salary, then adjust region, pension, and student loan only if needed.
-              </p>
-
-              <div className="mt-6 space-y-5">
-                <div className={darkPanel}>
-                  <div className="flex items-center gap-3">
-                    <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-900">
-                      <Sparkles className="h-5 w-5 app-accent" />
-                    </div>
-                    <div>
-                      <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                        Pay period
-                      </p>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Choose yearly or monthly input.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div className={darkCard}>
-                    <div className="flex items-center gap-3">
-                      <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-900">
-                        <Building2 className="h-5 w-5 app-accent" />
-                      </div>
-                      <div>
-                        <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                          Region
-                        </p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          England, Wales & NI rules.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={darkCard}>
-                    <div className="flex items-center gap-3">
-                      <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-900">
-                        <GraduationCap className="h-5 w-5 app-accent" />
-                      </div>
-                      <div>
-                        <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                          Student loan
-                        </p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          Select the correct plan only if relevant.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={darkPanel}>
-                  <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    Tax code
+    <section className={isOverview ? "pb-0" : "pb-10"}>
+      <div className={isOverview ? "max-w-none" : "mx-auto max-w-7xl px-4 sm:px-6"}>
+        <div className="overflow-hidden rounded-[34px] border app-card-strong shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)]">
+          <div className="grid gap-0 lg:grid-cols-[0.94fr_1.06fr]">
+            <div
+              className="border-b p-5 sm:p-6 lg:border-b-0 lg:border-r lg:p-7"
+              style={{ borderColor: "var(--line)" }}
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] app-accent">
+                    Salary input
                   </p>
-                  <p className="mt-2 text-sm leading-7 text-slate-500 dark:text-slate-400">
-                    Leave the standard code unless your payslip shows a different one.
+                  <h2 className="mt-2 text-2xl font-bold tracking-tight app-title sm:text-3xl">
+                    Enter a salary and get the answer immediately
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-sm leading-7 app-copy sm:text-[15px]">
+                    Start with gross pay. Adjust region, pension, and student
+                    loan only when they matter.
                   </p>
                 </div>
+
+                <div
+                  className="inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--surface-2)",
+                    color: "var(--muted)",
+                  }}
+                >
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                  Updated for UK PAYE-style logic
+                </div>
+              </div>
+
+              <div className="mt-5">
+                <CalculatorForm
+                  values={currentValues}
+                  onChange={(nextValues) => {
+                    if (!values) {
+                      setInternalValues(nextValues);
+                    }
+                    onValuesChange?.(nextValues);
+                  }}
+                />
+              </div>
+
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    resultRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "nearest",
+                    })
+                  }
+                  className="app-button-primary"
+                >
+                  Calculate take-home pay
+                </button>
+
+                <Link href="/calculator" className="app-button-secondary">
+                  Open full calculator
+                </Link>
               </div>
             </div>
 
-            <div className="p-7">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] app-accent">
-                Step 2
-              </p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                Take-home result
-              </h2>
-              <p className="mt-3 text-base leading-8 text-slate-600 dark:text-slate-300">
-                Your annual and monthly net pay update instantly.
-              </p>
-
-              <div className="mt-6 grid gap-4 md:grid-cols-3">
-                <div className={darkCard}>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                    Take-home per year
+            <div ref={resultRef} className="p-5 sm:p-6 lg:p-7">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] app-accent">
+                    Instant result
                   </p>
-                  <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
-                    £29,282
-                  </p>
+                  <h2 className="mt-2 text-2xl font-bold tracking-tight app-title sm:text-3xl">
+                    See what actually reaches you
+                  </h2>
                 </div>
 
-                <div className={darkCard}>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                    Take-home per month
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
-                    £2,440
-                  </p>
-                </div>
-
-                <div className={darkCard}>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-                    Biggest deduction
-                  </p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    Income Tax
-                  </p>
+                <div
+                  className="inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-medium"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--surface-2)",
+                    color: "var(--muted)",
+                  }}
+                >
+                  Live calculation
+                  <ArrowDownRight className="h-3.5 w-3.5" />
                 </div>
               </div>
 
-              <div className="mt-5 rounded-[26px] border border-slate-200 bg-slate-50/70 p-5 dark:border-slate-800 dark:bg-slate-950/88">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-                      Deduction breakdown
-                    </p>
-                    <p className="mt-2 text-sm leading-7 text-slate-500 dark:text-slate-400">
-                      Which deductions shape your take-home most
-                    </p>
-                  </div>
-
-                  <div className="inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm dark:bg-slate-900 dark:text-slate-300">
-                    Live interpretation
-                  </div>
-                </div>
-
-                <div className="mt-5 space-y-5">
-                  {deductionItems.map((item, index) => (
-                    <motion.div
-                      key={item.label}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.08 * index }}
-                    >
-                      <div className="mb-2 flex items-end justify-between gap-4">
-                        <div>
-                          <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                            {item.label}
-                          </p>
-                          {item.helper ? (
-                            <p className="mt-1 text-sm leading-7 text-slate-500 dark:text-slate-400">
-                              {item.helper}
-                            </p>
-                          ) : null}
-                        </div>
-
-                        <span className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                          {item.value}
-                        </span>
-                      </div>
-
-                      <div className="h-4 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${item.percent}%` }}
-                          transition={{ duration: 0.8, delay: 0.12 * index }}
-                          className={`h-full rounded-full ${item.colorClass}`}
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="mt-6 rounded-[22px] border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-                  <div className="flex items-start gap-3">
-                    <div className="inline-flex rounded-[16px] bg-slate-100 p-3 dark:bg-slate-950">
-                      <WalletCards className="h-5 w-5 app-accent" />
-                    </div>
-                    <div>
-                      <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                        Take-home drives decisions
-                      </p>
-                      <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                        Rent, bills, savings, and lifestyle all depend on the money left after deductions, not the gross figure.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              <div className="mt-5">
+                <ResultPreview result={result} values={currentValues} />
               </div>
             </div>
           </div>

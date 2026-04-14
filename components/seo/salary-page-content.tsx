@@ -5,11 +5,16 @@ import { formatCurrency } from "../../lib/tax/utils/currency";
 import type { CalculatorInput, TakeHomeResult } from "../../types/tax";
 import InternalLinkBlock from "./internal-link-block";
 import {
+  getAdjacentScenarioLinks,
   getDecisionLinks,
+  getPrimaryNextAction,
   getRelatedSalaryLinks,
+  getRetentionLink,
   getSalaryIntentLinks,
+  getUnderstandingLinks,
   getVariantLinks,
 } from "../../components/seo/internal-links";
+import { getProgrammaticSalaryContent } from "./programmatic-salary-content";
 
 type Props = {
   salary: number;
@@ -53,10 +58,22 @@ export default function SalaryPageContent({
   const decisionLinks = getDecisionLinks(salary);
   const intentLinks = getSalaryIntentLinks(salary);
 
+  const primaryAction = getPrimaryNextAction(salary);
+  const adjacentLinks = getAdjacentScenarioLinks(salary);
+  const understandingLinks = getUnderstandingLinks(salary);
+  const retentionAction = getRetentionLink(salary);
+
   const regionLabel =
     input.region === "scotland"
       ? "Scotland salary rules"
       : "England, Wales & Northern Ireland rules";
+
+  const insightPack = getProgrammaticSalaryContent({
+    salary,
+    netMonthly: result.netMonthly,
+    netAnnual: result.netAnnual,
+    keepPercent,
+  });
 
   return (
     <div className="space-y-10">
@@ -69,14 +86,11 @@ export default function SalaryPageContent({
               </p>
 
               <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-                What {formatCurrency(salary)} actually turns into after tax
+                {insightPack.headline}
               </h2>
 
               <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-400">
-                A salary of {formatCurrency(salary)} sounds meaningful in
-                isolation. But what shapes real life is the take-home pay that
-                reaches you after income tax, National Insurance, pension, and
-                student loan deductions.
+                {insightPack.summary}
               </p>
             </div>
 
@@ -113,10 +127,28 @@ export default function SalaryPageContent({
 
               <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
                 <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
-                  You keep
+                  Weekly take-home
                 </p>
-                <p className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
-                  {keepPercent.toFixed(0)}%
+                <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                  {formatCurrency(weeklyNet)}
+                </p>
+              </div>
+
+              <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                  Gross monthly pay
+                </p>
+                <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                  {formatCurrency(monthlyGross)}
+                </p>
+              </div>
+
+              <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
+                <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
+                  Gross weekly pay
+                </p>
+                <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                  {formatCurrency(weeklyGross)}
                 </p>
               </div>
             </div>
@@ -124,171 +156,158 @@ export default function SalaryPageContent({
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950/80">
             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-              Deduction reading
+              Deduction pressure
             </p>
 
             <div className="mt-5 space-y-3">
-              {[
-                ["Income Tax", result.incomeTaxAnnual],
-                ["National Insurance", result.nationalInsuranceAnnual],
-                ["Pension", result.pensionAnnual],
-                ["Student Loan", result.studentLoanAnnual],
-              ].map(([label, value]) => (
-                <div
-                  key={label}
-                  className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900"
-                >
-                  <span className="text-sm text-slate-600 dark:text-slate-400">
-                    {label}
-                  </span>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {formatCurrency(Number(value))}
-                  </span>
-                </div>
-              ))}
+              <div className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
+                <span className="text-sm text-slate-600 dark:text-slate-400">
+                  Total deductions
+                </span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {formatCurrency(totalDeductions)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
+                <span className="text-sm text-slate-600 dark:text-slate-400">
+                  Keep rate
+                </span>
+                <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                  {keepPercent.toFixed(0)}%
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between rounded-[20px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
+                <span className="text-sm text-slate-600 dark:text-slate-400">
+                  Biggest deduction
+                </span>
+                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  {biggestDeduction?.label ?? "No major deduction visible"}
+                </span>
+              </div>
             </div>
 
             <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">
-                Biggest deduction
-              </p>
-              <p className="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
-                {biggestDeduction?.label ?? "No major deduction"}
-              </p>
-              <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                {biggestDeduction
-                  ? `${biggestDeduction.label} is the biggest drag on this salary result at ${formatCurrency(
-                      biggestDeduction.value
-                    )} per year.`
-                  : "This page does not currently show one standout deduction."}
+              <p className="text-sm leading-7 text-slate-600 dark:text-slate-400">
+                {insightPack.practicalMeaning}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          ["Gross monthly pay", formatCurrency(monthlyGross)],
-          ["Weekly gross pay", formatCurrency(weeklyGross)],
-          ["Weekly take-home", formatCurrency(weeklyNet)],
-          ["Total deductions", formatCurrency(totalDeductions)],
-        ].map(([label, value]) => (
-          <div
-            key={label}
-            className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950"
-          >
-            <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
-            <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-              {value}
-            </p>
+      <InternalLinkBlock
+        title="Move deeper from this salary result"
+        description="This page should not be a dead end. From here, the best route is either to compare, reverse-plan, understand the deductions better, or move into nearby salary scenarios."
+        primaryAction={primaryAction}
+        adjacentLinks={adjacentLinks}
+        understandingLinks={understandingLinks}
+        retentionAction={retentionAction}
+      />
+
+      <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
+          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+            What this salary means
+          </p>
+
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+            {formatCurrency(salary)} is only useful when the take-home is understood
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
+            <p>{insightPack.practicalMeaning}</p>
+            <p>{insightPack.thresholdNote}</p>
+            <p>{insightPack.decisionPrompt}</p>
           </div>
-        ))}
+
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            {insightPack.qualitySignals.map((item) => (
+              <div
+                key={item}
+                className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
+          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+            Salary variants
+          </p>
+
+          <div className="mt-5 grid gap-3">
+            {variantLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-2">
+        <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
+          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+            Compare and decide
+          </p>
+
+          <div className="mt-5 grid gap-3">
+            {decisionLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
+          <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+            Related intent paths
+          </p>
+
+          <div className="mt-5 grid gap-3">
+            {intentLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
         <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-          Important insight
+          Nearby salary pages
         </p>
 
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-          A higher salary does not translate 1:1 into a better monthly life
-        </h2>
-
-        <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
-          <p>
-            At {formatCurrency(salary)}, what matters most is not the gross
-            salary on paper but the estimated take-home pay of{" "}
-            <strong className="text-slate-900 dark:text-slate-100">
-              {formatCurrency(result.netMonthly)}
-            </strong>{" "}
-            per month.
-          </p>
-
-          <p>
-            That is the number that shapes rent, bills, transport, savings, and
-            day-to-day life. It is also why people often overestimate how much a
-            raise or offer change will really improve their situation.
-          </p>
-
-          <p>
-            On this salary, you lose around{" "}
-            <strong className="text-slate-900 dark:text-slate-100">
-              {formatCurrency(totalDeductions)}
-            </strong>{" "}
-            per year to deductions, which means you keep roughly{" "}
-            <strong className="text-slate-900 dark:text-slate-100">
-              {keepPercent.toFixed(0)}%
-            </strong>{" "}
-            of your gross income.
-          </p>
+        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {relatedSalaryLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-700 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </section>
-
-      <section className="grid gap-4 md:grid-cols-3">
-        <Link
-          href="/compare-salary"
-          className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
-        >
-          <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Compare this salary
-          </p>
-          <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            See whether a higher or lower salary creates a meaningful monthly
-            difference after deductions.
-          </p>
-        </Link>
-
-        <Link
-          href="/reverse-tax"
-          className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
-        >
-          <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Reverse from take-home
-          </p>
-          <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Start from the monthly amount you want to keep and work backwards to
-            the salary it needs.
-          </p>
-        </Link>
-
-        <Link
-          href="/salary-hub"
-          className="rounded-[26px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
-        >
-          <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Explore more salary pages
-          </p>
-          <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Move into nearby salary levels, scenario pages, and related take-home
-            routes.
-          </p>
-        </Link>
-      </section>
-
-      <InternalLinkBlock
-        title="Compare nearby salaries"
-        description="These linked salary pages help users see whether a small change in gross pay meaningfully improves take-home pay."
-        links={relatedSalaryLinks}
-      />
-
-      <InternalLinkBlock
-        title="Explore more salary scenarios"
-        description="Use these pages to move into monthly, Scotland, student loan, calculator, and salary-hub paths."
-        links={variantLinks}
-      />
-
-      <InternalLinkBlock
-        title="Make the next salary decision"
-        description="These paths are useful when the first answer is not enough and you want to compare, reverse, or push into a more practical salary decision."
-        links={decisionLinks}
-      />
-
-      <InternalLinkBlock
-        title="Continue with related salary questions"
-        description="These intent-led paths help keep users moving through the platform in a way that feels natural and useful."
-        links={intentLinks}
-      />
     </div>
   );
 }

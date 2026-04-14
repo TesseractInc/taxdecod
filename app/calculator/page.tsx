@@ -1,7 +1,36 @@
+import Link from "next/link";
 import CalculatorCard from "../../components/calculator/calculator-card";
 import SiteHeader from "../../components/layout/site-header";
+import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import ExperiencePager from "../../components/ui/experience-pager";
+
+const nextRoutes = [
+  {
+    title: "Compare two salaries",
+    description:
+      "Best next move when you want to know whether a raise or new offer really changes monthly life.",
+    href: "/compare-salary",
+  },
+  {
+    title: "Reverse from a target income",
+    description:
+      "Start from the monthly amount you actually want to keep and work backwards to the gross salary needed.",
+    href: "/reverse-tax",
+  },
+  {
+    title: "Understand payslip deductions",
+    description:
+      "Useful when your payslip numbers feel confusing or you want plain-English deduction context.",
+    href: "/payslip-explained",
+  },
+  {
+    title: "Browse salary pages",
+    description:
+      "Jump into nearby salary bands and explore related after-tax routes quickly.",
+    href: "/salary-hub",
+  },
+];
 
 export default function CalculatorPage() {
   return (
@@ -60,13 +89,49 @@ export default function CalculatorPage() {
             </div>
           </div>
 
+          <section className="mt-10 overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_70px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
+            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-7">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                What to do after the first result
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+                Move into the next salary decision, not just the first calculation
+              </h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
+                The calculator should not be a dead end. After a result, users
+                usually need comparison, reverse planning, payslip understanding,
+                or a nearby salary path.
+              </p>
+            </div>
+
+            <div className="grid gap-4 p-6 md:grid-cols-2 sm:p-7">
+              {nextRoutes.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 text-sm transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                >
+                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {item.title}
+                  </p>
+                  <p className="mt-3 leading-7 text-slate-600 dark:text-slate-400">
+                    {item.description}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
           <div className="mt-10 sm:mt-12">
             <ExperiencePager
-              next={{ href: "/insights", label: "Salary leaderboard and insights" }}
+              previous={{ href: "/salary-hub", label: "Browse salary pages" }}
+              next={{ href: "/compare-salary", label: "Compare salary outcomes" }}
             />
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }
