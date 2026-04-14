@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Save } from "lucide-react";
 import SiteHeader from "@/components/layout/site-header";
 import SiteFooter from "@/components/layout/site-footer";
 import Container from "@/components/ui/container";
@@ -10,9 +11,23 @@ import SeoPageHero from "@/components/seo/seo-page-hero";
 import SeoRealityCard from "@/components/seo/seo-reality-card";
 import SeoCtaCluster from "@/components/seo/seo-cta-cluster";
 import EmailCapturePanel from "@/components/shared/email-capture-panel";
+import SavedScenariosPanel from "@/components/shared/saved-scenarios-panel";
+import { useSupabaseAuth } from "@/components/auth/supabase-auth-provider";
 import { calculateTakeHome } from "@/lib/tax/calculators/take-home";
 import { formatCurrency } from "@/lib/tax/utils/currency";
 import { TRUST_COPY, getStandardUkEmployeeInput } from "@/lib/tax/config";
+import {
+  createScenarioId,
+  getLastScenario,
+  saveLastScenario,
+  saveScenario,
+  type SavedScenario,
+} from "@/lib/tax/storage/saved-scenarios";
+
+type CompareState = {
+  salaryA: number;
+  salaryB: number;
+};
 
 const quickPairs = [
   [30000, 35000],
@@ -22,8 +37,31 @@ const quickPairs = [
 ];
 
 export default function CompareSalaryPageClient() {
+  const { user, email } = useSupabaseAuth();
+  const userScope = user?.id || email || "guest";
+
   const [salaryA, setSalaryA] = useState(40000);
   const [salaryB, setSalaryB] = useState(50000);
+  const [saveNotice, setSaveNotice] = useState("");
+
+  useEffect(() => {
+    const saved = getLastScenario<CompareState>("compare", userScope);
+    if (saved?.salaryA && saved?.salaryB) {
+      setSalaryA(saved.salaryA);
+      setSalaryB(saved.salaryB);
+    }
+  }, [userScope]);
+
+  useEffect(() => {
+    saveLastScenario(
+      "compare",
+      {
+        salaryA,
+        salaryB,
+      },
+      userScope
+    );
+  }, [salaryA, salaryB, userScope]);
 
   const inputA = useMemo(
     () =>
@@ -58,6 +96,37 @@ export default function CompareSalaryPageClient() {
 
   const taxLossPercent =
     grossDifference > 0 ? (taxOnIncrease / grossDifference) * 100 : 0;
+
+  function handleSaveScenario() {
+    const scenario: SavedScenario = {
+      id: createScenarioId("compare"),
+      type: "compare",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      title: `£${salaryA.toLocaleString("en-GB")} vs £${salaryB.toLocaleString(
+        "en-GB"
+      )}`,
+      subtitle: `${formatCurrency(monthlyDiff)}/month difference · ${keepPercent.toFixed(
+        0
+      )}% kept`,
+      payload: {
+        salaryA,
+        salaryB,
+      },
+    };
+
+    saveScenario(scenario, userScope);
+    setSaveNotice("Saved to your recent comparison scenarios.");
+    window.setTimeout(() => setSaveNotice(""), 2200);
+  }
+
+  function handleLoadScenario(scenario: SavedScenario) {
+    const payload = scenario.payload as Partial<CompareState>;
+    if (payload.salaryA && payload.salaryB) {
+      setSalaryA(payload.salaryA);
+      setSalaryB(payload.salaryB);
+    }
+  }
 
   return (
     <main className="app-shell">
@@ -192,6 +261,33 @@ export default function CompareSalaryPageClient() {
                 </p>
               </div>
             </div>
+
+            <div className="border-t border-slate-200 px-6 py-5 dark:border-slate-800 sm:px-8">
+              <div className="grid gap-3 sm:grid-cols-[auto_1fr] sm:items-center">
+                <button
+                  type="button"
+                  onClick={handleSaveScenario}
+                  className="app-button-secondary justify-center sm:justify-start"
+                >
+                  <Save className="mr-2 h-4 w-4" />
+                  Save comparison
+                </button>
+
+                {saveNotice ? (
+                  <div
+                    className="rounded-[18px] border px-4 py-3 text-sm"
+                    style={{
+                      borderColor: "color-mix(in srgb, #10b981 22%, var(--line))",
+                      background:
+                        "color-mix(in srgb, #10b981 8%, var(--surface-2))",
+                      color: "var(--text)",
+                    }}
+                  >
+                    {saveNotice}
+                  </div>
+                ) : null}
+              </div>
+            </div>
           </section>
 
           <section className="mt-10 overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_28px_90px_-40px_rgba(15,23,42,0.30)] dark:border-slate-800 dark:bg-slate-950">
@@ -253,6 +349,16 @@ export default function CompareSalaryPageClient() {
               </div>
             </div>
           </section>
+
+          <div className="mt-10">
+            <SavedScenariosPanel
+              type="compare"
+              title="Recent comparison scenarios"
+              emptyTitle="No comparison scenarios saved yet"
+              emptyDescription="Save a salary comparison route and it will appear here for fast return access."
+              onLoad={handleLoadScenario}
+            />
+          </div>
 
           <section className="mt-14 grid gap-4 md:grid-cols-3">
             <Link

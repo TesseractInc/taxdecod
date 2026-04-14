@@ -5,65 +5,56 @@ import { motion } from "framer-motion";
 import {
   ArrowUpRight,
   BadgePoundSterling,
-  BriefcaseBusiness,
   Compass,
   Mail,
   Receipt,
-  RefreshCcw,
+  SearchCheck,
   Target,
 } from "lucide-react";
 import Reveal from "../ui/reveal";
 
-const links = [
+const primaryRoutes = [
   {
     title: "Compare two salaries properly",
-    desc: "See whether a higher salary actually improves monthly life or mainly increases deductions.",
+    desc: "Use this when the real question is whether a raise or offer actually improves monthly life.",
     href: "/compare-salary",
-    tag: "Decision tool",
+    tag: "Decision route",
     icon: Compass,
   },
   {
     title: "Reverse from a monthly target",
-    desc: "Work backwards from the amount you actually want to keep and find the salary behind it.",
+    desc: "Use this when you care about the amount you want to keep, not the gross headline salary.",
     href: "/reverse-tax",
-    tag: "Planning",
+    tag: "Planning route",
     icon: Target,
   },
   {
-    title: "Explore hourly and monthly routes",
-    desc: "Use faster entry points when the question is about hourly pay or a target take-home figure.",
-    href: "/salary-hub",
-    tag: "Intent hub",
-    icon: BadgePoundSterling,
-  },
-  {
-    title: "Check a payslip or refund route",
-    desc: "Move into payroll validation when the question is no longer just about gross salary.",
+    title: "Check payslip or refund routes",
+    desc: "Use these when the question shifts from salary estimation into payroll correctness.",
     href: "/payslip-checker",
     tag: "Verification",
     icon: Receipt,
-    featured: true,
   },
 ];
 
-const supportCards = [
+const secondaryRoutes = [
   {
-    title: "Benchmarks",
-    desc: "Add role and city salary context before moving into take-home comparison.",
+    title: "Benchmarks hub",
+    desc: "Add role and city salary context before checking take-home outcomes.",
     href: "/benchmarks",
     icon: BadgePoundSterling,
   },
   {
-    title: "Contact",
-    desc: "Use the contact page for support, partnerships, or commercial questions.",
-    href: "/contact",
-    icon: Mail,
+    title: "Methodology",
+    desc: "Read how TaxDecod frames salary outputs and how they should be interpreted.",
+    href: "/methodology",
+    icon: SearchCheck,
   },
   {
-    title: "Services",
-    desc: "See wider offerings, business-facing support, and connected tools.",
-    href: "/services",
-    icon: BriefcaseBusiness,
+    title: "Contact",
+    desc: "Use the contact page for support, partnerships, or commercial enquiries.",
+    href: "/contact",
+    icon: Mail,
   },
 ];
 
@@ -76,19 +67,19 @@ export default function ExploreNext() {
             <p className="text-sm font-medium app-accent">What to do next</p>
 
             <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-              Move into the right next salary route
+              Move into the next route that matches the real salary question
             </h2>
 
             <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600 dark:text-slate-300">
               TaxDecod works best when users move from the first result into the
-              next route that matches the real question: compare, reverse, benchmark,
-              payslip check, or refund exploration.
+              next route that fits the actual problem: compare, reverse-plan,
+              verify, benchmark, or understand the result more deeply.
             </p>
           </div>
         </Reveal>
 
-        <div className="mt-7 grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
-          {links.map((item, index) => {
+        <div className="mt-7 grid gap-4 lg:grid-cols-3">
+          {primaryRoutes.map((item, index) => {
             const Icon = item.icon;
 
             return (
@@ -100,11 +91,7 @@ export default function ExploreNext() {
                 >
                   <Link
                     href={item.href}
-                    className={`relative flex h-full flex-col rounded-[28px] border p-5 shadow-sm transition ${
-                      item.featured
-                        ? "border-sky-300 bg-sky-50/22 hover:border-sky-400 dark:border-sky-700 dark:bg-sky-950/18 dark:hover:border-sky-600"
-                        : "border-slate-200 bg-white hover:border-sky-200 hover:bg-sky-50/20 dark:border-slate-800 dark:bg-slate-950/88 dark:hover:border-sky-800 dark:hover:bg-slate-900"
-                    }`}
+                    className="relative flex h-full flex-col rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm transition hover:border-sky-200 hover:bg-sky-50/20 dark:border-slate-800 dark:bg-slate-950/88 dark:hover:border-sky-800 dark:hover:bg-slate-900"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="inline-flex rounded-[18px] bg-slate-100 p-3 dark:bg-slate-900">
@@ -137,21 +124,22 @@ export default function ExploreNext() {
         </div>
 
         <Reveal>
-          <div className="mt-7 grid gap-4 lg:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
+          <div className="mt-7 grid gap-4 lg:grid-cols-[1.15fr_0.95fr_0.95fr_0.95fr]">
             <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-900/78">
               <p className="text-sm app-subtle">Platform logic</p>
 
               <p className="mt-3 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                Different salary questions need different routes
+                Different salary questions need different tools
               </p>
 
               <p className="mt-4 max-w-2xl text-sm leading-8 text-slate-600 dark:text-slate-400">
-                A salary estimate, a city judgment page, a benchmark page, and a payslip
-                check are not the same question. TaxDecod should make that journey obvious.
+                A salary estimate, a city benchmark page, a reverse planner, and a
+                payslip check are not the same job. TaxDecod should make that
+                distinction feel obvious and trustworthy.
               </p>
             </div>
 
-            {supportCards.map((item) => {
+            {secondaryRoutes.map((item) => {
               const Icon = item.icon;
 
               return (
@@ -172,7 +160,9 @@ export default function ExploreNext() {
                     {item.desc}
                   </p>
 
-                  <p className="mt-5 text-sm font-semibold app-accent">Open page →</p>
+                  <p className="mt-5 text-sm font-semibold app-accent">
+                    Open page →
+                  </p>
                 </Link>
               );
             })}

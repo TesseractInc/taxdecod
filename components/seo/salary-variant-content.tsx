@@ -14,10 +14,7 @@ type SalaryVariantContentProps = {
   salary: number;
   input: CalculatorInput;
   result: TakeHomeResult;
-  variant:
-    | "monthly"
-    | "student-loan"
-    | "scotland";
+  variant: "monthly" | "student-loan" | "scotland";
   title: string;
   intro: string;
 };
@@ -25,7 +22,7 @@ type SalaryVariantContentProps = {
 function getVariantLabel(variant: SalaryVariantContentProps["variant"]) {
   if (variant === "monthly") return "Monthly view";
   if (variant === "student-loan") return "Student loan variant";
-  return "Scotland variant";
+  return "Scotland view";
 }
 
 function getVariantPrimaryAction(
@@ -41,7 +38,7 @@ function getVariantPrimaryAction(
 
   if (variant === "scotland") {
     return {
-      label: `Compare the Scotland view against the main UK reading for £${salary.toLocaleString(
+      label: `Compare Scotland against the main UK reading for £${salary.toLocaleString(
         "en-GB"
       )}`,
       href: `/${salary}-after-tax-uk`,
@@ -58,7 +55,7 @@ function getVariantAdjacentLinks(
   salary: number,
   variant: SalaryVariantContentProps["variant"]
 ): LinkItem[] {
-  const baseLinks: LinkItem[] = [
+  const links: LinkItem[] = [
     {
       label: `£${Math.max(18000, salary - 5000).toLocaleString(
         "en-GB"
@@ -74,21 +71,21 @@ function getVariantAdjacentLinks(
   ];
 
   if (variant !== "monthly") {
-    baseLinks.push({
+    links.push({
       label: `£${salary.toLocaleString("en-GB")} after tax monthly`,
       href: `/${salary}-after-tax-monthly`,
     });
   }
 
   if (variant !== "scotland") {
-    baseLinks.push({
+    links.push({
       label: `£${salary.toLocaleString("en-GB")} after tax in Scotland`,
       href: `/${salary}-after-tax-scotland`,
     });
   }
 
   if (variant !== "student-loan") {
-    baseLinks.push({
+    links.push({
       label: `£${salary.toLocaleString(
         "en-GB"
       )} after tax with student loan`,
@@ -96,13 +93,30 @@ function getVariantAdjacentLinks(
     });
   }
 
-  return baseLinks.slice(0, 4);
+  return links.slice(0, 4);
 }
 
 function getVariantUnderstandingLinks(
   salary: number,
   variant: SalaryVariantContentProps["variant"]
 ): LinkItem[] {
+  if (variant === "scotland") {
+    return [
+      {
+        label: `See the main £${salary.toLocaleString("en-GB")} UK after-tax page`,
+        href: `/${salary}-after-tax-uk`,
+      },
+      {
+        label: "Compare salary outcomes interactively",
+        href: "/compare-salary",
+      },
+      {
+        label: "Browse Scotland salary routes in the salary hub",
+        href: "/salary-hub",
+      },
+    ];
+  }
+
   const links: LinkItem[] = [
     {
       label: `See the main £${salary.toLocaleString("en-GB")} after-tax page`,
@@ -154,6 +168,24 @@ function getVariantRetentionAction(
   };
 }
 
+function getScotlandReading(salary: number, netMonthly: number) {
+  if (salary < 30000) {
+    return "At this level, Scotland-specific tax differences are usually less about headline salary and more about how much monthly breathing room remains after fixed costs.";
+  }
+
+  if (salary < 50000) {
+    return "This is a strong range for Scotland-specific comparison because small changes in gross salary can feel different once Scottish income tax treatment is applied.";
+  }
+
+  if (salary < 75000) {
+    return "At this level, Scotland-specific tax treatment becomes more decision-relevant because gross increases can feel less efficient than users expect after deductions.";
+  }
+
+  return `At roughly ${formatCurrency(
+    netMonthly
+  )} a month, Scotland-specific tax treatment should be judged strategically, not just by headline salary.`;
+}
+
 export default function SalaryVariantContent({
   salary,
   input,
@@ -180,6 +212,11 @@ export default function SalaryVariantContent({
     input.region === "scotland"
       ? "Scotland rules"
       : "England, Wales & Northern Ireland rules";
+
+  const scotlandSpecific =
+    variant === "scotland"
+      ? getScotlandReading(salary, result.netMonthly)
+      : null;
 
   return (
     <div className="space-y-10">
@@ -257,6 +294,17 @@ export default function SalaryVariantContent({
                 </p>
               </div>
             </div>
+
+            {scotlandSpecific ? (
+              <div className="mt-6 rounded-[22px] border border-sky-200 bg-sky-50/70 px-4 py-4 dark:border-sky-900/60 dark:bg-sky-950/20">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  Scotland-specific reading
+                </p>
+                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  {scotlandSpecific}
+                </p>
+              </div>
+            ) : null}
           </div>
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950/80">
@@ -278,17 +326,32 @@ export default function SalaryVariantContent({
                 take-home pay.
               </p>
 
-              <p>
-                This variant matters because users often need to understand how
-                the same salary changes under a different framing — monthly,
-                Scotland-specific, or student-loan affected.
-              </p>
-
-              <p>
-                The next smart move is usually to compare this reading with the
-                main salary page, a nearby salary band, or a reverse monthly
-                target.
-              </p>
+              {variant === "scotland" ? (
+                <>
+                  <p>
+                    The Scotland route matters because the same gross salary can
+                    feel different once Scottish income tax treatment is applied.
+                  </p>
+                  <p>
+                    The best next move is usually to compare this page against the
+                    main UK route, then judge whether the monthly difference is
+                    meaningful in real life.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    This variant matters because users often need to understand how
+                    the same salary changes under a different framing — monthly,
+                    Scotland-specific, or student-loan affected.
+                  </p>
+                  <p>
+                    The next smart move is usually to compare this reading with the
+                    main salary page, a nearby salary band, or a reverse monthly
+                    target.
+                  </p>
+                </>
+              )}
             </div>
 
             <div className="mt-6 grid gap-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -8,6 +8,7 @@ import {
   CircleDollarSign,
   GraduationCap,
   PiggyBank,
+  Save,
   Scale,
   Target,
   Wallet2,
@@ -16,8 +17,17 @@ import CalculatorForm from "@/components/calculator/calculator-form";
 import ResultPreview from "@/components/calculator/result-preview";
 import ResultsExperience from "@/components/results/results-experience";
 import PdfReportStrip from "@/components/shared/pdf-report-strip";
+import SavedScenariosPanel from "@/components/shared/saved-scenarios-panel";
+import { useSupabaseAuth } from "@/components/auth/supabase-auth-provider";
 import { calculateTakeHome } from "@/lib/tax/calculators/take-home";
 import { formatCurrency } from "@/lib/tax/utils/currency";
+import {
+  createScenarioId,
+  getLastScenario,
+  saveLastScenario,
+  saveScenario,
+  type SavedScenario,
+} from "@/lib/tax/storage/saved-scenarios";
 import type { CalculatorInput } from "@/types/tax";
 
 type ReverseInput = {
@@ -44,6 +54,11 @@ const initialValues: CalculatorInput = {
   pensionPercent: 5,
   studentLoanPlan: "plan2",
   taxCode: "1257L",
+};
+
+const initialReverseInput: ReverseInput = {
+  targetNet: 3000,
+  payPeriod: "monthly",
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -167,10 +182,9 @@ function getDominantAction(requiredGross: number): NextAction {
     title: "Open the full salary calculator for this result",
     description:
       "Now that you know the estimated salary needed, check the full deduction breakdown and result interpretation in the main calculator.",
-      href: "/calculator",
-    };
-  }
-
+    href: "/calculator",
+  };
+}
 
 const toneStyles = {
   neutral: {
@@ -188,12 +202,34 @@ const toneStyles = {
 } as const;
 
 export default function ReverseTaxCalculator() {
-  const [values, setValues] = useState<CalculatorInput>(initialValues);
+  const { user, email } = useSupabaseAuth();
+  const userScope = user?.id || email || "guest";
 
-  const [reverseInput, setReverseInput] = useState<ReverseInput>({
-    targetNet: 3000,
-    payPeriod: "monthly",
-  });
+  const [values, setValues] = useState<CalculatorInput>(initialValues);
+  const [reverseInput, setReverseInput] =
+    useState<ReverseInput>(initialReverseInput);
+  const [saveNotice, setSaveNotice] = useState("");
+
+  useEffect(() => {
+    const saved = getLastScenario<{
+      reverseInput?: ReverseInput;
+      values?: CalculatorInput;
+    }>("reverse", userScope);
+
+    if (saved?.values) {
+      setValues({
+        ...initialValues,
+        ...saved.values,
+      });
+    }
+
+    if (saved?.reverseInput) {
+      setReverseInput({
+        ...initialReverseInput,
+        ...saved.reverseInput,
+      });
+    }
+  }, [userScope]);
 
   const targetAnnual = useMemo(() => {
     return reverseInput.payPeriod === "monthly"
@@ -232,6 +268,17 @@ export default function ReverseTaxCalculator() {
       payPeriod: "yearly",
     });
   }, [calculatedGross, values]);
+
+  useEffect(() => {
+    saveLastScenario(
+      "reverse",
+      {
+        reverseInput,
+        values,
+      },
+      userScope
+    );
+  }, [reverseInput, userScope, values]);
 
   const effectiveMonthly = result.netMonthly;
   const targetMonthly =
@@ -308,6 +355,48 @@ export default function ReverseTaxCalculator() {
     },
   ];
 
+  function handleSaveScenario() {
+    const scenario: SavedScenario = {
+      id: createScenarioId("reverse"),
+      type: "reverse",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      title: `Target ${formatCurrency(targetMonthly)}/month`,
+      subtitle: `Needs ${formatCurrency(
+        calculatedGross
+      )} gross · ${values.region === "scotland" ? "Scotland" : "UK"} route`,
+      payload: {
+        reverseInput,
+        values,
+      },
+    };
+
+    saveScenario(scenario, userScope);
+    setSaveNotice("Saved to your recent reverse-planning scenarios.");
+    window.setTimeout(() => setSaveNotice(""), 2200);
+  }
+
+  function handleLoadScenario(scenario: SavedScenario) {
+    const payload = scenario.payload as {
+      reverseInput?: ReverseInput;
+      values?: CalculatorInput;
+    };
+
+    if (payload.values) {
+      setValues({
+        ...initialValues,
+        ...payload.values,
+      });
+    }
+
+    if (payload.reverseInput) {
+      setReverseInput({
+        ...initialReverseInput,
+        ...payload.reverseInput,
+      });
+    }
+  }
+
   return (
     <div className="space-y-8">
       <section className="overflow-hidden rounded-[34px] border app-card-strong shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)]">
@@ -382,15 +471,37 @@ export default function ReverseTaxCalculator() {
                 <span className="font-semibold app-title">
                   {formatCurrency(reverseInput.targetNet)}
                 </span>{" "}
-                {reverseInput.payPeriod === "monthly"
-                  ? "per month"
-                  : "per year"}
-                .
+                {reverseInput.payPeriod === "monthly" ? "per month" : "per year"}.
               </p>
             </div>
 
             <div className="mt-6">
               <CalculatorForm values={values} onChange={setValues} />
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-[auto_1fr] sm:items-center">
+              <button
+                type="button"
+                onClick={handleSaveScenario}
+                className="app-button-secondary justify-center sm:justify-start"
+              >
+                <Save className="mr-2 h-4 w-4" />
+                Save reverse route
+              </button>
+
+              {saveNotice ? (
+                <div
+                  className="rounded-[18px] border px-4 py-3 text-sm"
+                  style={{
+                    borderColor: "color-mix(in srgb, #10b981 22%, var(--line))",
+                    background:
+                      "color-mix(in srgb, #10b981 8%, var(--surface-2))",
+                    color: "var(--text)",
+                  }}
+                >
+                  {saveNotice}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -448,9 +559,7 @@ export default function ReverseTaxCalculator() {
                         <p className="mt-1 text-sm font-semibold app-title">
                           {item.value}
                         </p>
-                        <p className="mt-1 text-xs app-subtle">
-                          {item.helper}
-                        </p>
+                        <p className="mt-1 text-xs app-subtle">{item.helper}</p>
                       </div>
                     </div>
                   </div>
@@ -596,6 +705,14 @@ export default function ReverseTaxCalculator() {
           </div>
         </div>
       </section>
+
+      <SavedScenariosPanel
+        type="reverse"
+        title="Recent reverse-planning scenarios"
+        emptyTitle="No reverse salary scenarios saved yet"
+        emptyDescription="Save a target-income route and it will appear here for fast return access."
+        onLoad={handleLoadScenario}
+      />
 
       <section className="overflow-hidden rounded-[34px] border app-card shadow-[0_28px_90px_-40px_rgba(15,23,42,0.20)]">
         <div

@@ -24,6 +24,30 @@ type ScotlandVariantPageProps = {
   }>;
 };
 
+function getScotlandVerdict(salary: number, monthlyNet: number) {
+  if (salary < 30000) {
+    return `A salary of £${salary.toLocaleString(
+      "en-GB"
+    )} in Scotland usually needs to be judged through monthly affordability first. At about ${formatCurrency(
+      monthlyNet
+    )} a month, the decision is often about breathing room after rent and fixed costs, not the headline gross number.`;
+  }
+
+  if (salary < 50000) {
+    return `A salary of £${salary.toLocaleString(
+      "en-GB"
+    )} in Scotland is a useful comparison point because the same gross number can feel different against the main UK route once Scottish income tax treatment is applied.`;
+  }
+
+  if (salary < 75000) {
+    return `At this level, Scottish tax treatment becomes more strategically important. Users often need to compare monthly efficiency rather than assume that a bigger gross figure automatically feels proportionally better.`;
+  }
+
+  return `At about ${formatCurrency(
+    monthlyNet
+  )} a month after deductions, this Scotland route should be read as a strategic salary-planning page rather than a simple gross-to-net lookup.`;
+}
+
 export async function generateStaticParams() {
   return getVariantSalaryParams();
 }
@@ -63,6 +87,7 @@ export default async function ScotlandSalaryVariantPage({
   }
 
   const data = getScotlandSalaryPageData(salary);
+  const verdict = getScotlandVerdict(salary, data.result.netMonthly);
 
   return (
     <main className="app-shell">
@@ -117,7 +142,10 @@ export default async function ScotlandSalaryVariantPage({
           <div className="mt-8">
             <TaxYearTrustBar
               description={TRUST_COPY.salaryPage.description}
-              points={[...TRUST_COPY.salaryPage.points]}
+              points={[
+                ...TRUST_COPY.salaryPage.points,
+                "Scotland-specific income tax framing",
+              ]}
             />
           </div>
 
@@ -127,6 +155,12 @@ export default async function ScotlandSalaryVariantPage({
               <strong>£{salary.toLocaleString("en-GB")}</strong> becomes about{" "}
               <strong>{formatCurrency(data.result.netMonthly)}</strong> per
               month after tax and deductions in Scotland.
+            </SeoRealityCard>
+          </div>
+
+          <div className="mt-10">
+            <SeoRealityCard label="Why this Scotland route matters">
+              {verdict}
             </SeoRealityCard>
           </div>
 
@@ -146,10 +180,10 @@ export default async function ScotlandSalaryVariantPage({
                     "See whether a nearby salary band changes monthly life enough.",
                 },
                 {
-                  href: "/reverse-tax",
-                  title: "Reverse from a monthly target",
+                  href: "/salary-hub",
+                  title: "Browse more Scotland salary routes",
                   description:
-                    "Work backwards from the monthly amount you actually want to keep.",
+                    "Use the salary hub to move into Scotland-aware entry points and related salary pages.",
                 },
               ]}
             />

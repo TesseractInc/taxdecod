@@ -29,13 +29,21 @@ export default function EmailCapturePanel({
   title,
   description,
   buttonLabel,
-  eyebrow = "Save your salary reading",
+  eyebrow = "Save your salary route",
   placeholder = "you@example.com",
-  privacyNote = "Your email is used for sign-in and future saved-result access. TaxDecod does not need extra personal data for this step.",
-  signedInMessage = "You are signed in. This email can now be used later for saved scenarios, report delivery, and return access.",
+  privacyNote = "Used for sign-in and saved-scenario access. Salary routes should remain easy to revisit without forcing unnecessary data collection.",
+  signedInMessage = "You are signed in. This email can now support saved salary routes, comparison paths, and return access.",
 }: EmailCapturePanelProps) {
-  const { configured, ready, user, email: authEmail, status, notice, sendMagicLink, clearNotice } =
-    useSupabaseAuth();
+  const {
+    configured,
+    ready,
+    user,
+    email: authEmail,
+    status,
+    notice,
+    sendMagicLink,
+    clearNotice,
+  } = useSupabaseAuth();
 
   const [email, setEmail] = useState(authEmail ?? "");
   const [localError, setLocalError] = useState("");
@@ -45,12 +53,12 @@ export default function EmailCapturePanel({
       {
         title: "Useful for saved scenarios",
         description:
-          "Keep salary and comparison results tied to your login instead of losing them between visits.",
+          "Keep calculator, comparison, and reverse-planning routes tied to your sign-in instead of losing them between visits.",
       },
       {
         title: "Useful for return access",
         description:
-          "Sign in once by email and come back later to continue your salary planning journey.",
+          "Come back later and continue from the salary path that matched your decision, not just the first tool you opened.",
       },
     ],
     []
@@ -83,9 +91,7 @@ export default function EmailCapturePanel({
   }
 
   const panelMessage =
-    localError ||
-    notice ||
-    (isSignedIn ? signedInMessage : "");
+    localError || notice || (isSignedIn ? signedInMessage : "");
 
   const panelTone =
     localError || status === "error"
@@ -222,8 +228,7 @@ export default function EmailCapturePanel({
                     <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-sky-600 dark:text-sky-400" />
                     <p className="text-sm leading-7 text-sky-700 dark:text-sky-300">
                       This uses your existing Supabase magic-link login flow, so
-                      the email panel is now part of real account access, not a
-                      fake capture form.
+                      the panel behaves like real account access rather than a fake lead form.
                     </p>
                   </div>
                 ) : null}

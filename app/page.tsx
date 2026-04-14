@@ -11,6 +11,7 @@ import HowItWorks from "../components/home/how-it-works";
 import UseCases from "../components/home/use-cases";
 import ExploreNext from "../components/home/explore-next";
 import EmailCapturePanel from "../components/shared/email-capture-panel";
+import TaxYearTrustBar from "../components/shared/tax-year-trust-bar";
 
 export const metadata: Metadata = {
   title: "TaxDecod | UK Salary Intelligence Platform",
@@ -40,7 +41,7 @@ const platformClusters = [
   {
     title: "Browse and benchmark",
     description:
-      "Explore salary pages, role-city benchmark context, and newer intent routes like city salary judgement pages.",
+      "Explore salary pages, role-city benchmark context, and city salary judgment routes.",
     links: [
       { label: "Salary hub", href: "/salary-hub" },
       { label: "Benchmarks hub", href: "/benchmarks" },
@@ -49,7 +50,7 @@ const platformClusters = [
   {
     title: "Decode and verify",
     description:
-      "Use payslip and refund tools when the question is about payroll correctness, not just salary estimate.",
+      "Use payslip and refund routes when the question is about payroll correctness, not just salary estimate.",
     links: [
       { label: "Payslip checker", href: "/payslip-checker" },
       { label: "Tax refund calculator", href: "/tax-refund-calculator" },
@@ -60,7 +61,7 @@ const platformClusters = [
 const trustLinks = [
   {
     title: "Methodology",
-    description: "See how TaxDecod approaches salary logic and interpretation.",
+    description: "See how TaxDecod approaches salary logic and result interpretation.",
     href: "/methodology",
   },
   {
@@ -69,9 +70,9 @@ const trustLinks = [
     href: "/assumptions",
   },
   {
-    title: "Contact",
-    description: "Use the contact page for support, partnerships, or editorial questions.",
-    href: "/contact",
+    title: "Disclaimer",
+    description: "Read how estimate-based outputs should be interpreted properly.",
+    href: "/disclaimer",
   },
 ];
 
@@ -82,11 +83,24 @@ export default function HomePage() {
 
       <HeroSection />
 
-      <section id="calculator-section" className="pb-8">
+      <section className="pb-8">
         <Container>
           <div className="rounded-[30px] border p-2 shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)] app-card-strong sm:p-3">
             <CalculatorCard mode="overview" />
           </div>
+        </Container>
+      </section>
+
+      <section className="pb-9">
+        <Container>
+          <TaxYearTrustBar
+            description="TaxDecod is built for UK salary understanding and decision support. Results should be interpreted as current estimate-based salary guidance routes for 2025/26, not as personal payroll or regulated financial advice."
+            points={[
+              "Updated for 2025/26 UK salary interpretation",
+              "Estimate-based outputs, not financial advice",
+              "Methodology, assumptions, and disclaimer visible",
+            ]}
+          />
         </Container>
       </section>
 
@@ -100,13 +114,13 @@ export default function HomePage() {
                 </p>
 
                 <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-                  Enter the platform from the route that matches your question
+                  Enter from the route that matches the real question
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-300">
-                  Some users know their salary. Some know their hourly rate. Some
-                  care about a monthly target. Some want city context. TaxDecod
-                  should support all of those entry points cleanly.
+                  Some users know their gross salary. Some think in hourly pay.
+                  Some care about a monthly target. Some want city context.
+                  TaxDecod should support those routes clearly and consistently.
                 </p>
               </div>
 
@@ -121,7 +135,7 @@ export default function HomePage() {
                       {item.label}
                     </span>
                     <span className="mt-3 block leading-7 text-slate-600 dark:text-slate-400">
-                      Open the relevant decision route directly.
+                      Open the relevant salary decision route directly.
                     </span>
                   </Link>
                 ))}
@@ -187,19 +201,20 @@ export default function HomePage() {
                 </h2>
 
                 <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-300">
-                  Trust pages, methodology, and support routes should be easy to find,
-                  but the homepage should still prioritize calculation and decision flow.
+                  Trust pages, methodology, and support routes should stay easy
+                  to find, while the homepage still prioritizes calculation and
+                  decision flow first.
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-2.5">
                   <div className="inline-flex rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-300">
-                    Current UK salary logic
+                    Updated for 2025/26
                   </div>
                   <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-                    Methodology visibility
+                    Estimate-based salary guidance
                   </div>
                   <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-                    Contact legitimacy
+                    Methodology and assumptions visible
                   </div>
                 </div>
               </div>
@@ -232,7 +247,7 @@ export default function HomePage() {
         <Container>
           <EmailCapturePanel
             title="Save your salary journey across tools"
-            description="Use your email sign-in to come back to saved salary routes, comparison paths, and monthly-target planning later."
+            description="Use your email sign-in to come back to salary routes, comparison paths, and monthly-target planning later."
             buttonLabel="Continue with email"
           />
         </Container>

@@ -1,22 +1,22 @@
+"use client";
+
 import Link from "next/link";
-import { BriefcaseBusiness, LifeBuoy, Mail, Orbit, ShieldCheck } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  ArrowUpRight,
+  BadgePoundSterling,
+  ContactRound,
+  FileSearch,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 const coreLinks = [
-  { label: "Salary calculator", href: "/calculator" },
-  { label: "Compare salaries", href: "/compare-salary" },
-  { label: "Reverse salary tool", href: "/reverse-tax" },
-  { label: "Payslip checker", href: "/payslip-checker" },
-  { label: "Tax refund calculator", href: "/tax-refund-calculator" },
-  { label: "Salary hub", href: "/salary-hub" },
-];
-
-const exploreLinks = [
-  { label: "Payslip explained", href: "/payslip-explained" },
-  { label: "Reality check", href: "/reality-check" },
-  { label: "Salary tools", href: "/salary-tools" },
+  { label: "Calculator", href: "/calculator" },
+  { label: "Compare", href: "/compare-salary" },
+  { label: "Reverse", href: "/reverse-tax" },
+  { label: "Salary Hub", href: "/salary-hub" },
   { label: "Benchmarks", href: "/benchmarks" },
-  { label: "Leaderboard", href: "/leaderboard" },
-  { label: "Services", href: "/services" },
 ];
 
 const trustLinks = [
@@ -25,192 +25,225 @@ const trustLinks = [
   { label: "Disclaimer", href: "/disclaimer" },
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms", href: "/terms" },
+];
+
+const supportLinks = [
+  { label: "Salary Tools", href: "/salary-tools" },
+  { label: "Services", href: "/services" },
   { label: "Contact", href: "/contact" },
 ];
 
-const trustPills = [
-  "Built for UK salary decisions",
-  "Based on current UK tax-year logic",
-  "Methodology and assumptions visible",
+const footerCards = [
+  {
+    title: "Updated for 2025/26",
+    description:
+      "The platform is framed for current UK salary interpretation, not timeless generic calculator use.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Methodology visible",
+    description:
+      "Assumptions, methodology, and disclaimer routes are part of the product, not hidden away.",
+    icon: FileSearch,
+  },
+  {
+    title: "Built for salary decisions",
+    description:
+      "TaxDecod is designed for take-home clarity, comparison, reverse planning, and salary interpretation.",
+    icon: Sparkles,
+  },
 ];
-
-const lastReviewedLabel = "Reviewed April 2026";
 
 export default function SiteFooter() {
   return (
-    <footer className="pb-12 pt-4">
+    <footer className="pb-10 pt-5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950/96">
-          <div className="grid gap-8 p-7 md:p-8 xl:grid-cols-[1.2fr_0.86fr_0.86fr_1fr]">
+        <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.18)] dark:border-slate-800 dark:bg-slate-950">
+          <div className="grid gap-8 p-6 md:p-8 lg:grid-cols-[1.08fr_0.72fr_0.72fr_0.86fr]">
             <div>
-              <div className="flex items-center gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.35 }}
+                className="flex items-center gap-3"
+              >
                 <div className="site-header-mark">
-                  <Orbit className="h-5 w-5" />
+                  <BadgePoundSterling className="h-5 w-5" />
                 </div>
 
                 <div>
-                  <p className="text-[2rem] font-semibold leading-none tracking-tight text-slate-900 dark:text-slate-100">
+                  <p className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
                     TaxDecod
                   </p>
-                  <p className="mt-1 text-lg text-slate-500 dark:text-slate-400">
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     UK salary intelligence platform
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              <p className="mt-8 max-w-md text-base leading-10 text-slate-600 dark:text-slate-300">
-                TaxDecod is built to make UK salary, take-home pay, deductions,
-                and payslip understanding clearer for real financial decisions.
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.35, delay: 0.05 }}
+                className="mt-5 max-w-md text-sm leading-8 text-slate-600 dark:text-slate-300"
+              >
+                Built for salary understanding, take-home clarity, comparison,
+                reverse planning, and better UK salary decisions.
+              </motion.p>
+
+              <div className="mt-6 grid gap-3">
+                {footerCards.map((item, index) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.3 }}
+                      transition={{ duration: 0.3, delay: 0.06 * index }}
+                      whileHover={{ y: -2 }}
+                      className="rounded-[22px] border border-slate-200 bg-slate-50/80 px-4 py-4 dark:border-slate-800 dark:bg-slate-900/72"
+                    >
+                      <div className="flex items-start gap-3">
+                        <motion.div
+                          whileHover={{ rotate: 6, scale: 1.05 }}
+                          className="inline-flex rounded-[14px] bg-white p-2 shadow-sm dark:bg-slate-950"
+                        >
+                          <Icon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                        </motion.div>
+
+                        <div>
+                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                            {item.title}
+                          </p>
+                          <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-600 dark:text-sky-400">
+                Core
               </p>
 
-              <div className="mt-7 flex max-w-xl flex-wrap gap-3">
-                {trustPills.map((pill) => (
-                  <span
-                    key={pill}
-                    className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-5 py-2.5 text-sm font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300"
+              <div className="mt-4 space-y-3">
+                {coreLinks.map((link, index) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.26, delay: 0.03 * index }}
                   >
-                    {pill}
-                  </span>
+                    <Link
+                      href={link.href}
+                      className="group inline-flex items-center gap-2 text-sm font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                    >
+                      <span>{link.label}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-600 dark:text-sky-400">
+                Trust
+              </p>
+
+              <div className="mt-4 space-y-3">
+                {trustLinks.map((link, index) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.26, delay: 0.03 * index }}
+                  >
+                    <Link
+                      href={link.href}
+                      className="group inline-flex items-center gap-2 text-sm font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                    >
+                      <span>{link.label}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-600 dark:text-sky-400">
+                Support
+              </p>
+
+              <div className="mt-4 space-y-3">
+                {supportLinks.map((link, index) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.26, delay: 0.03 * index }}
+                  >
+                    <Link
+                      href={link.href}
+                      className="group inline-flex items-center gap-2 text-sm font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                    >
+                      <span>{link.label}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                    </Link>
+                  </motion.div>
                 ))}
               </div>
 
-              <div className="mt-7 grid max-w-xl gap-4 sm:grid-cols-2">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.32, delay: 0.12 }}
+                whileHover={{ y: -2 }}
+                className="mt-5"
+              >
                 <Link
                   href="/contact"
-                  className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/72 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                  className="group flex items-center gap-3 rounded-[22px] border border-slate-200 bg-slate-50/80 px-4 py-4 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/72 dark:hover:border-sky-800 dark:hover:bg-slate-900"
                 >
-                  <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-950">
-                    <Mail className="h-5 w-5 app-accent" />
+                  <motion.div
+                    whileHover={{ rotate: 8, scale: 1.06 }}
+                    className="inline-flex rounded-[14px] bg-white p-2 shadow-sm dark:bg-slate-950"
+                  >
+                    <ContactRound className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                  </motion.div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      Contact TaxDecod
+                    </p>
+                    <p className="mt-1 text-xs leading-6 text-slate-500 dark:text-slate-400">
+                      Support, editorial, or commercial queries
+                    </p>
                   </div>
-                  <p className="mt-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    Contact
-                  </p>
-                  <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                    Support, partnerships, editorial, or commercial enquiries.
-                  </p>
                 </Link>
-
-                <Link
-                  href="/methodology"
-                  className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/72 dark:hover:border-sky-800 dark:hover:bg-slate-900"
-                >
-                  <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-950">
-                    <BriefcaseBusiness className="h-5 w-5 app-accent" />
-                  </div>
-                  <p className="mt-4 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    Methodology
-                  </p>
-                  <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                    See how TaxDecod approaches salary logic, assumptions, and
-                    result framing.
-                  </p>
-                </Link>
-              </div>
-
-              <p className="mt-7 max-w-xl text-sm leading-8 text-slate-500 dark:text-slate-400">
-                TaxDecod is not HMRC and does not provide tax, financial, or
-                legal advice. Results are estimates and may vary depending on
-                tax code, payroll timing, pension arrangement, salary sacrifice,
-                region, employer setup, and student loan status.
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-400">
-                Core tools
-              </p>
-              <div className="mt-5 space-y-4">
-                {coreLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block text-2xl font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-400">
-                Explore
-              </p>
-              <div className="mt-5 space-y-4">
-                {exploreLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block text-2xl font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sky-600 dark:text-sky-400">
-                Trust & legal
-              </p>
-
-              <div className="mt-5 space-y-4">
-                {trustLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block text-2xl font-medium text-slate-700 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-
-              <div className="mt-8 space-y-4">
-                <div className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 dark:border-slate-800 dark:bg-slate-900/72">
-                  <div className="flex items-start gap-3">
-                    <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-950">
-                      <LifeBuoy className="h-5 w-5 app-accent" />
-                    </div>
-                    <div>
-                      <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                        Transparent by default
-                      </p>
-                      <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                        Methodology, assumptions, disclaimer, and legal pages
-                        are visible so users can understand how results should
-                        be interpreted.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-[24px] border border-slate-200 bg-slate-50/78 p-5 dark:border-slate-800 dark:bg-slate-900/72">
-                  <div className="flex items-start gap-3">
-                    <div className="inline-flex rounded-[16px] bg-white p-3 shadow-sm dark:bg-slate-950">
-                      <ShieldCheck className="h-5 w-5 app-accent" />
-                    </div>
-                    <div>
-                      <p className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                        {lastReviewedLabel}
-                      </p>
-                      <p className="mt-2 text-sm leading-8 text-slate-600 dark:text-slate-400">
-                        Trust pages and platform-level explanatory copy reviewed
-                        for clarity and interpretation.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              </motion.div>
             </div>
           </div>
 
-          <div className="border-t border-slate-200 px-7 py-5 dark:border-slate-800 md:px-8">
-            <div className="flex flex-col gap-4 text-sm text-slate-500 dark:text-slate-400 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex flex-wrap gap-x-5 gap-y-2">
-                <span>© 2026 TaxDecod. All rights reserved.</span>
-                <span>Built for salary decisions, not just raw numbers.</span>
-              </div>
+          <div className="border-t border-slate-200 px-6 py-4 dark:border-slate-800 md:px-8">
+            <div className="flex flex-col gap-3 text-xs text-slate-500 dark:text-slate-400 lg:flex-row lg:items-center lg:justify-between">
+              <p>
+                © 2026 TaxDecod. Results are estimate-based salary guidance for UK decision support.
+              </p>
 
               <div className="flex flex-wrap gap-x-4 gap-y-2">
                 {trustLinks.map((link) => (

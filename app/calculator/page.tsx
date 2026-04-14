@@ -4,6 +4,7 @@ import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import ExperiencePager from "../../components/ui/experience-pager";
+import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
 
 const nextRoutes = [
   {
@@ -62,31 +63,31 @@ export default function CalculatorPage() {
             </p>
 
             <h1 className="mt-3 text-3xl font-semibold tracking-tight app-title sm:text-5xl">
-              Accurate take-home pay, clearly shown
+              Accurate take-home pay, clearly framed
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 app-copy sm:text-base sm:leading-8">
               Check what reaches you after Income Tax, National Insurance,
-              pension, and student loan deductions.
+              pension, and student loan deductions — then use the result as salary guidance,
+              not as regulated personal advice.
             </p>
-
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
-              <div className="app-chip px-4 py-2 text-xs font-semibold sm:text-sm">
-                PAYE-style logic
-              </div>
-              <div className="app-soft px-4 py-2 text-xs app-subtle sm:text-sm">
-                Live net pay
-              </div>
-              <div className="app-soft px-4 py-2 text-xs app-subtle sm:text-sm">
-                Clean breakdown
-              </div>
-            </div>
           </div>
 
           <div className="mt-8 sm:mt-10">
             <div className="rounded-[30px] border p-2 shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)] app-card-strong sm:p-3">
               <CalculatorCard mode="overview" />
             </div>
+          </div>
+
+          <div className="mt-10">
+            <TaxYearTrustBar
+              description="TaxDecod calculator results are designed to help users understand UK salary outcomes more clearly for 2025/26. They should be read as estimate-based salary guidance rather than payroll, legal, or financial advice."
+              points={[
+                "Updated for 2025/26 salary interpretation",
+                "Estimate-based outputs, not financial advice",
+                "Methodology and assumptions visible",
+              ]}
+            />
           </div>
 
           <section className="mt-10 overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_70px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">

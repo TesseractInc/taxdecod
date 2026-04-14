@@ -44,6 +44,13 @@ const benchmarkSeeds = [
   { role: "data-analyst", city: "leeds", label: "Data Analyst salary Leeds" },
 ];
 
+const scotlandRoutes = [
+  { label: "£30,000 after tax in Scotland", href: "/30000-after-tax-scotland" },
+  { label: "£40,000 after tax in Scotland", href: "/40000-after-tax-scotland" },
+  { label: "£50,000 after tax in Scotland", href: "/50000-after-tax-scotland" },
+  { label: "Compare Scotland and main UK routes", href: "/40000-after-tax-scotland" },
+];
+
 export default function SalaryHubPage() {
   const popularSalaries = SEO_GROWTH_CONFIG.salaryHub.popularSalaries;
   const salaryGrid = SEO_GROWTH_CONFIG.salaryHub.gridSalaries;
@@ -57,7 +64,7 @@ export default function SalaryHubPage() {
           <SeoPageHero
             eyebrow="Salary discovery hub"
             title="Explore UK salaries after tax"
-            description="This hub is designed for fast take-home lookup, salary exploration, and deeper movement into comparison, reverse salary planning, hourly pay, and benchmark pages."
+            description="This hub is designed for fast take-home lookup, salary exploration, and deeper movement into comparison, reverse salary planning, hourly pay, benchmark pages, and Scotland-specific routes."
           />
 
           <div className="mt-8">
@@ -173,6 +180,33 @@ export default function SalaryHubPage() {
                   </Link>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
+            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                Scotland routes
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+                Explore Scotland-specific salary pages
+              </h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
+                These routes help users judge the same gross salary under Scottish
+                income tax treatment instead of assuming the main UK page tells the whole story.
+              </p>
+            </div>
+
+            <div className="grid gap-3 p-6 md:grid-cols-2 sm:p-8">
+              {scotlandRoutes.map((item) => (
+                <Link
+                  key={item.href + item.label}
+                  href={item.href}
+                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </section>
 
