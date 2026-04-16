@@ -158,7 +158,7 @@ export default function CalculatorCard({
 
   return (
     <section className={isOverview ? "pb-0" : "pb-10"}>
-      <div className={isOverview ? "max-w-none" : "mx-auto max-w-7xl px-4 sm:px-6"}>
+      <div className={isOverview ? "max-w-none" : "max-w-none"}>
         <div className="space-y-6">
           <div className="overflow-hidden rounded-[34px] border app-card-strong shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)]">
             <div className="grid gap-0 lg:grid-cols-[0.94fr_1.06fr]">
@@ -205,7 +205,13 @@ export default function CalculatorCard({
                   />
                 </div>
 
-                <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-center">
+                <div
+                  className={`mt-5 grid gap-3 ${
+                    isOverview
+                      ? "sm:grid-cols-[1fr_auto]"
+                      : "sm:grid-cols-[1fr_auto]"
+                  } sm:items-center`}
+                >
                   <button
                     type="button"
                     onClick={() =>
@@ -219,24 +225,26 @@ export default function CalculatorCard({
                     Calculate take-home pay
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={handleSaveScenario}
-                    className="app-button-secondary justify-center sm:justify-start"
-                  >
-                    <Save className="mr-2 h-4 w-4" />
-                    Save scenario
-                  </button>
-
-                  <Link
-                    href="/calculator"
-                    className="app-button-secondary justify-center sm:justify-start"
-                  >
-                    Open full calculator
-                  </Link>
+                  {isOverview ? (
+                    <Link
+                      href="/calculator"
+                      className="app-button-secondary justify-center sm:justify-start"
+                    >
+                      Open full calculator
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSaveScenario}
+                      className="app-button-secondary justify-center sm:justify-start"
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      Save scenario
+                    </button>
+                  )}
                 </div>
 
-                {saveNotice ? (
+                {!isOverview && saveNotice ? (
                   <div
                     className="mt-4 rounded-[18px] border px-4 py-3 text-sm"
                     style={{
@@ -303,13 +311,15 @@ export default function CalculatorCard({
             </div>
           </div>
 
-          <SavedScenariosPanel
-            type="calculator"
-            title="Recent calculator scenarios"
-            emptyTitle="No calculator scenarios saved yet"
-            emptyDescription="Save a calculator route and it will appear here for fast return access."
-            onLoad={handleLoadScenario}
-          />
+          {!isOverview ? (
+            <SavedScenariosPanel
+              type="calculator"
+              title="Recent calculator scenarios"
+              emptyTitle="No calculator scenarios saved yet"
+              emptyDescription="Save a calculator route and it will appear here for fast return access."
+              onLoad={handleLoadScenario}
+            />
+          ) : null}
         </div>
       </div>
     </section>

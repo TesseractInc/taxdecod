@@ -36,6 +36,11 @@ const quickPairs = [
   [60000, 70000],
 ];
 
+function normalizeSalary(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.round(value));
+}
+
 export default function CompareSalaryPageClient() {
   const { user, email } = useSupabaseAuth();
   const userScope = user?.id || email || "guest";
@@ -47,8 +52,8 @@ export default function CompareSalaryPageClient() {
   useEffect(() => {
     const saved = getLastScenario<CompareState>("compare", userScope);
     if (saved?.salaryA && saved?.salaryB) {
-      setSalaryA(saved.salaryA);
-      setSalaryB(saved.salaryB);
+      setSalaryA(normalizeSalary(saved.salaryA));
+      setSalaryB(normalizeSalary(saved.salaryB));
     }
   }, [userScope]);
 
@@ -97,6 +102,14 @@ export default function CompareSalaryPageClient() {
   const taxLossPercent =
     grossDifference > 0 ? (taxOnIncrease / grossDifference) * 100 : 0;
 
+  const monthlyDiffLabel = `${monthlyDiff >= 0 ? "+" : "-"}${formatCurrency(
+    Math.abs(monthlyDiff)
+  )}`;
+
+  const annualDiffLabel = `${netDiff >= 0 ? "+" : "-"}${formatCurrency(
+    Math.abs(netDiff)
+  )}`;
+
   function handleSaveScenario() {
     const scenario: SavedScenario = {
       id: createScenarioId("compare"),
@@ -106,9 +119,11 @@ export default function CompareSalaryPageClient() {
       title: `£${salaryA.toLocaleString("en-GB")} vs £${salaryB.toLocaleString(
         "en-GB"
       )}`,
-      subtitle: `${formatCurrency(monthlyDiff)}/month difference · ${keepPercent.toFixed(
-        0
-      )}% kept`,
+      subtitle: `${formatCurrency(
+        Math.abs(monthlyDiff)
+      )}/month difference · ${
+        grossDifference > 0 ? `${keepPercent.toFixed(0)}% kept` : "comparison saved"
+      }`,
       payload: {
         salaryA,
         salaryB,
@@ -123,8 +138,8 @@ export default function CompareSalaryPageClient() {
   function handleLoadScenario(scenario: SavedScenario) {
     const payload = scenario.payload as Partial<CompareState>;
     if (payload.salaryA && payload.salaryB) {
-      setSalaryA(payload.salaryA);
-      setSalaryB(payload.salaryB);
+      setSalaryA(normalizeSalary(payload.salaryA));
+      setSalaryB(normalizeSalary(payload.salaryB));
     }
   }
 
@@ -138,11 +153,7 @@ export default function CompareSalaryPageClient() {
             eyebrow="Salary decision tool"
             title="Compare two salaries properly"
             description="This page is built for the moment when one salary looks better on paper but you need to know whether it really improves life after tax."
-            highlightValue={
-              monthlyDiff >= 0
-                ? `+${formatCurrency(Math.abs(monthlyDiff))}`
-                : `-${formatCurrency(Math.abs(monthlyDiff))}`
-            }
+            highlightValue={monthlyDiffLabel}
             highlightSubtext="estimated monthly take-home difference"
           />
 
@@ -231,8 +242,12 @@ export default function CompareSalaryPageClient() {
                   </span>
                   <input
                     type="number"
+                    min={0}
+                    step={100}
                     value={salaryA}
-                    onChange={(e) => setSalaryA(Number(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setSalaryA(normalizeSalary(Number(e.target.value)))
+                    }
                     className="app-input h-[72px] rounded-[22px] pl-12 text-2xl font-semibold"
                   />
                 </div>
@@ -251,8 +266,12 @@ export default function CompareSalaryPageClient() {
                   </span>
                   <input
                     type="number"
+                    min={0}
+                    step={100}
                     value={salaryB}
-                    onChange={(e) => setSalaryB(Number(e.target.value) || 0)}
+                    onChange={(e) =>
+                      setSalaryB(normalizeSalary(Number(e.target.value)))
+                    }
                     className="app-input h-[72px] rounded-[22px] pl-12 text-2xl font-semibold"
                   />
                 </div>
@@ -302,12 +321,10 @@ export default function CompareSalaryPageClient() {
                     : "text-rose-600 dark:text-rose-400"
                 }`}
               >
-                {netDiff >= 0 ? "+" : "-"}
-                {formatCurrency(Math.abs(netDiff))}
+                {annualDiffLabel}
               </h2>
               <p className="mt-3 text-base text-slate-600 dark:text-slate-400">
-                {monthlyDiff >= 0 ? "+" : "-"}
-                {formatCurrency(Math.abs(monthlyDiff))} per month difference
+                {monthlyDiffLabel} per month difference
               </p>
             </div>
 

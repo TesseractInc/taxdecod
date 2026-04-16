@@ -37,18 +37,53 @@ const intentRoutes = [
 ];
 
 const monthlyTargets = SEO_GROWTH_CONFIG.contentClusters.monthlyIntentTargets;
+
 const benchmarkSeeds = [
-  { role: "software-engineer", city: "london", label: "Software Engineer salary London" },
-  { role: "teacher", city: "manchester", label: "Teacher salary Manchester" },
-  { role: "nurse", city: "glasgow", label: "Nurse salary Glasgow" },
-  { role: "data-analyst", city: "leeds", label: "Data Analyst salary Leeds" },
+  {
+    role: "software-engineer",
+    city: "london",
+    label: "Software Engineer salary London",
+  },
+  {
+    role: "teacher",
+    city: "manchester",
+    label: "Teacher salary Manchester",
+  },
+  {
+    role: "nurse",
+    city: "glasgow",
+    label: "Nurse salary Glasgow",
+  },
+  {
+    role: "data-analyst",
+    city: "leeds",
+    label: "Data Analyst salary Leeds",
+  },
 ];
 
 const scotlandRoutes = [
   { label: "£30,000 after tax in Scotland", href: "/30000-after-tax-scotland" },
   { label: "£40,000 after tax in Scotland", href: "/40000-after-tax-scotland" },
   { label: "£50,000 after tax in Scotland", href: "/50000-after-tax-scotland" },
-  { label: "Compare Scotland and main UK routes", href: "/40000-after-tax-scotland" },
+  {
+    label: "Compare Scotland and main UK routes",
+    href: "/40000-after-tax-scotland",
+  },
+];
+
+const benchmarkHubRoutes = [
+  {
+    title: "Browse benchmarks by role",
+    description:
+      "Useful when the role is clear and you want to inspect cities or regions next.",
+    href: "/benchmarks/roles",
+  },
+  {
+    title: "Browse benchmarks by region",
+    description:
+      "Useful when location matters first and you want to inspect role context inside that market.",
+    href: "/benchmarks/regions",
+  },
 ];
 
 export default function SalaryHubPage() {
@@ -180,6 +215,39 @@ export default function SalaryHubPage() {
                   </Link>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
+            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                Benchmark browsing
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+                Enter benchmark pages in the way that fits the question
+              </h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
+                Some users start with the role. Others start with the city or
+                region. These routes reduce navigation friction and make the benchmark
+                system easier to browse.
+              </p>
+            </div>
+
+            <div className="grid gap-4 p-6 md:grid-cols-2 sm:p-8">
+              {benchmarkHubRoutes.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                >
+                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {item.title}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                    {item.description}
+                  </p>
+                </Link>
+              ))}
             </div>
           </section>
 

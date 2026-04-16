@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ThemeProvider from "../components/ui/theme-provider";
 import SupabaseAuthProvider from "../components/auth/supabase-auth-provider";
@@ -54,7 +55,10 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <SupabaseAuthProvider>{children}</SupabaseAuthProvider>
+          <SupabaseAuthProvider>
+            {children}
+            <Analytics />
+          </SupabaseAuthProvider>
         </ThemeProvider>
       </body>
     </html>

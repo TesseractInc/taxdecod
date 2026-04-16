@@ -62,6 +62,21 @@ const cityIntentRoutes = [
   },
 ];
 
+const benchmarkBrowseRoutes = [
+  {
+    title: "Browse all benchmark roles",
+    description:
+      "Enter the benchmark system by job title first, then move into the cities or regions that matter.",
+    href: "/benchmarks/roles",
+  },
+  {
+    title: "Browse all benchmark regions",
+    description:
+      "Enter the benchmark system by city or region first, then compare the job families present there.",
+    href: "/benchmarks/regions",
+  },
+];
+
 export default function BenchmarksHubPage() {
   return (
     <main className="app-shell">
@@ -114,6 +129,26 @@ export default function BenchmarksHubPage() {
               ]}
             />
           </div>
+
+          <section className="mt-10 grid gap-6 lg:grid-cols-2">
+            {benchmarkBrowseRoutes.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="overflow-hidden rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800 sm:p-7"
+              >
+                <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                  Browse entry
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+                  {item.title}
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  {item.description}
+                </p>
+              </Link>
+            ))}
+          </section>
 
           <section className="mt-14 grid gap-6 lg:grid-cols-2">
             <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">

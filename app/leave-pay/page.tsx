@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
+import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
 import ExperiencePager from "../../components/ui/experience-pager";
@@ -85,6 +86,8 @@ export default function LeavePayHubPage() {
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SiteHeader from "@/components/layout/site-header";
+import SiteFooter from "@/components/layout/site-footer";
 import Container from "@/components/ui/container";
 import TaxYearTrustBar from "@/components/shared/tax-year-trust-bar";
 import SeoPageHero from "@/components/seo/seo-page-hero";
@@ -118,6 +119,8 @@ export default function TaxRefundCalculatorPage() {
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

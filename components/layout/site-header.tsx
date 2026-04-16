@@ -45,10 +45,9 @@ import { useSupabaseAuth } from "../auth/supabase-auth-provider";
 type MobileSectionKey =
   | "core"
   | "calculator"
-  | "payslip"
-  | "leaderboard"
-  | "tools"
-  | "reality"
+  | "compare"
+  | "salaryhub"
+  | "benchmarks"
   | "more";
 
 const iconMap: Record<HeaderIconKey, React.ComponentType<{ className?: string }>> =
@@ -193,9 +192,14 @@ function GroupPanel({
                 ) : null}
               </div>
 
-              <p className="mt-2.5 text-sm leading-6 app-copy">
+              <p className="mt-2 text-sm leading-6 app-copy">
                 {group.featured.description}
               </p>
+
+              <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold app-accent">
+                Open route
+                <ChevronRight className="h-4 w-4" />
+              </div>
             </div>
           </div>
         </Link>
@@ -205,7 +209,7 @@ function GroupPanel({
         className="rounded-[24px] border p-5"
         style={{
           borderColor: "var(--line)",
-          background: "color-mix(in srgb, var(--surface-1) 96%, transparent)",
+          background: "var(--surface-1)",
         }}
       >
         <div className="mb-3.5 flex items-center gap-2">
@@ -293,10 +297,9 @@ export default function SiteHeader() {
   >({
     core: true,
     calculator: false,
-    payslip: false,
-    leaderboard: false,
-    tools: false,
-    reality: false,
+    compare: false,
+    salaryhub: false,
+    benchmarks: false,
     more: false,
   });
 
@@ -416,7 +419,15 @@ export default function SiteHeader() {
 
             <nav className="hidden items-center gap-1 xl:flex">
               {navItems.map((item) => {
-                const active = pathname === item.href || activePreview === item.href;
+                const group = item.group!;
+                const active =
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`) ||
+                  activePreview === item.href ||
+                  group.links.some(
+                    (link) =>
+                      pathname === link.href || pathname.startsWith(`${link.href}/`),
+                  );
 
                 return (
                   <button
@@ -436,7 +447,7 @@ export default function SiteHeader() {
                     <span>{item.label}</span>
                     <ChevronDown
                       className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                        active ? "rotate-180" : ""
+                        activePreview === item.href ? "rotate-180" : ""
                       }`}
                     />
                   </button>
@@ -470,7 +481,9 @@ export default function SiteHeader() {
                   }
                 }}
                 className="site-header-menu"
-                aria-label="Open menu"
+                aria-label={mobileOpen || desktopMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileOpen || desktopMenuOpen}
+                aria-controls="site-header-navigation-panel"
               >
                 {mobileOpen || desktopMenuOpen ? (
                   <X className="h-5 w-5" />
@@ -515,6 +528,7 @@ export default function SiteHeader() {
           <AnimatePresence>
             {desktopMenuOpen ? (
               <motion.div
+                id="site-header-navigation-panel"
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
@@ -790,6 +804,7 @@ export default function SiteHeader() {
           <AnimatePresence>
             {mobileOpen ? (
               <motion.div
+                id="site-header-navigation-panel"
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
@@ -823,14 +838,33 @@ export default function SiteHeader() {
 
                     <div className="mt-4 space-y-3">
                       {[
-                        { key: "calculator", label: "Calculator", group: headerPreviewGroups[0] },
-                        { key: "payslip", label: "Payslip Check", group: headerPreviewGroups[1] },
-                        { key: "leaderboard", label: "Leaderboard", group: headerPreviewGroups[2] },
-                        { key: "tools", label: "Tools", group: headerPreviewGroups[3] },
-                        { key: "reality", label: "Reality", group: headerPreviewGroups[4] },
-                        { key: "more", label: "More", group: null },
+                        {
+                          key: "calculator" as const,
+                          label: "Calculator",
+                          group: headerPreviewGroups[0],
+                        },
+                        {
+                          key: "compare" as const,
+                          label: "Compare",
+                          group: headerPreviewGroups[1],
+                        },
+                        {
+                          key: "salaryhub" as const,
+                          label: "Salary Hub",
+                          group: headerPreviewGroups[2],
+                        },
+                        {
+                          key: "benchmarks" as const,
+                          label: "Benchmarks",
+                          group: headerPreviewGroups[3],
+                        },
+                        {
+                          key: "more" as const,
+                          label: "More",
+                          group: headerPreviewGroups[4],
+                        },
                       ].map((section) => {
-                        const open = mobileSections[section.key as MobileSectionKey];
+                        const open = mobileSections[section.key];
 
                         return (
                           <div
@@ -843,10 +877,9 @@ export default function SiteHeader() {
                           >
                             <button
                               type="button"
-                              onClick={() =>
-                                toggleMobileSection(section.key as MobileSectionKey)
-                              }
+                              onClick={() => toggleMobileSection(section.key)}
                               className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
+                              aria-expanded={open}
                             >
                               <p className="text-sm font-semibold app-title">{section.label}</p>
                               <ChevronDown
@@ -870,13 +903,11 @@ export default function SiteHeader() {
                                     style={{ borderColor: "var(--line)" }}
                                   >
                                     <div className="grid gap-3">
-                                      {section.group
-                                        ? [section.group.featured, ...section.group.links].map((link) => (
-                                            <ToolChip key={link.href + link.label} link={link} />
-                                          ))
-                                        : utilityMenuLinks.map((link) => (
-                                            <ToolChip key={link.href + link.label} link={link} />
-                                          ))}
+                                      {[section.group.featured, ...section.group.links].map(
+                                        (link) => (
+                                          <ToolChip key={link.href + link.label} link={link} />
+                                        ),
+                                      )}
                                     </div>
                                   </div>
                                 </motion.div>
@@ -885,6 +916,18 @@ export default function SiteHeader() {
                           </div>
                         );
                       })}
+                    </div>
+
+                    <div className="mt-4 rounded-[20px] border p-4" style={{ borderColor: "var(--line)", background: "var(--surface-1)" }}>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
+                        Utility links
+                      </p>
+
+                      <div className="mt-4 grid gap-3">
+                        {utilityMenuLinks.map((link) => (
+                          <ToolChip key={link.href + link.label} link={link} />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </Container>

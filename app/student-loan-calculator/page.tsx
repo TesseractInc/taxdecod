@@ -6,7 +6,7 @@ import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
-import StudentLoanCalculator from "../../components/student-loan/student-loan-calculator";
+import StudentLoanCalculator from "../../components/tools/student-loan/student-loan-calculator";
 import { buildSeoMetadata } from "../../components/seo/metadata";
 import PageSchema from "../../components/seo/page-schema";
 import { TRUST_COPY } from "../../lib/tax/config";

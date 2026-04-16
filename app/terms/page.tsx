@@ -1,34 +1,32 @@
-import type { Metadata } from "next";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
 
-export const metadata: Metadata = {
-  title: "Terms",
-  description: "Read the TaxDecod terms of use.",
-};
-
-const termsBlocks = [
+const termSections = [
   {
-    title: "Use of the platform",
-    body: "By using TaxDecod, users accept that the platform is intended for informational salary understanding and decision support purposes.",
+    title: "Use of the service",
+    body: "By using TaxDecod, users agree to use the site lawfully and responsibly. The platform is provided as an informational salary and deduction guidance service, not as payroll software or a regulated advisory service.",
   },
   {
-    title: "No guarantee of exact payroll match",
-    body: "Tool outputs are designed to be useful and directionally strong, but they may not match an employer's exact payroll system or a user's final payslip in every case.",
+    title: "No guarantee of official outcome",
+    body: "TaxDecod does not guarantee that any estimate, benchmark, comparison, or interpretation produced on the site will exactly match employer payroll results, HMRC records, or future tax outcomes.",
   },
   {
-    title: "User responsibility",
-    body: "Users are responsible for reviewing their own tax code, payroll treatment, deductions, and personal circumstances where precision matters.",
+    title: "Content and tool availability",
+    body: "TaxDecod may update, improve, pause, or remove features, pages, or routes as the platform develops. The service is provided on an ongoing-improvement basis rather than a guarantee of uninterrupted availability.",
   },
   {
-    title: "No regulated advice",
-    body: "Nothing on TaxDecod should be treated as legal, financial, tax, or regulated professional advice.",
+    title: "User judgment and verification",
+    body: "Users remain responsible for verifying important decisions against official documents, employer payroll information, HMRC records, or qualified professional advice where appropriate.",
   },
   {
-    title: "Platform evolution",
-    body: "TaxDecod may update, improve, remove, or expand features, page structures, and content as the product develops.",
+    title: "Limitation of reliance",
+    body: "TaxDecod is intended to support understanding and decision preparation. It should not be treated as the sole basis for employment, salary-negotiation, tax, legal, or financial decisions without additional verification.",
+  },
+  {
+    title: "Acceptance of terms",
+    body: "By continuing to use the platform, users accept these terms and the published trust, disclaimer, and privacy framing associated with the site.",
   },
 ];
 
@@ -41,19 +39,24 @@ export default function TermsPage() {
         <Container>
           <PageHero
             eyebrow="Terms"
-            title="Terms of use"
-            description="These terms explain the basis on which TaxDecod is made available and how users should treat the outputs shown on the platform."
-            ctaLabel="Use calculator"
-            ctaHref="/calculator"
+            title="Terms for using TaxDecod"
+            description="These terms explain the basis on which TaxDecod is offered and how the platform should be used and interpreted."
           />
 
-          <div className="space-y-6">
-            {termsBlocks.map((section) => (
-              <section key={section.title} className="app-card p-6 sm:p-7">
-                <h2 className="text-2xl font-semibold app-title">
+          <div className="mt-10 grid gap-4">
+            {termSections.map((section) => (
+              <section
+                key={section.title}
+                className="rounded-[30px] border px-6 py-6 sm:px-7"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--card-strong)",
+                }}
+              >
+                <h2 className="text-2xl font-semibold tracking-tight app-title">
                   {section.title}
                 </h2>
-                <p className="mt-4 text-base leading-8 app-copy">
+                <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
                   {section.body}
                 </p>
               </section>

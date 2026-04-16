@@ -68,14 +68,14 @@ export default function CalculatorPage() {
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 app-copy sm:text-base sm:leading-8">
               Check what reaches you after Income Tax, National Insurance,
-              pension, and student loan deductions — then use the result as salary guidance,
-              not as regulated personal advice.
+              pension, and student loan deductions — then use the result as salary
+              guidance, not as regulated personal advice.
             </p>
           </div>
 
           <div className="mt-8 sm:mt-10">
             <div className="rounded-[30px] border p-2 shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)] app-card-strong sm:p-3">
-              <CalculatorCard mode="overview" />
+              <CalculatorCard mode="full" />
             </div>
           </div>
 

@@ -50,6 +50,11 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+function normalizeTargetNet(value: number) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.round(value));
+}
+
 function getPrimaryInsight(
   targetMonthly: number,
   requiredGross: number,
@@ -167,9 +172,9 @@ function getDominantAction(requiredGross: number): NextAction {
     title: "Open the full salary calculator for this result",
     description:
       "Now that you know the estimated salary needed, check the full deduction breakdown and result interpretation in the main calculator.",
-      href: "/calculator",
-    };
-  }
+    href: "/calculator",
+  };
+}
 
 const toneStyles = {
   neutral: {
@@ -201,6 +206,8 @@ export default function ReverseTaxCalculator() {
   }, [reverseInput]);
 
   const calculatedGross = useMemo(() => {
+    if (targetAnnual <= 0) return 0;
+
     let low = 0;
     let high = 250000;
     let mid = 0;
@@ -339,11 +346,13 @@ export default function ReverseTaxCalculator() {
                   </span>
                   <input
                     type="number"
+                    min={0}
+                    step={100}
                     value={reverseInput.targetNet}
                     onChange={(e) =>
                       setReverseInput({
                         ...reverseInput,
-                        targetNet: Number(e.target.value) || 0,
+                        targetNet: normalizeTargetNet(Number(e.target.value)),
                       })
                     }
                     className="app-input h-[60px] pl-10 text-lg font-semibold"

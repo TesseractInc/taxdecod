@@ -1,4 +1,5 @@
 import SiteHeader from "../../../components/layout/site-header";
+import SiteFooter from "../../../components/layout/site-footer";
 import Container from "../../../components/ui/container";
 import PageHero from "../../../components/ui/page-hero";
 import ExperiencePager from "../../../components/ui/experience-pager";
@@ -8,6 +9,7 @@ export default function PaternityPayPage() {
   return (
     <main className="app-shell">
       <SiteHeader />
+
       <section className="py-10 sm:py-14">
         <Container>
           <PageHero
@@ -28,6 +30,8 @@ export default function PaternityPayPage() {
           </div>
         </Container>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }

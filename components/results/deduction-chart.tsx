@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { TakeHomeResult } from "../../types/tax";
 import { formatCurrency } from "../../lib/tax/utils/currency";
 
@@ -46,34 +40,36 @@ export default function DeductionChart({ result }: { result: TakeHomeResult }) {
       </div>
 
       <div className="grid gap-6 p-6 xl:grid-cols-[0.95fr_1.05fr] xl:items-center sm:p-7">
-        <div className="relative h-[320px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                dataKey="value"
-                innerRadius={82}
-                outerRadius={118}
-                paddingAngle={3}
-                stroke="none"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value) =>
-  typeof value === "number" ? formatCurrency(value) : String(value ?? "")
-}
-                contentStyle={{
-                  borderRadius: 16,
-                  border: "1px solid rgba(148,163,184,0.18)",
-                  background: "rgba(255,255,255,0.98)",
-                  boxShadow: "0 12px 30px rgba(15,23,42,0.08)",
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="relative flex min-h-[320px] w-full items-center justify-center">
+          <PieChart width={320} height={320}>
+            <Pie
+              data={data}
+              dataKey="value"
+              innerRadius={82}
+              outerRadius={118}
+              paddingAngle={3}
+              stroke="none"
+              cx="50%"
+              cy="50%"
+            >
+              {data.map((entry, index) => (
+                <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value) =>
+                typeof value === "number"
+                  ? formatCurrency(value)
+                  : String(value ?? "")
+              }
+              contentStyle={{
+                borderRadius: 16,
+                border: "1px solid rgba(148,163,184,0.18)",
+                background: "rgba(255,255,255,0.98)",
+                boxShadow: "0 12px 30px rgba(15,23,42,0.08)",
+              }}
+            />
+          </PieChart>
 
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
             <div className="rounded-full border border-slate-200 bg-white/90 px-7 py-6 text-center shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">

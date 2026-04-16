@@ -23,7 +23,6 @@ export default function PayslipCheckerPage() {
 
           <div className="mt-8">
             <TaxYearTrustBar
-              title="YTD payslip trust system"
               description={TRUST_COPY.payslipChecker.description}
               points={[...TRUST_COPY.payslipChecker.points]}
             />

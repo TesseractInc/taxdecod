@@ -3,9 +3,9 @@ import SiteFooter from "../../../components/layout/site-footer";
 import Container from "../../../components/ui/container";
 import PageHero from "../../../components/ui/page-hero";
 import ExperiencePager from "../../../components/ui/experience-pager";
-import SickPayCalculator from "../../../components/leave-pay/sick-pay-calculator";
+import MaternityPayCalculator from "../../../components/leave-pay/maternity-pay-calculator";
 
-export default function SickPayPage() {
+export default function MaternityPayPage() {
   return (
     <main className="app-shell">
       <SiteHeader />
@@ -14,18 +14,18 @@ export default function SickPayPage() {
         <Container>
           <PageHero
             eyebrow="Leave pay"
-            title="Statutory sick pay calculator"
-            description="Estimate SSP clearly using average weekly earnings and selected sick weeks, with the statutory minimum framed as the baseline."
+            title="Statutory maternity pay calculator"
+            description="Estimate SMP clearly with weekly and total values, then use it as a planning baseline before enhanced employer pay is considered."
           />
 
           <div className="mt-8">
-            <SickPayCalculator />
+            <MaternityPayCalculator />
           </div>
 
           <div className="mt-10">
             <ExperiencePager
-              previous={{ href: "/leave-pay/paternity-pay", label: "Paternity pay" }}
-              next={{ href: "/benchmarks", label: "Benchmarks" }}
+              previous={{ href: "/leave-pay", label: "Leave pay hub" }}
+              next={{ href: "/leave-pay/paternity-pay", label: "Paternity pay" }}
             />
           </div>
         </Container>
