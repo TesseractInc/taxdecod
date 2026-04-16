@@ -4,52 +4,28 @@ import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
 
-const tools = [
+const guides = [
   {
-    title: "Student loan calculator",
+    title: "How Income Tax works in the UK",
     description:
-      "Estimate how student loan repayment changes what salary actually leaves you with.",
-    href: "/student-loan-calculator",
+      "A plain-English guide to how Income Tax affects salary and why take-home differs from gross pay.",
+    href: "/guides/how-income-tax-works-uk",
   },
   {
-    title: "Bonus tax calculator",
+    title: "How student loan affects take-home pay",
     description:
-      "Estimate how bonus pay is affected by tax pressure and salary context.",
-    href: "/bonus-tax-calculator",
+      "A guide to why student loan repayment can materially change what salary actually leaves you with.",
+    href: "/guides/how-student-loan-affects-take-home-pay",
   },
   {
-    title: "Overtime calculator",
+    title: "How to read a payslip in the UK",
     description:
-      "Estimate how overtime affects take-home rather than just gross pay.",
-    href: "/overtime-calculator",
-  },
-  {
-    title: "Salary sacrifice calculator",
-    description:
-      "Estimate how sacrifice can change tax efficiency and overall take-home structure.",
-    href: "/salary-sacrifice-calculator",
-  },
-  {
-    title: "Tax refund calculator",
-    description:
-      "Check whether Income Tax paid looks broadly high, low, or aligned.",
-    href: "/tax-refund-calculator",
-  },
-  {
-    title: "Tax code decoder",
-    description:
-      "Decode common PAYE tax codes in plain English before guessing at deduction issues.",
-    href: "/tax-code-decoder",
-  },
-  {
-    title: "Leave pay tools",
-    description:
-      "Estimate maternity, paternity, and sick pay under statutory-style rules.",
-    href: "/leave-pay",
+      "A plain-English guide to PAYE, National Insurance, pension, tax code, and year-to-date deduction lines.",
+    href: "/guides/how-to-read-a-payslip-uk",
   },
 ];
 
-export default function SalaryToolsPage() {
+export default function GuidesPage() {
   return (
     <main className="app-shell">
       <SiteHeader />
@@ -57,9 +33,9 @@ export default function SalaryToolsPage() {
       <section className="py-10 sm:py-14">
         <Container>
           <PageHero
-            eyebrow="Salary tools"
-            title="Specialist salary and deduction tools"
-            description="These tools exist for more specific salary questions that go beyond the main calculator, comparison, and reverse-planning routes."
+            eyebrow="Guides"
+            title="Salary and payslip guides"
+            description="These guides are designed to make TaxDecod more useful beyond calculation alone by adding context, interpretation, and plain-English salary understanding."
           />
 
           <section
@@ -70,20 +46,20 @@ export default function SalaryToolsPage() {
             }}
           >
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
-              How to use this page
+              Why these guides exist
             </p>
             <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
-              Use these routes when your question is narrower than a normal salary
-              check — for example student loan drag, bonus tax, tax-code interpretation,
-              refund signals, or statutory pay.
+              TaxDecod is not built around calculation alone. These guides exist
+              to explain the meaning behind salary numbers, deductions, payslips,
+              and monthly outcomes in a clearer, more useful way.
             </p>
           </section>
 
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {tools.map((tool) => (
+            {guides.map((guide) => (
               <Link
-                key={tool.href}
-                href={tool.href}
+                key={guide.href}
+                href={guide.href}
                 className="rounded-[30px] border px-6 py-6 transition hover-lift"
                 style={{
                   borderColor: "var(--line)",
@@ -91,13 +67,13 @@ export default function SalaryToolsPage() {
                 }}
               >
                 <h2 className="text-2xl font-semibold tracking-tight app-title">
-                  {tool.title}
+                  {guide.title}
                 </h2>
                 <p className="mt-4 text-sm leading-8 app-copy">
-                  {tool.description}
+                  {guide.description}
                 </p>
                 <p className="mt-6 text-sm font-semibold app-accent">
-                  Open route →
+                  Read guide →
                 </p>
               </Link>
             ))}
@@ -114,20 +90,19 @@ export default function SalaryToolsPage() {
               Related next steps
             </h2>
             <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
-              If the specialist route still leaves a broader question open, the
-              best next move is usually to return to the main calculator, compare
-              two salary outcomes, or read a guide for more context.
+              After reading a guide, the best next move is usually to check a
+              salary, compare two salary routes, inspect a payslip, or decode a tax code.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/calculator" className="app-button-primary">
-                Open salary calculator
+                Check a salary
               </Link>
               <Link href="/compare-salary" className="app-button-secondary">
                 Compare salaries
               </Link>
-              <Link href="/guides" className="app-button-secondary">
-                Read guides
+              <Link href="/payslip-checker" className="app-button-secondary">
+                Check a payslip
               </Link>
             </div>
           </section>

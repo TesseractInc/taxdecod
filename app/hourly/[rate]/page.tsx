@@ -71,7 +71,10 @@ export default async function HourlyPage({ params }: HourlyPageProps) {
         breadcrumbs={[
           { name: "Home", url: "https://taxdecod.com" },
           { name: "Salary hub", url: "https://taxdecod.com/salary-hub" },
-          { name: `£${rate} an hour after tax`, url: `https://taxdecod.com/hourly/${rate}` },
+          {
+            name: `£${rate} an hour after tax`,
+            url: `https://taxdecod.com/hourly/${rate}`,
+          },
         ]}
         faqItems={[
           {
@@ -104,7 +107,10 @@ export default async function HourlyPage({ params }: HourlyPageProps) {
           <div className="mt-8">
             <TaxYearTrustBar
               description={TRUST_COPY.salaryPage.description}
-              points={[...TRUST_COPY.salaryPage.points]}
+              points={[
+                ...TRUST_COPY.salaryPage.points,
+                "Useful for converting hourly rates into real monthly salary context",
+              ]}
             />
           </div>
 
@@ -123,21 +129,74 @@ export default async function HourlyPage({ params }: HourlyPageProps) {
                 {
                   href: "/calculator",
                   title: "Open the full salary calculator",
-                  description: "Check a full breakdown using an exact annual salary setup.",
+                  description:
+                    "Use this when you want a full breakdown using an exact annual salary setup.",
                 },
                 {
                   href: "/compare-salary",
                   title: "Compare salary outcomes",
-                  description: "See whether the next pay band really changes monthly life.",
+                  description:
+                    "Use this when you want to know whether the next pay band really changes monthly life.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse from a target monthly income",
-                  description: "Find the salary needed for the monthly number you want.",
+                  title: "Work backwards from a target monthly income",
+                  description:
+                    "Use this when the monthly amount you want to keep matters more than the hourly headline.",
                 },
               ]}
             />
           </div>
+
+          <section className="mt-10 grid gap-4 lg:grid-cols-3">
+            <Link
+              href="/compare-salary"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Compare this against another salary route
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want to see whether the next pay band meaningfully changes the result.
+              </p>
+            </Link>
+
+            <Link
+              href="/reverse-tax"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Reverse-plan from the monthly amount you need
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you care more about the income target than the hourly headline rate.
+              </p>
+            </Link>
+
+            <Link
+              href="/salary-hub"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Explore more salary routes
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want broader salary context beyond one hourly figure.
+              </p>
+            </Link>
+          </section>
 
           <section className="mt-14 grid gap-6 lg:grid-cols-[1fr_1fr]">
             <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
@@ -146,19 +205,25 @@ export default async function HourlyPage({ params }: HourlyPageProps) {
               </p>
               <div className="mt-5 space-y-3">
                 <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Gross yearly</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Gross yearly
+                  </p>
                   <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(data.grossAnnual)}
                   </p>
                 </div>
                 <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Net monthly</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Net monthly
+                  </p>
                   <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(data.result.netMonthly)}
                   </p>
                 </div>
                 <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Approx net hourly</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Approx net hourly
+                  </p>
                   <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(data.netHourlyApprox)}
                   </p>

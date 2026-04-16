@@ -133,7 +133,10 @@ export default async function GoodSalaryPage({
           <div className="mt-8">
             <TaxYearTrustBar
               description={TRUST_COPY.salaryPage.description}
-              points={[...TRUST_COPY.salaryPage.points]}
+              points={[
+                ...TRUST_COPY.salaryPage.points,
+                "Useful when city context matters as much as tax",
+              ]}
             />
           </div>
 
@@ -151,25 +154,75 @@ export default async function GoodSalaryPage({
               items={[
                 {
                   href: "/calculator",
-                  title: "Open the full salary calculator",
+                  title: "Inspect the full deduction breakdown",
                   description:
-                    "Check the exact deduction breakdown behind this salary.",
+                    "Useful when you want the deeper take-home picture behind this salary.",
                 },
                 {
                   href: "/compare-salary",
                   title: "Compare this against a nearby salary",
                   description:
-                    "See whether the next pay band changes monthly life enough.",
+                    "Useful when you want to know whether the next pay band actually changes life enough.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse from a target monthly income",
+                  title: "Work backwards from a target income",
                   description:
-                    "Work backwards from the monthly amount you actually want.",
+                    "Useful when the amount you want to keep matters more than judging a single fixed salary.",
                 },
               ]}
             />
           </div>
+
+          <section className="mt-10 grid gap-4 lg:grid-cols-3">
+            <Link
+              href={`/${salary}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                See the full after-tax salary route
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want the full deduction reading behind this city-context verdict.
+              </p>
+            </Link>
+
+            <Link
+              href={`/benchmarks/software-engineer/${resolvedParams.region}`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Add a role benchmark in {regionLabel}
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when market role context matters alongside take-home pay.
+              </p>
+            </Link>
+
+            <Link
+              href="/salary-hub"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Explore more salary routes
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want wider salary context rather than one city verdict alone.
+              </p>
+            </Link>
+          </section>
 
           <section className="mt-14 grid gap-6 lg:grid-cols-[1fr_1fr]">
             <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
@@ -189,9 +242,9 @@ export default async function GoodSalaryPage({
                   gross salary alone does not tell the full story.
                 </p>
                 <p>
-                  The right answer depends on your rent, travel cost, debt,
-                  family setup, and how much monthly flexibility you actually
-                  need.
+                  The right answer depends on rent, travel cost, debt,
+                  household structure, and how much monthly flexibility you actually
+                  need in {regionLabel}.
                 </p>
               </div>
             </div>

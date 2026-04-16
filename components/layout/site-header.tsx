@@ -45,9 +45,10 @@ import { useSupabaseAuth } from "../auth/supabase-auth-provider";
 type MobileSectionKey =
   | "core"
   | "calculator"
-  | "compare"
-  | "salaryhub"
-  | "benchmarks"
+  | "payslip"
+  | "leaderboard"
+  | "tools"
+  | "reality"
   | "more";
 
 const iconMap: Record<HeaderIconKey, React.ComponentType<{ className?: string }>> =
@@ -192,14 +193,9 @@ function GroupPanel({
                 ) : null}
               </div>
 
-              <p className="mt-2 text-sm leading-6 app-copy">
+              <p className="mt-2.5 text-sm leading-6 app-copy">
                 {group.featured.description}
               </p>
-
-              <div className="mt-4 inline-flex items-center gap-2 text-sm font-semibold app-accent">
-                Open route
-                <ChevronRight className="h-4 w-4" />
-              </div>
             </div>
           </div>
         </Link>
@@ -209,7 +205,7 @@ function GroupPanel({
         className="rounded-[24px] border p-5"
         style={{
           borderColor: "var(--line)",
-          background: "var(--surface-1)",
+          background: "color-mix(in srgb, var(--surface-1) 96%, transparent)",
         }}
       >
         <div className="mb-3.5 flex items-center gap-2">
@@ -297,9 +293,10 @@ export default function SiteHeader() {
   >({
     core: true,
     calculator: false,
-    compare: false,
-    salaryhub: false,
-    benchmarks: false,
+    payslip: false,
+    leaderboard: false,
+    tools: false,
+    reality: false,
     more: false,
   });
 
@@ -412,22 +409,14 @@ export default function SiteHeader() {
                   TaxDecod
                 </p>
                 <p className="truncate text-xs app-subtle">
-                  UK salary clarity engine
+                  UK salary and take-home guidance
                 </p>
               </div>
             </Link>
 
             <nav className="hidden items-center gap-1 xl:flex">
               {navItems.map((item) => {
-                const group = item.group!;
-                const active =
-                  pathname === item.href ||
-                  pathname.startsWith(`${item.href}/`) ||
-                  activePreview === item.href ||
-                  group.links.some(
-                    (link) =>
-                      pathname === link.href || pathname.startsWith(`${link.href}/`),
-                  );
+                const active = pathname === item.href || activePreview === item.href;
 
                 return (
                   <button
@@ -447,7 +436,7 @@ export default function SiteHeader() {
                     <span>{item.label}</span>
                     <ChevronDown
                       className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                        activePreview === item.href ? "rotate-180" : ""
+                        active ? "rotate-180" : ""
                       }`}
                     />
                   </button>
@@ -456,15 +445,17 @@ export default function SiteHeader() {
             </nav>
 
             <div className="flex items-center gap-2">
-              <AccountButton
-                signedIn={signedIn}
-                email={email}
-                onClick={() => {
-                  setActivePreview(null);
-                  setDesktopMenuOpen(false);
-                  setAccountOpen((prev) => !prev);
-                }}
-              />
+              {configured ? (
+                <AccountButton
+                  signedIn={signedIn}
+                  email={email}
+                  onClick={() => {
+                    setActivePreview(null);
+                    setDesktopMenuOpen(false);
+                    setAccountOpen((prev) => !prev);
+                  }}
+                />
+              ) : null}
 
               <ThemeToggle compact />
 
@@ -483,7 +474,6 @@ export default function SiteHeader() {
                 className="site-header-menu"
                 aria-label={mobileOpen || desktopMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={mobileOpen || desktopMenuOpen}
-                aria-controls="site-header-navigation-panel"
               >
                 {mobileOpen || desktopMenuOpen ? (
                   <X className="h-5 w-5" />
@@ -528,7 +518,6 @@ export default function SiteHeader() {
           <AnimatePresence>
             {desktopMenuOpen ? (
               <motion.div
-                id="site-header-navigation-panel"
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
@@ -679,7 +668,7 @@ export default function SiteHeader() {
           </AnimatePresence>
 
           <AnimatePresence>
-            {accountOpen ? (
+            {configured && accountOpen ? (
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -804,7 +793,6 @@ export default function SiteHeader() {
           <AnimatePresence>
             {mobileOpen ? (
               <motion.div
-                id="site-header-navigation-panel"
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
@@ -838,33 +826,14 @@ export default function SiteHeader() {
 
                     <div className="mt-4 space-y-3">
                       {[
-                        {
-                          key: "calculator" as const,
-                          label: "Calculator",
-                          group: headerPreviewGroups[0],
-                        },
-                        {
-                          key: "compare" as const,
-                          label: "Compare",
-                          group: headerPreviewGroups[1],
-                        },
-                        {
-                          key: "salaryhub" as const,
-                          label: "Salary Hub",
-                          group: headerPreviewGroups[2],
-                        },
-                        {
-                          key: "benchmarks" as const,
-                          label: "Benchmarks",
-                          group: headerPreviewGroups[3],
-                        },
-                        {
-                          key: "more" as const,
-                          label: "More",
-                          group: headerPreviewGroups[4],
-                        },
+                        { key: "calculator", label: "Calculator", group: headerPreviewGroups[0] },
+                        { key: "payslip", label: "Payslip Check", group: headerPreviewGroups[1] },
+                        { key: "leaderboard", label: "Leaderboard", group: headerPreviewGroups[2] },
+                        { key: "tools", label: "Tools", group: headerPreviewGroups[3] },
+                        { key: "reality", label: "Reality", group: headerPreviewGroups[4] },
+                        { key: "more", label: "More", group: null },
                       ].map((section) => {
-                        const open = mobileSections[section.key];
+                        const open = mobileSections[section.key as MobileSectionKey];
 
                         return (
                           <div
@@ -877,9 +846,10 @@ export default function SiteHeader() {
                           >
                             <button
                               type="button"
-                              onClick={() => toggleMobileSection(section.key)}
+                              onClick={() =>
+                                toggleMobileSection(section.key as MobileSectionKey)
+                              }
                               className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
-                              aria-expanded={open}
                             >
                               <p className="text-sm font-semibold app-title">{section.label}</p>
                               <ChevronDown
@@ -903,11 +873,13 @@ export default function SiteHeader() {
                                     style={{ borderColor: "var(--line)" }}
                                   >
                                     <div className="grid gap-3">
-                                      {[section.group.featured, ...section.group.links].map(
-                                        (link) => (
-                                          <ToolChip key={link.href + link.label} link={link} />
-                                        ),
-                                      )}
+                                      {section.group
+                                        ? [section.group.featured, ...section.group.links].map((link) => (
+                                            <ToolChip key={link.href + link.label} link={link} />
+                                          ))
+                                        : utilityMenuLinks.map((link) => (
+                                            <ToolChip key={link.href + link.label} link={link} />
+                                          ))}
                                     </div>
                                   </div>
                                 </motion.div>
@@ -916,18 +888,6 @@ export default function SiteHeader() {
                           </div>
                         );
                       })}
-                    </div>
-
-                    <div className="mt-4 rounded-[20px] border p-4" style={{ borderColor: "var(--line)", background: "var(--surface-1)" }}>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
-                        Utility links
-                      </p>
-
-                      <div className="mt-4 grid gap-3">
-                        {utilityMenuLinks.map((link) => (
-                          <ToolChip key={link.href + link.label} link={link} />
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </Container>

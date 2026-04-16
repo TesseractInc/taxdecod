@@ -6,7 +6,7 @@ import PageHero from "../../components/ui/page-hero";
 const disclaimerSections = [
   {
     title: "General position",
-    body: "TaxDecod provides estimate-based salary, deduction, and take-home guidance for informational use. Nothing on the site should be read as payroll processing, legal advice, regulated financial advice, or a formal tax determination.",
+    body: "TaxDecod provides estimate-based salary, deduction, payslip, and take-home guidance for informational use. Nothing on the site should be read as payroll processing, legal advice, regulated financial advice, or a formal tax determination.",
   },
   {
     title: "No HMRC or employer authority",
@@ -38,6 +38,23 @@ export default function DisclaimerPage() {
             title="Important interpretation and limitation notice"
             description="This page explains the limits of TaxDecod so users can understand where the platform is helpful and where formal payroll, HMRC, or professional confirmation is still required."
           />
+
+          <section
+            className="mt-8 rounded-[28px] border px-6 py-5 sm:px-7"
+            style={{
+              borderColor: "var(--line)",
+              background: "var(--surface-2)",
+            }}
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
+              Disclaimer framing
+            </p>
+            <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
+              TaxDecod is intended to improve salary and deduction understanding.
+              It should not be treated as a formal authority, legal opinion, or
+              definitive payroll outcome.
+            </p>
+          </section>
 
           <div className="mt-10 grid gap-4">
             {disclaimerSections.map((section) => (

@@ -8,27 +8,27 @@ import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
 
 const nextRoutes = [
   {
-    title: "Compare two salaries",
+    title: "Compare this salary against another offer",
     description:
-      "Best next move when you want to know whether a raise or new offer really changes monthly life.",
+      "Use this when the real question is whether a raise or a new role changes monthly life enough after deductions.",
     href: "/compare-salary",
   },
   {
-    title: "Reverse from a target income",
+    title: "Work backwards from a target monthly income",
     description:
-      "Start from the monthly amount you actually want to keep and work backwards to the gross salary needed.",
+      "Use this when you know the amount you want to keep and need the gross salary required to reach it.",
     href: "/reverse-tax",
   },
   {
-    title: "Understand payslip deductions",
+    title: "Check whether a payslip looks on track",
     description:
-      "Useful when your payslip numbers feel confusing or you want plain-English deduction context.",
-    href: "/payslip-explained",
+      "Use this when your deductions feel unusual and you want a first-check reading of PAYE, NI, and year-to-date totals.",
+    href: "/payslip-checker",
   },
   {
-    title: "Browse salary pages",
+    title: "Browse nearby salary bands and routes",
     description:
-      "Jump into nearby salary bands and explore related after-tax routes quickly.",
+      "Use this when you want more context around neighbouring salary levels rather than a single isolated result.",
     href: "/salary-hub",
   },
 ];
@@ -63,13 +63,13 @@ export default function CalculatorPage() {
             </p>
 
             <h1 className="mt-3 text-3xl font-semibold tracking-tight app-title sm:text-5xl">
-              Accurate take-home pay, clearly framed
+              See what your salary actually leaves you with
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 app-copy sm:text-base sm:leading-8">
-              Check what reaches you after Income Tax, National Insurance,
-              pension, and student loan deductions — then use the result as salary
-              guidance, not as regulated personal advice.
+              Check take-home pay after Income Tax, National Insurance, pension,
+              and student loan deductions, then use the result to make a better
+              salary decision.
             </p>
           </div>
 
@@ -86,6 +86,7 @@ export default function CalculatorPage() {
                 "Updated for 2025/26 salary interpretation",
                 "Estimate-based outputs, not financial advice",
                 "Methodology and assumptions visible",
+                "Best used for salary decisions and first-check clarity",
               ]}
             />
           </div>
@@ -93,15 +94,15 @@ export default function CalculatorPage() {
           <section className="mt-10 overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_70px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
             <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-7">
               <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                What to do after the first result
+                Where to go after the first result
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Move into the next salary decision, not just the first calculation
+                Use the result to answer the next salary question properly
               </h2>
               <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
-                The calculator should not be a dead end. After a result, users
-                usually need comparison, reverse planning, payslip understanding,
-                or a nearby salary path.
+                The first number is only the start. Most users then need to
+                compare a different offer, work backwards from a target income,
+                or check whether deductions look normal.
               </p>
             </div>
 

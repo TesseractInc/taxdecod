@@ -158,7 +158,7 @@ export default function CalculatorCard({
 
   return (
     <section className={isOverview ? "pb-0" : "pb-10"}>
-      <div className={isOverview ? "max-w-none" : "max-w-none"}>
+      <div className="max-w-none">
         <div className="space-y-6">
           <div className="overflow-hidden rounded-[34px] border app-card-strong shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)]">
             <div className="grid gap-0 lg:grid-cols-[0.94fr_1.06fr]">
@@ -172,11 +172,11 @@ export default function CalculatorCard({
                       Salary input
                     </p>
                     <h2 className="mt-2 text-2xl font-bold tracking-tight app-title sm:text-3xl">
-                      Enter a salary and get the answer immediately
+                      Start with the salary you want to understand
                     </h2>
                     <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
-                      Start with gross pay. Only adjust region, pension, or student
-                      loan when they materially change the result.
+                      Enter gross pay first. Then adjust region, pension, and
+                      student loan only where they materially change the result.
                     </p>
                   </div>
 
@@ -189,7 +189,7 @@ export default function CalculatorCard({
                     }}
                   >
                     <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                    Estimate-based salary guidance
+                    First-check salary guidance
                   </div>
                 </div>
 
@@ -205,13 +205,7 @@ export default function CalculatorCard({
                   />
                 </div>
 
-                <div
-                  className={`mt-5 grid gap-3 ${
-                    isOverview
-                      ? "sm:grid-cols-[1fr_auto]"
-                      : "sm:grid-cols-[1fr_auto]"
-                  } sm:items-center`}
-                >
+                <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
                   <button
                     type="button"
                     onClick={() =>
@@ -222,7 +216,7 @@ export default function CalculatorCard({
                     }
                     className="app-button-primary w-full sm:w-auto"
                   >
-                    Calculate take-home pay
+                    See take-home result
                   </button>
 
                   {isOverview ? (
@@ -230,7 +224,7 @@ export default function CalculatorCard({
                       href="/calculator"
                       className="app-button-secondary justify-center sm:justify-start"
                     >
-                      Open full calculator
+                      Open full salary calculator
                     </Link>
                   ) : (
                     <button
@@ -239,7 +233,7 @@ export default function CalculatorCard({
                       className="app-button-secondary justify-center sm:justify-start"
                     >
                       <Save className="mr-2 h-4 w-4" />
-                      Save scenario
+                      Save this salary route
                     </button>
                   )}
                 </div>
@@ -266,12 +260,12 @@ export default function CalculatorCard({
                   }}
                 >
                   <p className="text-sm font-semibold app-title">
-                    What this tool is for
+                    What to do after the first result
                   </p>
                   <p className="mt-2 text-sm leading-7 app-copy">
-                    Use this to understand what actually reaches you after tax and
-                    deductions. Then move into comparison, reverse planning, or
-                    payslip interpretation if needed.
+                    Use the first result to understand what your salary leaves you
+                    with. Then move into comparison, reverse planning, or payslip
+                    checking if the next decision needs more context.
                   </p>
                 </div>
               </div>
@@ -280,14 +274,14 @@ export default function CalculatorCard({
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="max-w-2xl">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.2em] app-accent">
-                      Instant result
+                      Result
                     </p>
                     <h2 className="mt-2 text-2xl font-bold tracking-tight app-title sm:text-3xl">
-                      See what actually reaches you
+                      See what the salary actually turns into
                     </h2>
                     <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
-                      This result is designed for salary understanding and next-step
-                      decision making, not just raw number display.
+                      This result is designed to support salary decisions, not
+                      just display a number.
                     </p>
                   </div>
 
@@ -316,7 +310,7 @@ export default function CalculatorCard({
               type="calculator"
               title="Recent calculator scenarios"
               emptyTitle="No calculator scenarios saved yet"
-              emptyDescription="Save a calculator route and it will appear here for fast return access."
+              emptyDescription="Save a salary route here when you want to return to it quickly later."
               onLoad={handleLoadScenario}
             />
           ) : null}

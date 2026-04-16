@@ -150,9 +150,9 @@ export default function CompareSalaryPageClient() {
       <section className="py-16 sm:py-20">
         <Container>
           <SeoPageHero
-            eyebrow="Salary decision tool"
-            title="Compare two salaries properly"
-            description="This page is built for the moment when one salary looks better on paper but you need to know whether it really improves life after tax."
+            eyebrow="Salary comparison"
+            title="Compare two salaries after deductions"
+            description="Use this page when the real question is not which salary looks bigger on paper, but which one leaves you materially better off month to month."
             highlightValue={monthlyDiffLabel}
             highlightSubtext="estimated monthly take-home difference"
           />
@@ -165,10 +165,10 @@ export default function CompareSalaryPageClient() {
           </div>
 
           <div className="mt-10">
-            <SeoRealityCard label="Comparison reality">
-              A bigger gross salary is not the same as a better monthly outcome.
-              What matters is how much of the increase actually survives tax,
-              National Insurance, pension, and student loan deductions.
+            <SeoRealityCard label="Why this matters">
+              A higher gross salary does not always translate into a meaningfully
+              better outcome once tax, National Insurance, pension, and student
+              loan deductions are applied.
             </SeoRealityCard>
           </div>
 
@@ -177,21 +177,21 @@ export default function CompareSalaryPageClient() {
               items={[
                 {
                   href: "/calculator",
-                  title: "Open the full calculator",
+                  title: "Check one salary in full first",
                   description:
-                    "Check a single salary in more depth before you compare it with another.",
+                    "Use the main calculator when you want a deeper reading of one salary before comparing it against another.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse from a target income",
+                  title: "Work backwards from a target income",
                   description:
-                    "Find the gross salary needed to hit the monthly figure you actually want.",
+                    "Use reverse salary planning when you know the monthly figure you want to keep.",
                 },
                 {
                   href: "/salary-hub",
-                  title: "Explore salary pages",
+                  title: "Browse nearby salary bands",
                   description:
-                    "Browse nearby salary levels and take-home routes for more context.",
+                    "Use the salary hub when you need more context around neighbouring pay levels and routes.",
                 },
               ]}
             />
@@ -202,14 +202,14 @@ export default function CompareSalaryPageClient() {
               <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-3xl">
                   <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                    Salary comparison console
+                    Comparison input
                   </p>
                   <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                    Test the salary jump before you believe it
+                    Test the salary jump before you believe the headline number
                   </h2>
                   <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
-                    Use the pair inputs below to see the real annual and monthly
-                    take-home change, not just the gross increase.
+                    Enter the current salary and the alternative salary below to
+                    see what actually changes after deductions.
                   </p>
                 </div>
 
@@ -252,7 +252,7 @@ export default function CompareSalaryPageClient() {
                   />
                 </div>
                 <p className="mt-3 text-xs leading-6 text-slate-500 dark:text-slate-400">
-                  Starting salary, current offer, or current role.
+                  Current salary, existing role, or first offer.
                 </p>
               </div>
 
@@ -276,7 +276,7 @@ export default function CompareSalaryPageClient() {
                   />
                 </div>
                 <p className="mt-3 text-xs leading-6 text-slate-500 dark:text-slate-400">
-                  New salary, target role, or raise scenario.
+                  New salary, target role, or competing offer.
                 </p>
               </div>
             </div>
@@ -289,7 +289,7 @@ export default function CompareSalaryPageClient() {
                   className="app-button-secondary justify-center sm:justify-start"
                 >
                   <Save className="mr-2 h-4 w-4" />
-                  Save comparison
+                  Save this comparison
                 </button>
 
                 {saveNotice ? (
@@ -372,7 +372,7 @@ export default function CompareSalaryPageClient() {
               type="compare"
               title="Recent comparison scenarios"
               emptyTitle="No comparison scenarios saved yet"
-              emptyDescription="Save a salary comparison route and it will appear here for fast return access."
+              emptyDescription="Save a comparison here when you want to return to the same decision later."
               onLoad={handleLoadScenario}
             />
           </div>
@@ -383,10 +383,10 @@ export default function CompareSalaryPageClient() {
               className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
             >
               <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                Reverse from take-home
+                Work backwards from a target income
               </p>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                Start from the monthly amount you want and work backwards.
+                Use this when the monthly amount you want to keep matters more than the headline salary.
               </p>
             </Link>
 
@@ -395,10 +395,10 @@ export default function CompareSalaryPageClient() {
               className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
             >
               <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                Open the main calculator
+                Inspect one salary in more detail
               </p>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                Get a full guided reading for one salary in more detail.
+                Use the main calculator when you need a full guided reading of one salary route.
               </p>
             </Link>
 
@@ -407,19 +407,19 @@ export default function CompareSalaryPageClient() {
               className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
             >
               <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                Explore salary pages
+                Browse nearby salary bands
               </p>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                Browse nearby salary bands and related take-home pages.
+                Use the hub when you want wider salary context rather than a two-point comparison only.
               </p>
             </Link>
           </section>
 
           <div className="mt-14">
             <EmailCapturePanel
-              title="Send this salary comparison to your email"
-              description="Save a job-offer or raise comparison so you can come back to it later with clearer context."
-              buttonLabel="Send comparison report"
+              title="Keep this comparison for later"
+              description="Use this area when you want a calmer way to return to the same decision later without relying on a live email flow."
+              buttonLabel="Comparison follow-up"
             />
           </div>
         </Container>

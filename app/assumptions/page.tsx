@@ -1,25 +1,29 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
 
-export const metadata: Metadata = {
-  title: "Assumptions",
-  description:
-    "See the main assumptions behind TaxDecod salary and take-home pay estimates.",
-};
-
 const assumptions = [
-  "The platform assumes the user provides accurate salary inputs.",
-  "Results are estimate-led and may not perfectly match payroll software or employer-specific configuration.",
-  "Different tax codes can materially change net pay.",
-  "Pension treatment can vary depending on arrangement and payroll setup.",
-  "Student loan deductions depend on the plan selected and applicable thresholds.",
-  "Scottish tax treatment can differ from England, Wales, and Northern Ireland.",
-  "Bonuses, benefits, salary sacrifice, deductions, and payroll timing can alter final take-home amounts.",
-  "The platform is intended to improve salary understanding, not replace payslip verification or professional advice.",
+  {
+    title: "Tax year framing",
+    body: "TaxDecod pages are framed around the current UK tax year and the site’s published interpretation of standard employee salary treatment. Results should be read within that tax-year context, not as timeless figures.",
+  },
+  {
+    title: "Standard employee assumptions",
+    body: "Many salary calculations assume a standard employee-style route with PAYE Income Tax, employee National Insurance, and ordinary salary flow. Real employer payroll setups can differ depending on tax code, benefit treatment, sacrifice arrangements, and pay timing.",
+  },
+  {
+    title: "Pension and student loan assumptions",
+    body: "Where pension and student loan settings are used, TaxDecod assumes the selected deduction structure applies consistently to the salary route being tested. Real payroll treatment may vary depending on scheme design and employer setup.",
+  },
+  {
+    title: "Payslip and refund checks",
+    body: "Payslip and refund-related pages provide estimate-based guidance only. They are best used as first-check interpretation tools rather than final determinations of overpayment, underpayment, or payroll error.",
+  },
+  {
+    title: "Benchmark and salary-context assumptions",
+    body: "Benchmark and salary-context pages are designed to support interpretation and comparison. They should not be read as guarantees of market salary, guaranteed offers, or formal compensation standards.",
+  },
 ];
 
 export default function AssumptionsPage() {
@@ -31,57 +35,28 @@ export default function AssumptionsPage() {
         <Container>
           <PageHero
             eyebrow="Assumptions"
-            title="The assumptions behind TaxDecod results"
-            description="Salary tools become more trustworthy when users can see the assumptions clearly. This page sets those expectations directly."
-            ctaLabel="Back to calculator"
-            ctaHref="/calculator"
+            title="Core assumptions behind TaxDecod pages"
+            description="This page explains the practical assumptions that sit behind TaxDecod’s salary, deduction, payslip, and comparison outputs."
           />
 
-          <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="app-card p-6 sm:p-7">
-              <div className="space-y-4">
-                {assumptions.map((item, index) => (
-                  <div key={item} className="app-soft rounded-2xl px-4 py-4">
-                    <p className="text-sm leading-7 app-copy">
-                      <span className="mr-2 font-semibold app-title">
-                        {index + 1}.
-                      </span>
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <aside className="space-y-6">
-              <div className="app-card p-6">
-                <h2 className="text-xl font-semibold app-title">
-                  Why this page matters
+          <div className="mt-10 grid gap-4">
+            {assumptions.map((section) => (
+              <section
+                key={section.title}
+                className="rounded-[30px] border px-6 py-6 sm:px-7"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--card-strong)",
+                }}
+              >
+                <h2 className="text-2xl font-semibold tracking-tight app-title">
+                  {section.title}
                 </h2>
-                <p className="mt-3 text-sm leading-7 app-copy">
-                  Users should know what a calculator can and cannot assume
-                  automatically. Visible assumptions reduce confusion, improve
-                  trust, and make the product feel more serious.
+                <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
+                  {section.body}
                 </p>
-              </div>
-
-              <div className="app-card p-6">
-                <h2 className="text-xl font-semibold app-title">
-                  Related pages
-                </h2>
-                <div className="mt-4 space-y-3 text-sm">
-                  <Link href="/methodology" className="block app-copy hover:underline">
-                    Methodology
-                  </Link>
-                  <Link href="/disclaimer" className="block app-copy hover:underline">
-                    Disclaimer
-                  </Link>
-                  <Link href="/contact" className="block app-copy hover:underline">
-                    Contact
-                  </Link>
-                </div>
-              </div>
-            </aside>
+              </section>
+            ))}
           </div>
         </Container>
       </section>

@@ -23,16 +23,16 @@ const intentRoutes = [
     href: "/compare-salary",
   },
   {
-    title: "Reverse from a target monthly income",
+    title: "Work backwards from a monthly income target",
     description:
-      "Best when you know the monthly amount you want to keep and need the salary behind it.",
+      "Best when you know the amount you want to keep and need the salary behind it.",
     href: "/reverse-tax",
   },
   {
-    title: "Understand payslip deductions",
+    title: "Check whether a payslip looks on track",
     description:
-      "Best when a user needs deduction clarity rather than another gross salary lookup.",
-    href: "/payslip-explained",
+      "Best when the issue is not salary alone but how deductions are appearing on a real payslip.",
+    href: "/payslip-checker",
   },
 ];
 
@@ -65,24 +65,27 @@ const scotlandRoutes = [
   { label: "£30,000 after tax in Scotland", href: "/30000-after-tax-scotland" },
   { label: "£40,000 after tax in Scotland", href: "/40000-after-tax-scotland" },
   { label: "£50,000 after tax in Scotland", href: "/50000-after-tax-scotland" },
-  {
-    label: "Compare Scotland and main UK routes",
-    href: "/40000-after-tax-scotland",
-  },
+  { label: "Browse Scotland salary routes", href: "/40000-after-tax-scotland" },
 ];
 
-const benchmarkHubRoutes = [
+const differentiatorRoutes = [
   {
-    title: "Browse benchmarks by role",
+    title: "Reverse salary planning",
     description:
-      "Useful when the role is clear and you want to inspect cities or regions next.",
-    href: "/benchmarks/roles",
+      "A stronger route when you are solving for the income you need rather than starting from a gross salary.",
+    href: "/reverse-tax",
   },
   {
-    title: "Browse benchmarks by region",
+    title: "Payslip interpretation",
     description:
-      "Useful when location matters first and you want to inspect role context inside that market.",
-    href: "/benchmarks/regions",
+      "A stronger route when your real question is whether deductions to date look normal.",
+    href: "/payslip-checker",
+  },
+  {
+    title: "Student loan drag",
+    description:
+      "A stronger route when the same salary feels weaker because student loan repayment is changing the result.",
+    href: "/student-loan-calculator",
   },
 ];
 
@@ -98,8 +101,8 @@ export default function SalaryHubPage() {
         <Container>
           <SeoPageHero
             eyebrow="Salary discovery hub"
-            title="Explore UK salaries after tax"
-            description="This hub is designed for fast take-home lookup, salary exploration, and deeper movement into comparison, reverse salary planning, hourly pay, benchmark pages, and Scotland-specific routes."
+            title="Explore salary routes, take-home pay, and better next steps"
+            description="This hub is designed for fast salary lookup, wider route discovery, and movement into the tools that answer the next real question after a single salary result."
           />
 
           <div className="mt-8">
@@ -112,8 +115,8 @@ export default function SalaryHubPage() {
           <div className="mt-10">
             <SeoRealityCard label="Why this hub matters">
               Salary discovery works best when users can move quickly between
-              nearby salary levels, compare different outcomes, and open pages
-              that match the question they are actually trying to answer.
+              nearby salary levels, comparison routes, reverse planning, benchmark
+              context, and deduction interpretation — not just open another salary page.
             </SeoRealityCard>
           </div>
 
@@ -134,9 +137,9 @@ export default function SalaryHubPage() {
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse from a monthly goal",
+                  title: "Work backwards from a monthly goal",
                   description:
-                    "Work backwards from the monthly amount you want to keep and find the salary behind it.",
+                    "Use reverse salary planning when the amount you want to keep matters most.",
                 },
               ]}
             />
@@ -145,15 +148,43 @@ export default function SalaryHubPage() {
           <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
             <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
               <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Intent routes
+                Best route by question
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Choose the right next path, not just another page
+                Choose the right route, not just another salary page
               </h2>
             </div>
 
             <div className="grid gap-4 p-6 md:grid-cols-2 sm:p-8">
               {intentRoutes.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                >
+                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {item.title}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                    {item.description}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
+            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                Where TaxDecod is strongest
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+                Go beyond one salary figure
+              </h2>
+            </div>
+
+            <div className="grid gap-4 p-6 md:grid-cols-3 sm:p-8">
+              {differentiatorRoutes.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -200,7 +231,7 @@ export default function SalaryHubPage() {
                   Role + city benchmarks
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                  Add market context to salary decisions
+                  Add market context
                 </h2>
               </div>
 
@@ -221,48 +252,11 @@ export default function SalaryHubPage() {
           <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
             <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
               <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Benchmark browsing
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Enter benchmark pages in the way that fits the question
-              </h2>
-              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
-                Some users start with the role. Others start with the city or
-                region. These routes reduce navigation friction and make the benchmark
-                system easier to browse.
-              </p>
-            </div>
-
-            <div className="grid gap-4 p-6 md:grid-cols-2 sm:p-8">
-              {benchmarkHubRoutes.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
-                >
-                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    {item.title}
-                  </p>
-                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                    {item.description}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
                 Scotland routes
               </p>
               <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
                 Explore Scotland-specific salary pages
               </h2>
-              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
-                These routes help users judge the same gross salary under Scottish
-                income tax treatment instead of assuming the main UK page tells the whole story.
-              </p>
             </div>
 
             <div className="grid gap-3 p-6 md:grid-cols-2 sm:p-8">
@@ -327,8 +321,7 @@ export default function SalaryHubPage() {
                   </h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                    Open the after-tax breakdown, monthly reality, and related
-                    salary paths.
+                    Open the after-tax breakdown, monthly reality, and related salary paths.
                   </p>
 
                   <p className="mt-5 text-sm font-medium text-sky-700 dark:text-sky-300">

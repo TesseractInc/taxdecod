@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import SiteHeader from "../../../components/layout/site-header";
 import SiteFooter from "../../../components/layout/site-footer";
 import Container from "../../../components/ui/container";
@@ -90,7 +91,10 @@ export default async function ComparisonSeoPage({
           <div className="mt-8">
             <TaxYearTrustBar
               description={TRUST_COPY.comparisonSeoPage.description}
-              points={[...TRUST_COPY.comparisonSeoPage.points]}
+              points={[
+                ...TRUST_COPY.comparisonSeoPage.points,
+                "Useful when gross salary alone is not the real answer",
+              ]}
             />
           </div>
 
@@ -113,23 +117,73 @@ export default async function ComparisonSeoPage({
                   href: "/compare-salary",
                   title: "Use the interactive comparison tool",
                   description:
-                    "Enter your own salary pair and compare live in a more flexible way.",
+                    "Adjust the salaries directly when you want a live comparison instead of this fixed route.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse from a monthly target",
+                  title: "Work backwards from a target income",
                   description:
-                    "Work backwards from the number you want to keep each month.",
+                    "Use reverse salary planning when the amount you want to keep matters more than either headline salary.",
                 },
                 {
-                  href: "/salary-hub",
-                  title: "Explore more salary pages",
+                  href: "/calculator",
+                  title: "Inspect one salary in full",
                   description:
-                    "Browse more salary bands, variants, and take-home scenarios.",
+                    "Useful when you want the deeper deduction picture behind either side of this comparison.",
                 },
               ]}
             />
           </div>
+
+          <section className="mt-10 grid gap-4 lg:grid-cols-3">
+            <Link
+              href={`/${salaryA}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Inspect £{salaryA.toLocaleString("en-GB")} on its own
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want the full one-salary deduction reading behind the first side of the comparison.
+              </p>
+            </Link>
+
+            <Link
+              href={`/${salaryB}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Inspect £{salaryB.toLocaleString("en-GB")} on its own
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want the full one-salary deduction reading behind the second side of the comparison.
+              </p>
+            </Link>
+
+            <Link
+              href="/payslip-checker"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Check a real payslip if the difference still feels wrong
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when a comparison looks fine on paper but the actual payslip experience still feels off.
+              </p>
+            </Link>
+          </section>
 
           <div className="mt-14">
             <ComparisonPageContent

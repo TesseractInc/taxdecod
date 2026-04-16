@@ -90,7 +90,7 @@ function getPrimaryInsight(
     return {
       title: "This target is entering a more complex salary zone",
       description:
-        "At higher salary levels, salary sacrifice, pension strategy, and tax-efficiency planning become much more important if you want to reach a take-home goal cleanly.",
+        "At higher salary levels, pension strategy, salary sacrifice, and tax-efficiency decisions become much more important if you want to reach a take-home goal cleanly.",
       tone: "warning",
     };
   }
@@ -99,15 +99,15 @@ function getPrimaryInsight(
     return {
       title: "This is a strong planning range for real-life salary decisions",
       description:
-        "Targets in this zone are usually tied to rent, savings, household budgeting, and job-change planning, which makes reverse calculation much more useful than headline salary thinking.",
+        "Targets in this zone are often tied to rent, saving goals, household budgeting, and job-change planning, which makes reverse salary calculation especially useful.",
       tone: "positive",
     };
   }
 
   return {
-    title: "This result translates your real income target into a usable salary goal",
+    title: "This result turns a take-home target into a usable salary goal",
     description:
-      "The main value here is clarity. Instead of guessing from gross salary, you now have a more decision-ready target to compare against jobs, offers, and raise expectations.",
+      "The main value here is clarity. Instead of guessing from gross salary alone, you now have a more decision-ready figure to compare against real jobs, offers, and raise expectations.",
     tone: "neutral",
   };
 }
@@ -121,27 +121,27 @@ function getSecondaryInsights(
 
   if (values.studentLoanPlan !== "none") {
     insights.push({
-      title: "Student loan is influencing the salary required",
+      title: "Student loan is raising the salary needed",
       description:
-        "Because student loan deductions are included in this setup, the gross salary needed to hit your target is higher than it would be without that repayment drag.",
+        "Because student loan deductions are included in this setup, the gross salary required to hit your target is higher than it would be without that repayment drag.",
       tone: "neutral",
     });
   }
 
   if (values.pensionPercent > 0) {
     insights.push({
-      title: "Pension contributions are lowering current take-home",
+      title: "Pension contributions reduce current take-home",
       description:
-        "That is not necessarily bad, but it does mean the gross figure required to reach your target monthly income rises as pension contribution levels increase.",
+        "That is not necessarily negative, but it does mean the gross figure needed to reach your monthly target rises as pension contribution levels increase.",
       tone: "neutral",
     });
   }
 
   if (resultNetMonthly < 2500) {
     insights.push({
-      title: "This target may still feel tight depending on location and rent",
+      title: "This target may still feel tight depending on rent and location",
       description:
-        "Even when the reverse salary is achieved, affordability depends heavily on region, rent, travel, and fixed monthly commitments.",
+        "Even when the required salary is achieved, affordability still depends heavily on region, travel, housing cost, and fixed monthly commitments.",
       tone: "warning",
     });
   }
@@ -150,7 +150,7 @@ function getSecondaryInsights(
     insights.push({
       title: "Further gross increases may convert less efficiently from here",
       description:
-        "Once reverse targets push salary higher, each additional increase in desired take-home can cost more gross salary than users expect.",
+        "Once reverse targets push salary higher, each additional step in desired take-home can demand more gross salary than users often expect.",
       tone: "neutral",
     });
   }
@@ -161,17 +161,17 @@ function getSecondaryInsights(
 function getDominantAction(requiredGross: number): NextAction {
   if (requiredGross >= 45000) {
     return {
-      title: "Compare this required salary against a nearby salary band",
+      title: "Compare this required salary against nearby pay levels",
       description:
-        "Once the required gross salary is known, the smartest next step is to test whether nearby salary jumps create meaningfully better monthly outcomes.",
+        "Once the required gross salary is known, the smartest next step is often to test whether nearby salary jumps materially improve life after deductions.",
       href: "/compare-salary",
     };
   }
 
   return {
-    title: "Open the full salary calculator for this result",
+    title: "Inspect this salary in the full calculator",
     description:
-      "Now that you know the estimated salary needed, check the full deduction breakdown and result interpretation in the main calculator.",
+      "Now that you know the estimated salary needed, open the main calculator to see the fuller deduction picture and next-step options.",
     href: "/calculator",
   };
 }
@@ -323,16 +323,17 @@ export default function ReverseTaxCalculator() {
             style={{ borderColor: "var(--line)" }}
           >
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] app-accent">
-              Reverse planning input
+              Target income input
             </p>
 
             <h2 className="mt-3 text-2xl font-bold tracking-tight app-title sm:text-3xl">
-              Start from the income you actually want to keep
+              Start from the amount you actually want to keep
             </h2>
 
             <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
-              Set your target take-home first, then adjust region, pension, and
-              student loan settings only where they materially change the result.
+              Set the monthly or yearly take-home target first. Then adjust
+              region, pension, and student loan only where they materially affect
+              the result.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -381,19 +382,19 @@ export default function ReverseTaxCalculator() {
             </div>
 
             <div className="mt-6 rounded-[24px] border p-5 app-soft">
-              <p className="text-sm font-semibold app-title">Required salary</p>
+              <p className="text-sm font-semibold app-title">Estimated salary needed</p>
               <h3 className="mt-3 text-4xl font-bold tracking-tight app-title sm:text-5xl">
                 {formatCurrency(calculatedGross)}
               </h3>
               <p className="mt-3 text-sm leading-7 app-copy">
-                Estimated gross salary needed to take home{" "}
+                This is the estimated gross salary required to take home{" "}
                 <span className="font-semibold app-title">
                   {formatCurrency(reverseInput.targetNet)}
                 </span>{" "}
                 {reverseInput.payPeriod === "monthly"
                   ? "per month"
-                  : "per year"}
-                .
+                  : "per year"}{" "}
+                under the current setup.
               </p>
             </div>
 
@@ -406,10 +407,10 @@ export default function ReverseTaxCalculator() {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] app-accent">
-                  Planning dashboard
+                  Planning view
                 </p>
                 <h2 className="mt-3 text-2xl font-bold tracking-tight app-title sm:text-3xl">
-                  Turn a target income into a salary plan
+                  Turn a target income into a realistic salary route
                 </h2>
               </div>
 
@@ -535,7 +536,7 @@ export default function ReverseTaxCalculator() {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold app-title">
-                    Next best step
+                    Best next step
                   </p>
                   <h3 className="mt-2 text-xl font-semibold tracking-tight app-title">
                     {dominantAction.title}
@@ -546,7 +547,7 @@ export default function ReverseTaxCalculator() {
                 </div>
 
                 <Link href={dominantAction.href} className="app-button-primary">
-                  Continue
+                  Continue with this next step
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
@@ -561,10 +562,10 @@ export default function ReverseTaxCalculator() {
                   }}
                 >
                   <p className="text-sm font-semibold app-title">
-                    Compare salaries
+                    Compare nearby salaries
                   </p>
                   <p className="mt-2 text-xs leading-6 app-copy">
-                    Test whether nearby salary bands improve life enough.
+                    Use this when you want to see whether nearby pay levels change life enough after deductions.
                   </p>
                 </Link>
 
@@ -577,10 +578,10 @@ export default function ReverseTaxCalculator() {
                   }}
                 >
                   <p className="text-sm font-semibold app-title">
-                    Open calculator
+                    Inspect the full salary route
                   </p>
                   <p className="mt-2 text-xs leading-6 app-copy">
-                    Inspect the full one-salary deduction breakdown.
+                    Use the main calculator when you want the broader one-salary deduction picture.
                   </p>
                 </Link>
 
@@ -593,10 +594,10 @@ export default function ReverseTaxCalculator() {
                   }}
                 >
                   <p className="text-sm font-semibold app-title">
-                    Explore salary hub
+                    Browse salary bands
                   </p>
                   <p className="mt-2 text-xs leading-6 app-copy">
-                    Browse nearby salary pages and related routes.
+                    Use the hub when you want more context around neighbouring salary levels.
                   </p>
                 </Link>
               </div>
@@ -611,10 +612,10 @@ export default function ReverseTaxCalculator() {
           style={{ borderColor: "var(--line)" }}
         >
           <p className="text-sm font-semibold app-title">
-            What is creating the drag
+            What is creating the deduction pressure
           </p>
           <p className="mt-2 text-sm leading-7 app-copy">
-            These deductions explain why the gross salary needed is higher than
+            These deductions explain why the gross salary required is higher than
             the take-home target you started with.
           </p>
         </div>
@@ -684,7 +685,7 @@ export default function ReverseTaxCalculator() {
 
       <PdfReportStrip
         title="Download this reverse salary report"
-        description="Save the estimated salary needed for your target take-home and use it later for planning, job comparisons, or salary negotiations."
+        description="Keep the estimated salary needed for your target take-home so you can use it later for planning, job comparisons, or salary discussions."
         values={values}
         result={result}
         filename="taxdecod-reverse-salary-report.pdf"

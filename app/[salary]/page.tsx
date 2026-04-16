@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
@@ -95,6 +96,9 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
     keepPercent,
   });
 
+  const nearbyLower = Math.max(salary - 5000, 15000);
+  const nearbyHigher = salary + 5000;
+
   return (
     <main className="app-shell">
       <SalaryPageSchema
@@ -121,7 +125,10 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
           <div className="mt-8">
             <TaxYearTrustBar
               description={TRUST_COPY.salaryPage.description}
-              points={[...TRUST_COPY.salaryPage.points]}
+              points={[
+                ...TRUST_COPY.salaryPage.points,
+                "Useful for comparing salary reality, not just gross pay",
+              ]}
             />
           </div>
 
@@ -141,23 +148,73 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
                   href: "/compare-salary",
                   title: "Compare this with another salary",
                   description:
-                    "See whether a higher salary really changes your monthly life after deductions.",
+                    "Use this when the next question is whether a higher salary really changes monthly life enough after deductions.",
                 },
                 {
                   href: "/reverse-tax",
-                  title: "Reverse from a target monthly income",
+                  title: "Work backwards from a target monthly income",
                   description:
-                    "Find the gross salary needed to hit the monthly number you actually want.",
+                    "Use this when the real goal is the amount you want to keep, not just the gross salary headline.",
                 },
                 {
-                  href: "/salary-hub",
-                  title: "Explore more salary pages",
+                  href: "/payslip-checker",
+                  title: "Check whether a real payslip looks on track",
                   description:
-                    "Move into nearby salary levels, scenario pages, and related take-home routes.",
+                    "Useful when the salary number looks fine but actual deductions on a payslip still feel wrong.",
                 },
               ]}
             />
           </div>
+
+          <section className="mt-10 grid gap-4 lg:grid-cols-3">
+            <Link
+              href={`/${nearbyLower}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                See £{nearbyLower.toLocaleString("en-GB")} after tax
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want context around the next lower salary band.
+              </p>
+            </Link>
+
+            <Link
+              href={`/${nearbyHigher}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                See £{nearbyHigher.toLocaleString("en-GB")} after tax
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want context around the next higher salary band.
+              </p>
+            </Link>
+
+            <Link
+              href={`/good-salary/${salary}/london`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Judge whether this feels strong in a city context
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want to go beyond tax and think about what this salary means in real life.
+              </p>
+            </Link>
+          </section>
 
           <div className="mt-14">
             <SalaryPageContent

@@ -15,7 +15,25 @@ const specialistLinks = [
   { label: "Student loan calculator", href: "/student-loan-calculator" },
 ];
 
+const guideLinks = [
+  { label: "Guides hub", href: "/guides" },
+  {
+    label: "How Income Tax works in the UK",
+    href: "/guides/how-income-tax-works-uk",
+  },
+  {
+    label: "How student loan affects take-home pay",
+    href: "/guides/how-student-loan-affects-take-home-pay",
+  },
+  {
+    label: "How to read a payslip in the UK",
+    href: "/guides/how-to-read-a-payslip-uk",
+  },
+];
+
 const trustLinks = [
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
   { label: "Methodology", href: "/methodology" },
   { label: "Assumptions", href: "/assumptions" },
   { label: "Disclaimer", href: "/disclaimer" },
@@ -27,14 +45,13 @@ export default function SiteFooter() {
   return (
     <footer className="border-t" style={{ borderColor: "var(--line)" }}>
       <Container className="py-10 sm:py-12">
-        <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr_0.9fr_1.1fr]">
+        <div className="grid gap-8 xl:grid-cols-[1.15fr_0.8fr_0.9fr_1fr_1fr]">
           <div className="max-w-md">
             <p className="text-sm font-semibold app-title">TaxDecod</p>
             <p className="mt-3 text-sm leading-7 app-copy">
-              TaxDecod is built to help users understand UK salary, deductions,
-              and take-home pay more clearly. It is designed for estimation,
-              interpretation, and planning — not payroll processing, regulated
-              advice, or HMRC decision-making.
+              TaxDecod is a UK salary and deduction interpretation platform.
+              It is designed to help users understand take-home pay, payslips,
+              and salary decisions more clearly through estimate-based guidance.
             </p>
 
             <div
@@ -44,14 +61,24 @@ export default function SiteFooter() {
                 background: "var(--surface-2)",
               }}
             >
-              <p className="text-sm font-semibold app-title">
-                Trust position
-              </p>
+              <p className="text-sm font-semibold app-title">Public trust framing</p>
               <p className="mt-2 text-sm leading-7 app-copy">
-                Results should be read as guidance based on current site logic,
-                visible assumptions, and UK tax-year interpretation. Final payroll,
-                tax-code, and refund outcomes remain dependent on employer payroll
-                systems and HMRC records.
+                TaxDecod should be read as a salary-decision and deduction
+                interpretation platform. It does not replace payroll software,
+                HMRC records, or regulated advice.
+              </p>
+            </div>
+
+            <div
+              className="mt-4 rounded-[22px] border px-4 py-4"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-sm font-semibold app-title">Contact</p>
+              <p className="mt-2 text-sm leading-7 app-copy">
+                contact@taxdecod.com
               </p>
             </div>
           </div>
@@ -75,6 +102,21 @@ export default function SiteFooter() {
             <p className="text-sm font-semibold app-title">Specialist tools</p>
             <div className="mt-4 grid gap-3">
               {specialistLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm app-copy transition hover:app-accent"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold app-title">Guides</p>
+            <div className="mt-4 grid gap-3">
+              {guideLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -112,7 +154,7 @@ export default function SiteFooter() {
           </p>
 
           <p className="app-subtle">
-            Built for clarity, not hype.
+            Public guidance only. Verify important outcomes with official records where needed.
           </p>
         </div>
       </Container>

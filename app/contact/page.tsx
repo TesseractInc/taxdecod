@@ -1,50 +1,8 @@
 import Link from "next/link";
-import type { Metadata } from "next";
-import {
-  Mail,
-  Globe,
-  BriefcaseBusiness,
-  Send,
-  ShieldCheck,
-} from "lucide-react";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
-import ExperiencePager from "../../components/ui/experience-pager";
-
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Contact TaxDecod for support, partnerships, editorial, product, or commercial enquiries.",
-};
-
-const contactCards = [
-  {
-    title: "Email",
-    value: "hello@taxdecod.com",
-    href: "mailto:hello@taxdecod.com",
-    icon: Mail,
-  },
-  {
-    title: "Website",
-    value: "taxdecod.com",
-    href: "https://taxdecod.com",
-    icon: Globe,
-  },
-  {
-    title: "Services",
-    value: "Explore wider business-facing routes",
-    href: "/services",
-    icon: BriefcaseBusiness,
-  },
-  {
-    title: "General enquiries",
-    value: "Product, editorial, partnerships, media",
-    href: "mailto:hello@taxdecod.com?subject=General%20Enquiry",
-    icon: Send,
-  },
-];
 
 export default function ContactPage() {
   return (
@@ -55,101 +13,84 @@ export default function ContactPage() {
         <Container>
           <PageHero
             eyebrow="Contact"
-            title="Get in touch with TaxDecod"
-            description="Use this page for support, partnerships, editorial questions, product feedback, or broader commercial discussions."
-            ctaLabel="Open calculator"
-            ctaHref="/calculator"
+            title="Contact TaxDecod"
+            description="Use this page for general platform contact, issue reporting, and trust-related questions about how TaxDecod works."
           />
 
-          <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="grid gap-6 md:grid-cols-2">
-              {contactCards.map((item) => {
-                const Icon = item.icon;
+          <section
+            className="mt-8 rounded-[28px] border px-6 py-5 sm:px-7"
+            style={{
+              borderColor: "var(--line)",
+              background: "var(--surface-2)",
+            }}
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
+              Contact framing
+            </p>
+            <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
+              This route is for platform-level questions, issue reporting, and
+              general clarification about how TaxDecod should be interpreted.
+              It is not a route for personal legal, payroll, or regulated tax advice.
+            </p>
+          </section>
 
-                return (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    className="app-card p-6 hover-lift"
-                  >
-                    <div className="inline-flex rounded-2xl p-3 app-soft">
-                      <Icon className="h-6 w-6 app-accent" />
-                    </div>
+          <div className="mt-10 grid gap-4 lg:grid-cols-2">
+            <section
+              className="rounded-[30px] border px-6 py-6 sm:px-7"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <h2 className="text-2xl font-semibold tracking-tight app-title">
+                General contact
+              </h2>
+              <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
+                For general site questions, issue reporting, or trust-related
+                clarification, contact:
+              </p>
 
-                    <h2 className="mt-5 text-xl font-semibold app-title">
-                      {item.title}
-                    </h2>
-                    <p className="mt-3 text-sm leading-7 app-copy">
-                      {item.value}
-                    </p>
-                  </Link>
-                );
-              })}
-            </div>
-
-            <aside className="space-y-6">
-              <div className="app-card p-6">
-                <div className="inline-flex rounded-2xl p-3 app-soft">
-                  <ShieldCheck className="h-6 w-6 app-accent" />
-                </div>
-                <h2 className="mt-5 text-xl font-semibold app-title">
-                  Trust and legitimacy
-                </h2>
-                <p className="mt-3 text-sm leading-7 app-copy">
-                  This page exists to make TaxDecod feel contactable, visible,
-                  and accountable. Users should never feel they are using a
-                  faceless salary tool with no way to reach the team behind it.
+              <div
+                className="mt-5 rounded-[22px] border px-4 py-4"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--surface-2)",
+                }}
+              >
+                <p className="text-sm font-semibold app-title">
+                  contact@taxdecod.com
+                </p>
+                <p className="mt-2 text-sm leading-7 app-copy">
+                  Replace this with your real contact address if different.
                 </p>
               </div>
+            </section>
 
-              <div className="app-card p-6">
-                <h2 className="text-xl font-semibold app-title">
-                  Best reasons to contact
-                </h2>
-                <div className="mt-4 space-y-3">
-                  {[
-                    "Product feedback or accuracy questions",
-                    "Commercial or partnership opportunities",
-                    "Editorial or media enquiries",
-                    "Support with platform usage",
-                  ].map((item) => (
-                    <div key={item} className="app-soft rounded-2xl px-4 py-3">
-                      <p className="text-sm leading-7 app-copy">{item}</p>
-                    </div>
-                  ))}
-                </div>
+            <section
+              className="rounded-[30px] border px-6 py-6 sm:px-7"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <h2 className="text-2xl font-semibold tracking-tight app-title">
+                Important note
+              </h2>
+              <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
+                TaxDecod can provide general clarification about the platform and
+                how its pages should be interpreted, but cannot provide personal
+                payroll processing, regulated tax advice, or legal advice.
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/methodology" className="app-button-secondary">
+                  Read methodology
+                </Link>
+                <Link href="/disclaimer" className="app-button-secondary">
+                  Read disclaimer
+                </Link>
               </div>
-
-              <div className="app-card p-6">
-                <h2 className="text-xl font-semibold app-title">
-                  Related trust pages
-                </h2>
-                <div className="mt-4 space-y-3 text-sm">
-                  <Link href="/methodology" className="block app-copy hover:underline">
-                    Methodology
-                  </Link>
-                  <Link href="/assumptions" className="block app-copy hover:underline">
-                    Assumptions
-                  </Link>
-                  <Link href="/disclaimer" className="block app-copy hover:underline">
-                    Disclaimer
-                  </Link>
-                  <Link href="/privacy-policy" className="block app-copy hover:underline">
-                    Privacy Policy
-                  </Link>
-                  <Link href="/terms" className="block app-copy hover:underline">
-                    Terms
-                  </Link>
-                </div>
-              </div>
-            </aside>
-          </div>
-
-          <div className="mt-10">
-            <ExperiencePager
-              previous={{ href: "/methodology", label: "Methodology" }}
-              next={{ href: "/calculator", label: "Back to calculator" }}
-            />
+            </section>
           </div>
         </Container>
       </section>

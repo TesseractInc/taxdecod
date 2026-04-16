@@ -70,7 +70,10 @@ export default async function MonthlyTakeHomePage({
         breadcrumbs={[
           { name: "Home", url: "https://taxdecod.com" },
           { name: "Reverse salary", url: "https://taxdecod.com/reverse-tax" },
-          { name: `£${amount.toLocaleString("en-GB")} monthly take-home`, url: `https://taxdecod.com/monthly-take-home/${amount}` },
+          {
+            name: `£${amount.toLocaleString("en-GB")} monthly take-home`,
+            url: `https://taxdecod.com/monthly-take-home/${amount}`,
+          },
         ]}
         faqItems={[
           {
@@ -102,7 +105,10 @@ export default async function MonthlyTakeHomePage({
           <div className="mt-8">
             <TaxYearTrustBar
               description={TRUST_COPY.reversePage.description}
-              points={[...TRUST_COPY.reversePage.points]}
+              points={[
+                ...TRUST_COPY.reversePage.points,
+                "Useful for rent, savings, and monthly affordability planning",
+              ]}
             />
           </div>
 
@@ -121,21 +127,74 @@ export default async function MonthlyTakeHomePage({
                 {
                   href: "/reverse-tax",
                   title: "Use the interactive reverse calculator",
-                  description: "Adjust the target and assumptions live.",
+                  description:
+                    "Adjust the target and assumptions live when you want a more exact planning route.",
                 },
                 {
                   href: "/compare-salary",
-                  title: "Compare salary outcomes",
-                  description: "Test whether nearby salary bands improve take-home enough.",
+                  title: "Compare nearby salary outcomes",
+                  description:
+                    "Test whether nearby salary bands improve take-home enough to matter in practice.",
                 },
                 {
                   href: "/calculator",
-                  title: "Open the full calculator",
-                  description: "Inspect the full deduction breakdown for the result salary.",
+                  title: "Inspect the full calculator result",
+                  description:
+                    "Open the broader salary and deduction picture behind this estimated result.",
                 },
               ]}
             />
           </div>
+
+          <section className="mt-10 grid gap-4 lg:grid-cols-3">
+            <Link
+              href="/reverse-tax"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Adjust this target live
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want to test assumptions instead of using a fixed monthly route.
+              </p>
+            </Link>
+
+            <Link
+              href="/compare-salary"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Compare salaries around this result
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want to see whether the next salary band materially changes monthly life.
+              </p>
+            </Link>
+
+            <Link
+              href="/guides/how-income-tax-works-uk"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Read why gross pay converts less cleanly than expected
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want the reasoning behind why the required salary feels higher than expected.
+              </p>
+            </Link>
+          </section>
 
           <section className="mt-14 grid gap-6 lg:grid-cols-[1fr_1fr]">
             <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
@@ -144,19 +203,25 @@ export default async function MonthlyTakeHomePage({
               </p>
               <div className="mt-5 space-y-3">
                 <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Target monthly take-home</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Target monthly take-home
+                  </p>
                   <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(amount)}
                   </p>
                 </div>
                 <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Required gross salary</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Required gross salary
+                  </p>
                   <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
                     {formatCurrency(data.grossAnnual)}
                   </p>
                 </div>
                 <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Estimated keep rate</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Estimated keep rate
+                  </p>
                   <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
                     {data.keepPercent.toFixed(0)}%
                   </p>
