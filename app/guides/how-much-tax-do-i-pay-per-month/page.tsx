@@ -5,9 +5,9 @@ import Container from "../../../components/ui/container";
 import RelatedLinks from "../../../components/seo/related-links";
 
 export const metadata: Metadata = {
-  title: "How Income Tax Works UK | TaxDecod",
+  title: "How Much Tax Do I Pay Per Month UK | TaxDecod",
   description:
-    "A simple explanation of how income tax works in the UK.",
+    "Understand how much tax you pay monthly in the UK.",
 };
 
 export default function Page() {
@@ -19,18 +19,17 @@ export default function Page() {
         <Container className="max-w-4xl">
 
           <h1 className="text-3xl font-bold app-title sm:text-4xl">
-            How income tax works in the UK
+            How much tax do I pay per month?
           </h1>
 
           <p className="mt-4 app-copy">
-            Income tax in the UK is progressive, meaning different parts of your income are taxed at different rates.
+            Monthly tax depends on your salary and deductions such as pension and student loans.
           </p>
 
           <RelatedLinks
             links={[
-              { title: "UK salary calculator", href: "/calculator" },
-              { title: "Tax bands explained", href: "/guides/uk-tax-bands-explained-simple" },
-              { title: "Take-home pay explained", href: "/guides/take-home-pay-explained" },
+              { title: "Calculate monthly tax", href: "/calculator" },
+              { title: "How tax works UK", href: "/guides/how-income-tax-works-uk" },
             ]}
           />
 

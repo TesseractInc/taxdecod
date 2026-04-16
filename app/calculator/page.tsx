@@ -5,6 +5,10 @@ import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import ExperiencePager from "../../components/ui/experience-pager";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import HmrcReferencePanel from "../../components/shared/hmrc-reference-panel";
+import AdSlot from "../../components/ads/ad-slot";
+import AffiliateRecommendationPanel from "../../components/monetization/affiliate-recommendation-panel";
+import RelatedLinks from "../../components/seo/related-links";
 
 const nextRoutes = [
   {
@@ -73,21 +77,37 @@ export default function CalculatorPage() {
             </p>
           </div>
 
+          <div className="mt-8">
+            <AdSlot label="Advertisement" minHeight={90} />
+          </div>
+
           <div className="mt-8 sm:mt-10">
             <div className="rounded-[30px] border p-2 shadow-[0_28px_100px_-44px_rgba(15,23,42,0.24)] app-card-strong sm:p-3">
               <CalculatorCard mode="full" />
             </div>
           </div>
 
+          <div className="mt-8">
+            <AdSlot label="Advertisement" />
+          </div>
+
           <div className="mt-10">
             <TaxYearTrustBar
-              description="TaxDecod calculator results are designed to help users understand UK salary outcomes more clearly for 2025/26. They should be read as estimate-based salary guidance rather than payroll, legal, or financial advice."
+              description="TaxDecod calculator results are designed to help users understand UK salary outcomes more clearly. They should be read as estimate-based salary guidance rather than payroll, legal, or financial advice."
               points={[
-                "Updated for 2025/26 salary interpretation",
+                "Updated for the current UK tax-year framing",
                 "Estimate-based outputs, not financial advice",
                 "Methodology and assumptions visible",
                 "Best used for salary decisions and first-check clarity",
               ]}
+            />
+          </div>
+
+          <div className="mt-10">
+            <HmrcReferencePanel
+              compact
+              title="Official references behind the trust layer"
+              description="Where formal confirmation matters, salary users should read calculator outputs alongside official GOV.UK guidance and payroll records."
             />
           </div>
 
@@ -123,6 +143,65 @@ export default function CalculatorPage() {
               ))}
             </div>
           </section>
+
+          <div className="mt-8">
+            <AdSlot label="Advertisement" />
+          </div>
+
+          <div className="mt-10">
+            <RelatedLinks
+              title="Understand your salary better"
+              links={[
+                {
+                  title: "How much tax do I pay in the UK?",
+                  href: "/guides/how-much-tax-do-i-pay-uk",
+                },
+                {
+                  title: "Net vs gross salary explained",
+                  href: "/guides/net-vs-gross-salary-explained",
+                },
+                {
+                  title: "What is a good salary in the UK?",
+                  href: "/guides/what-is-a-good-salary-uk",
+                },
+                {
+                  title: "How much salary increase is worth it?",
+                  href: "/guides/how-much-salary-increase-is-worth-it",
+                },
+              ]}
+            />
+          </div>
+
+          <div className="mt-10">
+            <AffiliateRecommendationPanel
+              eyebrow="Useful money follow-up"
+              title="If your take-home is now clearer, these are the next practical moves"
+              description="This section is designed for users who have already understood the salary result and now want budgeting, credit, or saving-related next steps."
+              items={[
+                {
+                  title: "Use a budgeting-first current account",
+                  description:
+                    "Best when you want cleaner control over monthly spending after understanding your true take-home pay.",
+                  href: "/services",
+                  badge: "Budgeting",
+                },
+                {
+                  title: "Check your credit position before bigger financial decisions",
+                  description:
+                    "Useful when salary, borrowing power, and affordability need to be understood together.",
+                  href: "/services",
+                  badge: "Credit",
+                },
+                {
+                  title: "Explore saving or investing once your monthly surplus is clear",
+                  description:
+                    "Best for users whose salary result shows real leftover room after bills and deductions.",
+                  href: "/services",
+                  badge: "Saving",
+                },
+              ]}
+            />
+          </div>
 
           <div className="mt-10 sm:mt-12">
             <ExperiencePager

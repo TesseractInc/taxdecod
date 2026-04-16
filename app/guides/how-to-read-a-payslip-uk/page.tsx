@@ -1,84 +1,118 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import SiteHeader from "../../../components/layout/site-header";
 import SiteFooter from "../../../components/layout/site-footer";
 import Container from "../../../components/ui/container";
-import PageHero from "../../../components/ui/page-hero";
+import RelatedLinks from "../../../components/seo/related-links";
+import SnippetBlock from "../../../components/seo/snippet-block";
+import AdSlot from "../../../components/ads/ad-slot";
 
-const sections = [
-  {
-    title: "Why payslips feel confusing",
-    body: "Payslips compress several important deductions into short labels and figures. For many users, the problem is not the existence of the numbers but understanding what each line is doing and whether it looks normal.",
-  },
-  {
-    title: "The main lines users usually need to understand",
-    body: "The main lines are usually gross pay, Income Tax, National Insurance, pension, tax code, and year-to-date totals. These are the lines that most often affect whether take-home pay feels right or wrong.",
-  },
-  {
-    title: "Why year-to-date totals matter",
-    body: "Year-to-date totals help show whether deductions are building in a way that broadly matches the tax year so far. They can be useful when users suspect overpayment, underpayment, or an unusual tax-code effect.",
-  },
-  {
-    title: "What to do if a payslip feels wrong",
-    body: "The best next step is usually to check whether the tax code looks right, whether the year-to-date figures look broadly on track, and whether the salary route itself matches what you expected after deductions.",
-  },
-];
+export const metadata: Metadata = {
+  title: "How to Read a Payslip in the UK | TaxDecod",
+  description:
+    "Learn how to read a UK payslip, including gross pay, tax, National Insurance, and year-to-date figures.",
+};
 
-export default function PayslipGuidePage() {
+export default function Page() {
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: "How to Read a Payslip in the UK",
+    description:
+      "Learn how to read a UK payslip, including gross pay, tax, National Insurance, and year-to-date figures.",
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How do you read a UK payslip?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "A UK payslip shows your gross pay, deductions such as Income Tax and National Insurance, and your final net pay. It also usually includes tax code and year-to-date figures.",
+        },
+      },
+    ],
+  };
+
   return (
     <main className="app-shell">
       <SiteHeader />
 
-      <section className="py-10 sm:py-14">
-        <Container>
-          <PageHero
-            eyebrow="Guide"
-            title="How to read a payslip in the UK"
-            description="A plain-English guide to the main payslip lines and why tax code, PAYE, National Insurance, and year-to-date totals matter."
+      <section className="py-16">
+        <Container className="max-w-4xl">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
           />
 
-          <div className="mt-10 grid gap-4">
-            {sections.map((section) => (
-              <section
-                key={section.title}
-                className="rounded-[30px] border px-6 py-6 sm:px-7"
-                style={{
-                  borderColor: "var(--line)",
-                  background: "var(--card-strong)",
-                }}
-              >
-                <h2 className="text-2xl font-semibold tracking-tight app-title">
-                  {section.title}
-                </h2>
-                <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
-                  {section.body}
-                </p>
-              </section>
-            ))}
-          </div>
+          <h1 className="text-3xl font-bold app-title sm:text-4xl">
+            How to read a payslip in the UK
+          </h1>
 
-          <section
-            className="mt-10 rounded-[30px] border px-6 py-6 sm:px-7"
-            style={{
-              borderColor: "var(--line)",
-              background: "var(--card-strong)",
-            }}
-          >
-            <h2 className="text-2xl font-semibold tracking-tight app-title">
-              Related next steps
-            </h2>
+          <SnippetBlock
+            question="How do you read a UK payslip?"
+            answer="A UK payslip shows your gross pay, deductions such as Income Tax and National Insurance, and your final net pay. It also usually includes pension, tax code, and year-to-date totals."
+            bullets={[
+              "Gross pay is your earnings before deductions",
+              "Deductions include tax, NI, and sometimes pension",
+              "Net pay is what you actually receive",
+              "Year-to-date figures help show the wider pattern",
+            ]}
+          />
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/payslip-checker" className="app-button-primary">
-                Check a payslip
-              </Link>
-              <Link href="/tax-code-decoder" className="app-button-secondary">
-                Decode a tax code
-              </Link>
-              <Link href="/guides" className="app-button-secondary">
-                Back to guides
-              </Link>
-            </div>
-          </section>
+          <p className="mt-6 app-copy">
+            A payslip shows how your salary turns into net pay after deductions,
+            but many people only look at the final number and miss the lines
+            that explain what is really happening.
+          </p>
+
+          <AdSlot label="Advertisement" />
+
+          <h2 className="mt-10 text-xl font-semibold app-title">
+            The most important payslip lines
+          </h2>
+
+          <ul className="mt-4 space-y-2 app-copy">
+            <li>• Gross pay</li>
+            <li>• Income Tax</li>
+            <li>• National Insurance</li>
+            <li>• Pension contributions</li>
+            <li>• Net pay</li>
+            <li>• Tax code</li>
+            <li>• Year-to-date totals</li>
+          </ul>
+
+          <h2 className="mt-10 text-xl font-semibold app-title">
+            Why year-to-date totals matter
+          </h2>
+
+          <p className="mt-4 app-copy">
+            These numbers help you see whether deductions across the tax year
+            look broadly normal, especially if one month feels unusual.
+          </p>
+
+          <RelatedLinks
+            links={[
+              { title: "Use the payslip checker", href: "/payslip-checker" },
+              { title: "Decode a tax code", href: "/tax-code-decoder" },
+              { title: "Check salary after tax", href: "/calculator" },
+              {
+                title: "How much tax do I pay in the UK?",
+                href: "/guides/how-much-tax-do-i-pay-uk",
+              },
+            ]}
+          />
+
+          <p className="mt-8 text-xs app-subtle">
+            A payslip should be read as a full salary record, not just a net pay
+            line.
+          </p>
         </Container>
       </section>
 

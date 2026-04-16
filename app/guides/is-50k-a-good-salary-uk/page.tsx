@@ -5,9 +5,9 @@ import Container from "../../../components/ui/container";
 import RelatedLinks from "../../../components/seo/related-links";
 
 export const metadata: Metadata = {
-  title: "How Income Tax Works UK | TaxDecod",
+  title: "Is 50k a Good Salary UK | TaxDecod",
   description:
-    "A simple explanation of how income tax works in the UK.",
+    "Find out if £50,000 is a good salary in the UK.",
 };
 
 export default function Page() {
@@ -19,18 +19,17 @@ export default function Page() {
         <Container className="max-w-4xl">
 
           <h1 className="text-3xl font-bold app-title sm:text-4xl">
-            How income tax works in the UK
+            Is £50,000 a good salary in the UK?
           </h1>
 
           <p className="mt-4 app-copy">
-            Income tax in the UK is progressive, meaning different parts of your income are taxed at different rates.
+            £50,000 is above the UK average and generally considered a strong salary.
           </p>
 
           <RelatedLinks
             links={[
-              { title: "UK salary calculator", href: "/calculator" },
-              { title: "Tax bands explained", href: "/guides/uk-tax-bands-explained-simple" },
-              { title: "Take-home pay explained", href: "/guides/take-home-pay-explained" },
+              { title: "View £50k breakdown", href: "/50000-after-tax-uk" },
+              { title: "Compare salaries", href: "/compare-salary" },
             ]}
           />
 

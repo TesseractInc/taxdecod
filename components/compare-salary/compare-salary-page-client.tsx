@@ -23,6 +23,8 @@ import {
   saveScenario,
   type SavedScenario,
 } from "@/lib/tax/storage/saved-scenarios";
+import AdSlot from "@/components/ads/ad-slot";
+import AffiliateRecommendationPanel from "@/components/monetization/affiliate-recommendation-panel";
 
 type CompareState = {
   salaryA: number;
@@ -156,6 +158,10 @@ export default function CompareSalaryPageClient() {
             highlightValue={monthlyDiffLabel}
             highlightSubtext="estimated monthly take-home difference"
           />
+
+          <div className="mt-8">
+            <AdSlot label="Advertisement" minHeight={90} />
+          </div>
 
           <div className="mt-8">
             <TaxYearTrustBar
@@ -309,6 +315,10 @@ export default function CompareSalaryPageClient() {
             </div>
           </section>
 
+          <div className="mt-8">
+            <AdSlot label="Advertisement" />
+          </div>
+
           <section className="mt-10 overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_28px_90px_-40px_rgba(15,23,42,0.30)] dark:border-slate-800 dark:bg-slate-950">
             <div className="border-b border-slate-200 px-6 py-7 dark:border-slate-800 sm:px-8">
               <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
@@ -375,6 +385,41 @@ export default function CompareSalaryPageClient() {
               emptyDescription="Save a comparison here when you want to return to the same decision later."
               onLoad={handleLoadScenario}
             />
+          </div>
+
+          <div className="mt-8">
+            <AffiliateRecommendationPanel
+              eyebrow="Useful next move"
+              title="Once the salary gap is clear, these follow-up routes become more useful"
+              description="This is where returning users often move from salary comparison into budgeting, affordability, or saving decisions."
+              items={[
+                {
+                  title: "Use a budgeting-first money setup",
+                  description:
+                    "Best when you now understand the monthly difference and want to manage the new amount better.",
+                  href: "/services",
+                  badge: "Budgeting",
+                },
+                {
+                  title: "Check credit or affordability before a bigger financial move",
+                  description:
+                    "Useful when the comparison is tied to renting, borrowing, or wider affordability decisions.",
+                  href: "/services",
+                  badge: "Credit",
+                },
+                {
+                  title: "Start planning what the surplus is actually for",
+                  description:
+                    "Best when the new salary leaves meaningful room for saving, investing, or medium-term goals.",
+                  href: "/services",
+                  badge: "Saving",
+                },
+              ]}
+            />
+          </div>
+
+          <div className="mt-8">
+            <AdSlot label="Advertisement" />
           </div>
 
           <section className="mt-14 grid gap-4 md:grid-cols-3">

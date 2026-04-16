@@ -5,9 +5,9 @@ import Container from "../../../components/ui/container";
 import RelatedLinks from "../../../components/seo/related-links";
 
 export const metadata: Metadata = {
-  title: "How Income Tax Works UK | TaxDecod",
+  title: "Take Home Pay Explained | TaxDecod",
   description:
-    "A simple explanation of how income tax works in the UK.",
+    "Understand what take-home pay means and how it is calculated in the UK.",
 };
 
 export default function Page() {
@@ -19,18 +19,17 @@ export default function Page() {
         <Container className="max-w-4xl">
 
           <h1 className="text-3xl font-bold app-title sm:text-4xl">
-            How income tax works in the UK
+            What is take-home pay?
           </h1>
 
           <p className="mt-4 app-copy">
-            Income tax in the UK is progressive, meaning different parts of your income are taxed at different rates.
+            Take-home pay is your income after all deductions including tax and National Insurance.
           </p>
 
           <RelatedLinks
             links={[
-              { title: "UK salary calculator", href: "/calculator" },
-              { title: "Tax bands explained", href: "/guides/uk-tax-bands-explained-simple" },
-              { title: "Take-home pay explained", href: "/guides/take-home-pay-explained" },
+              { title: "Salary calculator", href: "/calculator" },
+              { title: "Net vs gross salary", href: "/guides/net-vs-gross-salary-explained" },
             ]}
           />
 

@@ -19,6 +19,8 @@ import PdfReportStrip from "@/components/shared/pdf-report-strip";
 import { calculateTakeHome } from "@/lib/tax/calculators/take-home";
 import { formatCurrency } from "@/lib/tax/utils/currency";
 import type { CalculatorInput } from "@/types/tax";
+import AdSlot from "@/components/ads/ad-slot";
+import AffiliateRecommendationPanel from "@/components/monetization/affiliate-recommendation-panel";
 
 type ReverseInput = {
   targetNet: number;
@@ -172,9 +174,10 @@ function getDominantAction(requiredGross: number): NextAction {
     title: "Inspect this salary in the full calculator",
     description:
       "Now that you know the estimated salary needed, open the main calculator to see the fuller deduction picture and next-step options.",
-    href: "/calculator",
+      href: "/calculator",
+    };
   };
-}
+
 
 const toneStyles = {
   neutral: {
@@ -382,7 +385,9 @@ export default function ReverseTaxCalculator() {
             </div>
 
             <div className="mt-6 rounded-[24px] border p-5 app-soft">
-              <p className="text-sm font-semibold app-title">Estimated salary needed</p>
+              <p className="text-sm font-semibold app-title">
+                Estimated salary needed
+              </p>
               <h3 className="mt-3 text-4xl font-bold tracking-tight app-title sm:text-5xl">
                 {formatCurrency(calculatedGross)}
               </h3>
@@ -565,7 +570,8 @@ export default function ReverseTaxCalculator() {
                     Compare nearby salaries
                   </p>
                   <p className="mt-2 text-xs leading-6 app-copy">
-                    Use this when you want to see whether nearby pay levels change life enough after deductions.
+                    Use this when you want to see whether nearby pay levels
+                    change life enough after deductions.
                   </p>
                 </Link>
 
@@ -581,7 +587,8 @@ export default function ReverseTaxCalculator() {
                     Inspect the full salary route
                   </p>
                   <p className="mt-2 text-xs leading-6 app-copy">
-                    Use the main calculator when you want the broader one-salary deduction picture.
+                    Use the main calculator when you want the broader one-salary
+                    deduction picture.
                   </p>
                 </Link>
 
@@ -597,7 +604,8 @@ export default function ReverseTaxCalculator() {
                     Browse salary bands
                   </p>
                   <p className="mt-2 text-xs leading-6 app-copy">
-                    Use the hub when you want more context around neighbouring salary levels.
+                    Use the hub when you want more context around neighbouring
+                    salary levels.
                   </p>
                 </Link>
               </div>
@@ -605,6 +613,10 @@ export default function ReverseTaxCalculator() {
           </div>
         </div>
       </section>
+
+      <div className="mt-8">
+        <AdSlot label="Advertisement" />
+      </div>
 
       <section className="overflow-hidden rounded-[34px] border app-card shadow-[0_28px_90px_-40px_rgba(15,23,42,0.20)]">
         <div
@@ -615,8 +627,8 @@ export default function ReverseTaxCalculator() {
             What is creating the deduction pressure
           </p>
           <p className="mt-2 text-sm leading-7 app-copy">
-            These deductions explain why the gross salary required is higher than
-            the take-home target you started with.
+            These deductions explain why the gross salary required is higher
+            than the take-home target you started with.
           </p>
         </div>
 
@@ -690,6 +702,42 @@ export default function ReverseTaxCalculator() {
         result={result}
         filename="taxdecod-reverse-salary-report.pdf"
       />
+
+      <div className="mt-8">
+        <AdSlot label="Advertisement" />
+      </div>
+
+      <div className="mt-8">
+        <AffiliateRecommendationPanel
+          eyebrow="Useful money follow-up"
+          title="Once the target income is clear, the next practical financial step matters more"
+          description="This is designed for users who have already clarified the salary needed and now want help with budgeting, credit readiness, or building from future monthly surplus."
+          items={[
+            {
+              title: "Set up a budgeting-first money system",
+              description:
+                "Best when the reverse result is being used for rent, bills, or household planning.",
+              href: "/services",
+              badge: "Budgeting",
+            },
+            {
+              title:
+                "Check affordability or credit position before bigger commitments",
+              description:
+                "Useful when the salary target is tied to moving, borrowing, or wider affordability decisions.",
+              href: "/services",
+              badge: "Credit",
+            },
+            {
+              title: "Start planning what the future monthly surplus should do",
+              description:
+                "Best when the salary target is being used to support saving or investing goals.",
+              href: "/services",
+              badge: "Saving",
+            },
+          ]}
+        />
+      </div>
 
       <ResultsExperience result={result} values={values} view="full" />
     </div>

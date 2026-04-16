@@ -7,6 +7,7 @@ import SeoPageHero from "../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
 import ReverseTaxCalculator from "../../components/reverse-tax/ReverseTaxCalculator";
+import HmrcReferencePanel from "../../components/shared/hmrc-reference-panel";
 import { TRUST_COPY } from "../../lib/tax/config";
 
 export const metadata: Metadata = {
@@ -55,6 +56,14 @@ export default function ReverseTaxPage() {
               minimum income needed for a move. This page is built for that exact
               use case.
             </SeoRealityCard>
+          </div>
+
+          <div className="mt-10">
+            <HmrcReferencePanel
+              compact
+              title="Official references behind this planning route"
+              description="When a reverse salary result matters for a real decision, it should be read alongside current GOV.UK guidance and actual payroll treatment."
+            />
           </div>
 
           <div className="mt-10">
