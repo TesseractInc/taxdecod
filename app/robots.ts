@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://taxdecod.com/sitemap.xml",
+    sitemap: "https://www.taxdecod.com/sitemap.xml",
   };
 }

@@ -4,6 +4,7 @@ import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import CrossLinkRail from "../../components/seo/cross-link-rail";
 import RelatedLinks from "../../components/seo/related-links";
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ const principles = [
   },
   {
     title: "Designed for decision support",
-    body: "The product is built around real user questions like whether a raise is worth it, what salary is needed for a monthly target, and whether a payslip looks broadly on track.",
+    body: "The product is built around real questions like whether a raise is worth it, what salary is needed for a monthly target, and whether a payslip looks broadly on track.",
   },
   {
     title: "Estimate-based and transparent",
@@ -38,71 +39,60 @@ const whatPagesDo = [
   },
   {
     title: "Salary pages",
-    body: "Programmatic salary pages exist to make after-tax answers easier to find and easier to compare, while still pushing users toward more useful next-step tools.",
+    body: "Programmatic salary pages exist to make after-tax answers easier to find and easier to compare, while still pushing users toward more useful next steps.",
   },
   {
-    title: "Guides",
-    body: "Editorial guides exist to explain the logic behind salary, tax, take-home pay, payslips, and common planning questions in plain English.",
+    title: "Benchmarks and good-salary pages",
+    body: "These routes add role, region, and city-context interpretation so the site can help with salary meaning, not just tax output.",
   },
   {
-    title: "Trust pages",
-    body: "Methodology, assumptions, disclaimer, privacy, and terms pages exist so users can understand what the platform is doing, what it is not doing, and how to interpret outputs responsibly.",
+    title: "Guides and trust pages",
+    body: "Editorial and trust pages exist to explain logic, assumptions, limitations, and responsible interpretation so the platform feels more mature and transparent.",
   },
 ];
 
-export default function AboutPage() {
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "TaxDecod",
-    url: "https://taxdecod.com",
-    description:
-      "TaxDecod is a UK salary clarity platform built to help users understand take-home pay, salary comparisons, reverse salary planning, and payslip interpretation.",
-  };
+export const dynamic = "force-static";
 
+export default function AboutPage() {
   return (
     <main className="app-shell">
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
         <Container className="max-w-5xl">
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-          />
-
           <div className="max-w-3xl">
             <p className="text-sm font-medium app-accent">About TaxDecod</p>
             <h1 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-5xl">
-              TaxDecod is built to make UK salary decisions clearer
+              A UK salary clarity platform built for real decision-making
             </h1>
             <p className="mt-5 text-sm leading-8 app-copy sm:text-base">
-              TaxDecod is a UK salary clarity platform designed to help users
-              understand what salary actually means after deductions. The goal is
-              not just to show numbers, but to make salary, take-home pay,
-              comparison, reverse planning, and payslip interpretation easier to
-              understand in practical terms.
+              TaxDecod exists to help users move from headline salary curiosity
+              into practical understanding. The platform is designed around what
+              salary means after deductions, whether a raise is worth it, what a
+              monthly target requires, and how salary interpretation changes when
+              role, region, or payslip context is added.
             </p>
           </div>
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description="TaxDecod is designed around UK tax-year assumptions, planning logic, and transparent trust framing so users can understand what outputs mean and how to use them responsibly."
+              description="About pages matter because they explain what the platform is trying to do, what kind of guidance it provides, and what users should not mistake it for."
               points={[
-                "Updated for the 2026/27 UK tax year",
-                "Built for salary clarity and planning",
-                "Transparent assumptions and trust framing",
-                "Not payroll, legal advice, or HMRC",
+                "Built for salary clarity and decision support",
+                "Estimate-based platform logic",
+                "Transparent about limits and assumptions",
+                "Not payroll, HMRC, or regulated advice",
               ]}
             />
           </div>
 
           <section className="mt-12">
             <h2 className="text-2xl font-semibold app-title">
-              What TaxDecod is designed to help with
+              Core product principles
             </h2>
+
             <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {whatPagesDo.map((item) => (
+              {principles.map((item) => (
                 <div
                   key={item.title}
                   className="rounded-[28px] border px-6 py-6"
@@ -120,10 +110,11 @@ export default function AboutPage() {
 
           <section className="mt-12">
             <h2 className="text-2xl font-semibold app-title">
-              Product principles
+              What the main route families are for
             </h2>
+
             <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {principles.map((item) => (
+              {whatPagesDo.map((item) => (
                 <div
                   key={item.title}
                   className="rounded-[28px] border px-6 py-6"
@@ -146,88 +137,97 @@ export default function AboutPage() {
               background: "var(--card-strong)",
             }}
           >
-            <p className="text-sm font-medium app-accent">Important trust note</p>
+            <p className="text-sm font-medium app-accent">Important boundary</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight app-title">
-              TaxDecod is a guidance and interpretation platform
+              TaxDecod is designed to support understanding, not replace official records
             </h2>
             <p className="mt-4 text-sm leading-8 app-copy sm:text-base">
-              TaxDecod is intended to help users understand salary outcomes more
-              clearly. It is not a replacement for employer payroll, accountant
-              advice, legal advice, regulated financial advice, or formal HMRC
-              records and decisions. Where formal confirmation matters, users
-              should always refer to official documents and qualified support.
+              The platform is built to improve salary understanding and help users
+              take a better next step. It is not a substitute for employer payroll,
+              formal HMRC records, regulated financial advice, legal advice, or
+              professional tax advice.
             </p>
           </section>
 
-          <section className="mt-12 grid gap-4 md:grid-cols-2">
+          <CrossLinkRail
+            eyebrow="Trust and interpretation layer"
+            title="Read the pages that explain how TaxDecod should be used"
+            description="These pages are the strongest trust routes for users who need to understand logic, assumptions, boundaries, and platform intent."
+            items={[
+              {
+                href: "/methodology",
+                title: "Methodology",
+                description:
+                  "Read how TaxDecod approaches salary outputs, comparison logic, and planning routes.",
+              },
+              {
+                href: "/assumptions",
+                title: "Assumptions",
+                description:
+                  "Read the baseline assumptions behind estimate-based outputs and route logic.",
+              },
+              {
+                href: "/disclaimer",
+                title: "Disclaimer",
+                description:
+                  "Understand what the platform is and is not intended to provide.",
+              },
+              {
+                href: "/contact",
+                title: "Contact",
+                description:
+                  "Report a platform issue or reach out with a route-specific question.",
+              },
+            ]}
+          />
+
+          <section className="mt-12 grid gap-4 md:grid-cols-3">
             <Link
-              href="/methodology"
+              href="/salary-hub"
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card-strong)",
               }}
             >
-              <p className="text-lg font-semibold app-title">
-                Read the methodology
-              </p>
+              <p className="text-lg font-semibold app-title">Salary hub</p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                See how TaxDecod approaches salary calculations, comparisons,
-                payslip checks, and guidance logic.
+                Browse the main salary, monthly, compare, and city-intent route families.
               </p>
             </Link>
 
             <Link
-              href="/assumptions"
+              href="/salary-tools"
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card-strong)",
               }}
             >
-              <p className="text-lg font-semibold app-title">
-                Read the assumptions
-              </p>
+              <p className="text-lg font-semibold app-title">Salary tools</p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Understand the default employee setup and the assumptions behind
-                estimate-based outputs.
+                Move into the calculator, compare, reverse, payslip, and support tools.
               </p>
             </Link>
 
             <Link
-              href="/disclaimer"
+              href="/guides"
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card-strong)",
               }}
             >
-              <p className="text-lg font-semibold app-title">
-                Read the disclaimer
-              </p>
+              <p className="text-lg font-semibold app-title">Guides</p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Understand what TaxDecod is and is not designed to provide.
-              </p>
-            </Link>
-
-            <Link
-              href="/contact"
-              className="rounded-[28px] border px-6 py-6 transition hover-lift"
-              style={{
-                borderColor: "var(--line)",
-                background: "var(--card-strong)",
-              }}
-            >
-              <p className="text-lg font-semibold app-title">Contact</p>
-              <p className="mt-3 text-sm leading-8 app-copy">
-                Use the contact route for general questions, feedback, or site issues.
+                Read the editorial explanation layer behind TaxDecod decisions.
               </p>
             </Link>
           </section>
 
           <div className="mt-12">
             <RelatedLinks
-              title="Trust and platform pages"
+              title="Trust and legal pages"
               links={[
                 { title: "Methodology", href: "/methodology" },
                 { title: "Assumptions", href: "/assumptions" },

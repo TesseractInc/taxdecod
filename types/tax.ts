@@ -2,7 +2,13 @@ export type PayPeriod = "yearly" | "monthly";
 
 export type Region = "uk" | "scotland";
 
-export type StudentLoanPlan = "none" | "plan1" | "plan2" | "plan4" | "postgrad";
+export type StudentLoanPlan =
+  | "none"
+  | "plan1"
+  | "plan2"
+  | "plan4"
+  | "plan5"
+  | "postgrad";
 
 export type CalculatorInput = {
   salary: number;

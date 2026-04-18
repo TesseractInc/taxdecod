@@ -9,13 +9,18 @@ import SeoPageHero from "../../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../../components/seo/seo-cta-cluster";
 import ComparisonPageContent from "../../../components/seo/comparison-page-content";
+import CrossLinkRail from "../../../components/seo/cross-link-rail";
 import { TAX_YEAR_LABEL, TRUST_COPY } from "../../../lib/tax/config";
 import { buildSeoMetadata } from "../../../components/seo/metadata";
 import {
+  getComparisonClusterRoutes,
+  getComparisonDecisionSummary,
   getComparisonPageData,
   getComparisonSeoSlugs,
+  getNearbyComparisonRoutes,
   parseComparisonSlug,
 } from "../../../components/seo/comparison-pages";
+import { getContextualLinks } from "../../../components/seo/contextual-link-engine";
 import { formatCurrency } from "../../../lib/tax/utils/currency";
 
 type ComparisonSeoPageProps = {
@@ -73,6 +78,22 @@ export default async function ComparisonSeoPage({
   const { salaryA, salaryB } = parsed;
   const data = getComparisonPageData(salaryA, salaryB);
 
+  const contextualLinks = getContextualLinks({
+    type: "compare",
+    salaryA,
+    salaryB,
+    strongerSalary: salaryB,
+    strongerMonthlyNet: data.resultB.netMonthly,
+  });
+
+  const nearbyRoutes = getNearbyComparisonRoutes(salaryA, salaryB);
+  const clusterRoutes = getComparisonClusterRoutes(salaryA, salaryB);
+  const decisionSummary = getComparisonDecisionSummary(
+    salaryA,
+    salaryB,
+    data.netMonthlyDifference
+  );
+
   return (
     <main className="app-shell">
       <SiteHeader />
@@ -109,8 +130,7 @@ export default async function ComparisonSeoPage({
               <strong>{formatCurrency(data.grossDifference)}</strong> in gross
               salary, but only around{" "}
               <strong>{formatCurrency(data.netAnnualDifference)}</strong> in real
-              annual take-home pay. That is why this kind of route should be judged
-              by retained value, not headline salary alone.
+              annual take-home pay. {decisionSummary}
             </SeoRealityCard>
           </div>
 
@@ -206,6 +226,74 @@ export default async function ComparisonSeoPage({
               taxDragPercent={data.taxDragPercent}
             />
           </div>
+
+          <CrossLinkRail
+            title="Use this comparison to branch into the next best route"
+            description="These links connect comparison pages to full salary pages, monthly planning, regional interpretation, and editorial salary-decision guidance."
+            items={contextualLinks}
+          />
+
+          <CrossLinkRail
+            eyebrow="Nearby comparison routes"
+            title="Keep moving through nearby comparison bands"
+            description="These are the most natural adjacent compare routes around this salary pair."
+            items={nearbyRoutes}
+          />
+
+          <CrossLinkRail
+            eyebrow="Compare cluster"
+            title="Anchor this route inside the wider compare network"
+            description="These comparison pages help turn fixed salary pairs into a stronger mid-funnel decision cluster."
+            items={clusterRoutes}
+          />
+
+          <section className="mt-14 text-center">
+            <h3 className="text-xl font-semibold app-title">
+              Want to explore further?
+            </h3>
+
+            <p className="mt-2 app-copy">
+              Move from comparison into planning or real-life salary context.
+            </p>
+
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/reverse-tax"
+                className="rounded-full border px-4 py-2 text-sm font-medium transition hover-lift"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--surface-2)",
+                  color: "var(--text)",
+                }}
+              >
+                Reverse salary
+              </Link>
+
+              <Link
+                href={`/good-salary/${salaryB}/london`}
+                className="rounded-full border px-4 py-2 text-sm font-medium transition hover-lift"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--surface-2)",
+                  color: "var(--text)",
+                }}
+              >
+                City context
+              </Link>
+
+              <Link
+                href="/guides/how-much-salary-increase-is-worth-it"
+                className="rounded-full border px-4 py-2 text-sm font-medium transition hover-lift"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--surface-2)",
+                  color: "var(--text)",
+                }}
+              >
+                Raise guide
+              </Link>
+            </div>
+          </section>
         </Container>
       </section>
 

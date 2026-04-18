@@ -4,6 +4,7 @@ import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import CrossLinkRail from "../../components/seo/cross-link-rail";
 import RelatedLinks from "../../components/seo/related-links";
 
 export const metadata: Metadata = {
@@ -74,10 +75,10 @@ export default function MethodologyPage() {
               How TaxDecod approaches salary outputs and interpretation
             </h1>
             <p className="mt-5 text-sm leading-8 app-copy sm:text-base">
-              TaxDecod is designed to help users understand salary, take-home
-              pay, salary comparison, reverse planning, and payslip logic more
-              clearly. This page explains the general methodology behind those
-              outputs so users can interpret them more responsibly.
+              TaxDecod is designed to help users understand salary, take-home pay,
+              comparison logic, reverse planning, and payslip interpretation more
+              clearly. This page explains the general methodology behind those outputs
+              so users can interpret them more responsibly.
             </p>
           </div>
 
@@ -142,11 +143,11 @@ export default function MethodologyPage() {
               TaxDecod is designed to improve understanding, not replace official records
             </h2>
             <p className="mt-4 text-sm leading-8 app-copy sm:text-base">
-              The platform is built to help users understand patterns, salary
-              outcomes, and planning routes. Real payroll and formal tax outcomes
-              can differ because of employer-specific processing, updated tax
-              codes, irregular payments, benefits, cumulative PAYE, and other
-              factors that may not be fully represented in an estimate-based tool.
+              The platform is built to help users understand patterns, salary outcomes,
+              and planning routes. Real payroll and formal tax outcomes can differ
+              because of employer-specific processing, updated tax codes, irregular
+              payments, benefits, cumulative PAYE, and other factors that may not be
+              fully represented in an estimate-based tool.
             </p>
           </section>
 
@@ -171,46 +172,78 @@ export default function MethodologyPage() {
             </div>
           </section>
 
+          <CrossLinkRail
+            eyebrow="Trust layer"
+            title="Read the pages that complete the interpretation framework"
+            description="Methodology is strongest when read together with assumptions, disclaimer language, and the broader platform context."
+            items={[
+              {
+                href: "/assumptions",
+                title: "Assumptions",
+                description:
+                  "Read the default employee-style and estimate-based assumptions behind outputs.",
+              },
+              {
+                href: "/disclaimer",
+                title: "Disclaimer",
+                description:
+                  "See what TaxDecod is and is not intended to provide.",
+              },
+              {
+                href: "/about",
+                title: "About",
+                description:
+                  "Read the broader platform purpose and product direction.",
+              },
+              {
+                href: "/contact",
+                title: "Contact",
+                description:
+                  "Report a platform issue or ask a route-specific question.",
+              },
+            ]}
+          />
+
           <section className="mt-12 grid gap-4 md:grid-cols-3">
             <Link
-              href="/assumptions"
+              href="/salary-tools"
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card-strong)",
               }}
             >
-              <p className="text-lg font-semibold app-title">Assumptions</p>
+              <p className="text-lg font-semibold app-title">Salary tools</p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Read the default employee assumptions behind estimate-based outputs.
+                Move into the core product routes behind this methodology.
               </p>
             </Link>
 
             <Link
-              href="/disclaimer"
+              href="/salary-hub"
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card-strong)",
               }}
             >
-              <p className="text-lg font-semibold app-title">Disclaimer</p>
+              <p className="text-lg font-semibold app-title">Salary hub</p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                See what TaxDecod is and is not intended to provide.
+                Browse the main salary, monthly, compare, and guide route families.
               </p>
             </Link>
 
             <Link
-              href="/about"
+              href="/guides"
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card-strong)",
               }}
             >
-              <p className="text-lg font-semibold app-title">About</p>
+              <p className="text-lg font-semibold app-title">Guides</p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Read the broader platform purpose and product direction.
+                Read the editorial explanation layer behind route logic.
               </p>
             </Link>
           </section>

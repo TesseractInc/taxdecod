@@ -10,11 +10,12 @@ import SeoRealityCard from "../../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../../components/seo/seo-cta-cluster";
 import SalaryPageSchema from "../../../components/seo/salary-page-schema";
 import MonthlyTakeHomeContent from "../../../components/seo/monthly-take-home-content";
+import ContextualLinkSection from "../../../components/seo/contextual-link-section";
+import { getContextualLinks } from "../../../components/seo/contextual-link-engine";
 import { buildSeoMetadata } from "../../../components/seo/metadata";
 import { TAX_YEAR_LABEL } from "../../../lib/tax/config";
 import { formatCurrency } from "../../../lib/tax/utils/currency";
 import {
-  getMonthlyTakeHomeAmounts,
   getMonthlyTakeHomePageData,
   parseMonthlyTakeHomeAmount,
 } from "../../../components/seo/monthly-target-pages";
@@ -26,10 +27,14 @@ type PageProps = {
   }>;
 };
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  return getMonthlyTakeHomeAmounts().map((amount) => ({
-    amount: String(amount),
-  }));
+  const { getMonthlyTakeHomeStaticParamsForRollout } = await import(
+    "../../../components/seo/programmatic-expansion-config"
+  );
+
+  return getMonthlyTakeHomeStaticParamsForRollout();
 }
 
 export async function generateMetadata({
@@ -56,7 +61,9 @@ export async function generateMetadata({
   });
 
   return buildSeoMetadata({
-    title: `How Much Salary to Take Home ${formatCurrency(amount)} a Month | TaxDecod`,
+    title: `How Much Salary to Take Home ${formatCurrency(
+      amount
+    )} a Month | TaxDecod`,
     description: `${contentPack.summary} ${contentPack.thresholdNote}`.slice(
       0,
       155
@@ -81,14 +88,20 @@ export default async function MonthlyTakeHomePage({ params }: PageProps) {
     annualNet: data.result.netAnnual,
   });
 
-  const lowerTarget = Math.max(amount - 500, 1000);
+  const lowerTarget = Math.max(amount - 500, 1500);
   const higherTarget = amount + 500;
-  const lowerSalary = Math.max(data.grossAnnual - 5000, 15000);
+  const lowerSalary = Math.max(data.grossAnnual - 5000, 10000);
   const higherSalary = data.grossAnnual + 5000;
 
   const monthlyGross = data.grossAnnual / 12;
   const weeklyGross = data.grossAnnual / 52;
   const weeklyNet = data.result.netAnnual / 52;
+
+  const contextualLinks = getContextualLinks({
+    type: "monthly",
+    amount,
+    requiredSalary: data.grossAnnual,
+  });
 
   return (
     <main className="app-shell">
@@ -105,7 +118,9 @@ export default async function MonthlyTakeHomePage({ params }: PageProps) {
         <Container>
           <SeoPageHero
             eyebrow="Monthly target route"
-            title={`How much salary to take home ${formatCurrency(amount)} a month`}
+            title={`How much salary to take home ${formatCurrency(
+              amount
+            )} a month`}
             description={contentPack.summary}
             highlightValue={formatCurrency(data.grossAnnual)}
             highlightSubtext={`estimated gross salary needed under ${TAX_YEAR_LABEL}-style assumptions`}
@@ -239,6 +254,12 @@ export default async function MonthlyTakeHomePage({ params }: PageProps) {
               weeklyNet={weeklyNet}
             />
           </div>
+
+          <ContextualLinkSection
+            title="Use this monthly target to branch into the next best route"
+            description="These links connect reverse salary pages to full salary routes, nearby comparison pages, editorial guidance, and city-context salary interpretation."
+            items={contextualLinks}
+          />
         </Container>
       </section>
 

@@ -8,144 +8,152 @@ import TaxYearTrustBar from "../../../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../../../components/seo/seo-cta-cluster";
-import PageSchema from "../../../../components/seo/page-schema";
+import CrossLinkRail from "../../../../components/seo/cross-link-rail";
+import { getContextualLinks } from "../../../../components/seo/contextual-link-engine";
 import { buildSeoMetadata } from "../../../../components/seo/metadata";
+import { TAX_YEAR_LABEL } from "../../../../lib/tax/config";
 import { formatCurrency } from "../../../../lib/tax/utils/currency";
-import { TRUST_COPY, TAX_YEAR_LABEL } from "../../../../lib/tax/config";
+import { getSalaryPageData } from "../../../../components/seo/salary-pages";
 import {
-  formatCityIntentLabel,
-  getCitySalaryIntentData,
-  getCityIntentParams,
-} from "../../../../components/seo/city-salary-intent";
+  getBenchmarkRegionBySlug,
+  getBenchmarkRegions,
+} from "../../../../components/seo/benchmark-taxonomy";
+import { getGoodSalaryStaticParamsForRollout } from "../../../../components/seo/programmatic-expansion-config";
 
-type GoodSalaryPageProps = {
+type PageProps = {
   params: Promise<{
     salary: string;
     region: string;
   }>;
 };
 
+export const dynamicParams = false;
+
+function parseSalaryParam(value: string) {
+  const salary = Number(value);
+  if (!Number.isFinite(salary) || salary <= 0) return null;
+  return Math.round(salary);
+}
+
+function getRegionalReading(region: string) {
+  switch (region) {
+    case "london":
+      return "London usually requires a more demanding reading because housing and transport costs can absorb a large share of take-home pay.";
+    case "manchester":
+      return "Manchester usually gives a more balanced reading than London, but housing and lifestyle choices still matter a lot.";
+    case "birmingham":
+      return "Birmingham often gives a more moderate cost context than London, so the same salary can feel stronger here.";
+    case "leeds":
+      return "Leeds often gives a slightly more forgiving cost context than the highest-cost UK cities.";
+    case "glasgow":
+      return "Glasgow can change the affordability picture meaningfully compared with the most expensive English city routes.";
+    case "bristol":
+      return "Bristol often sits in the middle: not London-level, but still costly enough that take-home needs careful judging.";
+    default:
+      return "Regional cost context matters because the same salary can feel very different once housing and local costs are considered.";
+  }
+}
+
+function clampMonthlyTarget(value: number) {
+  return Math.max(1500, Math.min(5000, Math.round(value / 100) * 100));
+}
+
 export async function generateStaticParams() {
-  return getCityIntentParams();
+  return getGoodSalaryStaticParamsForRollout();
 }
 
 export async function generateMetadata({
   params,
-}: GoodSalaryPageProps): Promise<Metadata> {
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const salary = Number(resolvedParams.salary);
-  const regionLabel = formatCityIntentLabel(resolvedParams.region);
-  const data = getCitySalaryIntentData(salary, resolvedParams.region);
+  const salary = parseSalaryParam(resolvedParams.salary);
+  const region = getBenchmarkRegionBySlug(resolvedParams.region);
 
-  if (!data || !Number.isFinite(salary)) {
+  if (!salary || !region) {
     return buildSeoMetadata({
-      title: "Is this a good salary? | TaxDecod",
+      title: "Good Salary by Region | TaxDecod",
       description:
-        "City-specific salary context pages for UK salary decision support.",
-      path: "/benchmarks",
+        "Judge what a salary may mean in real life by UK city and region context.",
+      path: "/benchmarks/regions",
     });
   }
 
   return buildSeoMetadata({
-    title: `Is £${salary.toLocaleString("en-GB")} a good salary in ${regionLabel}?`,
-    description: `See whether £${salary.toLocaleString(
-      "en-GB"
-    )} is a good salary in ${regionLabel}, using take-home pay and city cost context rather than gross salary alone.`,
-    path: `/good-salary/${salary}/${resolvedParams.region}`,
+    title: `Is ${formatCurrency(salary)} a good salary in ${region.label}? | TaxDecod`,
+    description: `${formatCurrency(
+      salary
+    )} in ${region.label} should be judged by take-home pay, housing cost, and local affordability, not gross salary alone.`,
+    path: `/good-salary/${salary}/${region.slug}`,
   });
 }
 
-export default async function GoodSalaryPage({
-  params,
-}: GoodSalaryPageProps) {
+export default async function GoodSalaryRegionPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const salary = Number(resolvedParams.salary);
+  const salary = parseSalaryParam(resolvedParams.salary);
+  const region = getBenchmarkRegionBySlug(resolvedParams.region);
 
-  if (!Number.isFinite(salary)) {
+  if (!salary || !region) {
     notFound();
   }
 
-  const data = getCitySalaryIntentData(salary, resolvedParams.region);
+  const data = getSalaryPageData(salary);
+  const otherRegions = getBenchmarkRegions()
+    .filter((item) => item.slug !== region.slug)
+    .slice(0, 3);
 
-  if (!data) {
-    notFound();
-  }
+  const keepPercent =
+    data.result.grossAnnual > 0
+      ? (data.result.netAnnual / data.result.grossAnnual) * 100
+      : 0;
 
-  const regionLabel = formatCityIntentLabel(resolvedParams.region);
+  const lowerSalary = Math.max(10000, salary - 10000);
+  const higherSalary = salary + 10000;
+  const roundedMonthlyTarget = clampMonthlyTarget(data.result.netMonthly);
+
+  const contextualLinks = getContextualLinks({
+    type: "goodSalary",
+    salary,
+    region: region.slug,
+    monthlyNet: data.result.netMonthly,
+    nearbyRegions: otherRegions.map((item) => item.slug),
+  });
 
   return (
     <main className="app-shell">
-      <PageSchema
-        pageUrl={`https://taxdecod.com/good-salary/${salary}/${resolvedParams.region}`}
-        title={`Is £${salary.toLocaleString(
-          "en-GB"
-        )} a good salary in ${regionLabel}? | TaxDecod`}
-        description={`City-specific salary context for £${salary.toLocaleString(
-          "en-GB"
-        )} in ${regionLabel}.`}
-        breadcrumbs={[
-          { name: "Home", url: "https://taxdecod.com" },
-          { name: "Benchmarks", url: "https://taxdecod.com/benchmarks" },
-          {
-            name: `Is £${salary.toLocaleString(
-              "en-GB"
-            )} a good salary in ${regionLabel}?`,
-            url: `https://taxdecod.com/good-salary/${salary}/${resolvedParams.region}`,
-          },
-        ]}
-        faqItems={[
-          {
-            question: `Is £${salary.toLocaleString(
-              "en-GB"
-            )} a good salary in ${regionLabel}?`,
-            answer: data.verdictSummary,
-          },
-          {
-            question: `How much is £${salary.toLocaleString(
-              "en-GB"
-            )} after tax per month?`,
-            answer: `Estimated take-home pay is about ${formatCurrency(
-              data.result.netMonthly
-            )} per month under standard assumptions.`,
-          },
-          {
-            question: `Why does city context matter when judging salary?`,
-            answer:
-              "Because the same take-home pay can feel very different depending on rent, commuting, household size, debt, and the general cost level of the city.",
-          },
-        ]}
-      />
-
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
         <Container>
           <SeoPageHero
-            eyebrow="City salary decision page"
-            title={`Is £${salary.toLocaleString(
-              "en-GB"
-            )} a good salary in ${regionLabel}?`}
-            description="This page combines after-tax salary reality with city cost context so users can judge the salary more intelligently than by gross pay alone."
+            eyebrow="Regional salary reading"
+            title={`Is ${formatCurrency(salary)} a good salary in ${region.label}?`}
+            description={`This page helps judge what ${formatCurrency(
+              salary
+            )} may mean in ${region.label} after tax and within a local affordability context.`}
             highlightValue={formatCurrency(data.result.netMonthly)}
-            highlightSubtext="estimated monthly take-home"
+            highlightSubtext={`estimated monthly take-home under ${TAX_YEAR_LABEL}-style assumptions`}
           />
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description={TRUST_COPY.salaryPage.description}
+              description={`This page combines ${TAX_YEAR_LABEL}-style UK salary assumptions with a regional lifestyle reading. It is designed for judgment and planning, not as a definitive affordability rule.`}
               points={[
-                ...TRUST_COPY.salaryPage.points,
-                "Useful when city context matters as much as tax",
+                `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+                `${region.label} context matters`,
+                "Built for planning and salary judgment",
+                "Not a universal affordability guarantee",
               ]}
             />
           </div>
 
           <div className="mt-10">
-            <SeoRealityCard label="Verdict">
-              Using {TAX_YEAR_LABEL}-style assumptions, a salary of{" "}
-              <strong>£{salary.toLocaleString("en-GB")}</strong> becomes about{" "}
-              <strong>{formatCurrency(data.result.netMonthly)}</strong> a month
-              after deductions. {data.city.tone}
+            <SeoRealityCard label="Regional reality">
+              {formatCurrency(salary)} only becomes meaningful once the monthly
+              result is understood. At about{" "}
+              <strong>{formatCurrency(data.result.netMonthly)}</strong> per month
+              after deductions, the stronger question is whether that result is
+              enough for <strong>{region.label}</strong>, not whether the gross
+              salary sounds good on paper. {getRegionalReading(region.slug)}
             </SeoRealityCard>
           </div>
 
@@ -153,127 +161,177 @@ export default async function GoodSalaryPage({
             <SeoCtaCluster
               items={[
                 {
-                  href: "/calculator",
-                  title: "Inspect the full deduction breakdown",
+                  href: `/${salary}-after-tax-uk`,
+                  title: "See the full after-tax salary page",
                   description:
-                    "Useful when you want the deeper take-home picture behind this salary.",
+                    "Use the full salary route when you want the complete deduction picture behind this regional judgment.",
                 },
                 {
-                  href: "/compare-salary",
-                  title: "Compare this against a nearby salary",
+                  href: `/compare/${salary}-vs-${higherSalary}-after-tax`,
+                  title: "Compare this with the next salary band",
                   description:
-                    "Useful when you want to know whether the next pay band actually changes life enough.",
+                    "Useful when the real question is whether a nearby salary jump is meaningfully stronger in real life.",
                 },
                 {
-                  href: "/reverse-tax",
-                  title: "Work backwards from a target income",
+                  href: `/benchmarks/roles`,
+                  title: "Explore role benchmarks",
                   description:
-                    "Useful when the amount you want to keep matters more than judging a single fixed salary.",
+                    "Useful when you want to compare this salary against role-based market context, not just a generic city reading.",
                 },
               ]}
             />
           </div>
 
           <section className="mt-10 grid gap-4 lg:grid-cols-3">
-            <Link
-              href={`/${salary}-after-tax-uk`}
-              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+            <div
+              className="rounded-[28px] border px-6 py-6"
               style={{
                 borderColor: "var(--line)",
                 background: "var(--card-strong)",
               }}
             >
-              <p className="text-lg font-semibold app-title">
-                See the full after-tax salary route
+              <p className="text-sm font-medium app-subtle">Monthly take-home</p>
+              <p className="mt-3 text-3xl font-bold tracking-tight app-title">
+                {formatCurrency(data.result.netMonthly)}
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want the full deduction reading behind this city-context verdict.
+                This is the number that matters most for judging whether the salary
+                really works in {region.label}.
+              </p>
+            </div>
+
+            <div
+              className="rounded-[28px] border px-6 py-6"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-sm font-medium app-subtle">Keep rate</p>
+              <p className="mt-3 text-3xl font-bold tracking-tight app-title">
+                {keepPercent.toFixed(0)}%
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Roughly this share of gross salary is retained after deductions in
+                this route.
+              </p>
+            </div>
+
+            <div
+              className="rounded-[28px] border px-6 py-6"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-sm font-medium app-subtle">Regional reading</p>
+              <p className="mt-3 text-lg font-semibold app-title">
+                {region.label} context
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                {getRegionalReading(region.slug)}
+              </p>
+            </div>
+          </section>
+
+          <section className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <Link
+              href={`/${lowerSalary}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                See {formatCurrency(lowerSalary)} after tax
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want to know whether the lower nearby band would
+                feel materially weaker.
               </p>
             </Link>
 
             <Link
-              href={`/benchmarks/software-engineer/${resolvedParams.region}`}
+              href={`/${higherSalary}-after-tax-uk`}
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
-                background: "var(--card-strong)",
+                background: "var(--surface-2)",
               }}
             >
               <p className="text-lg font-semibold app-title">
-                Add a role benchmark in {regionLabel}
+                See {formatCurrency(higherSalary)} after tax
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when market role context matters alongside take-home pay.
+                Useful when you want to know whether the next band really changes
+                monthly life.
               </p>
             </Link>
 
             <Link
-              href="/salary-hub"
+              href={`/compare/${salary}-vs-${higherSalary}-after-tax`}
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
-                background: "var(--card-strong)",
+                background: "var(--surface-2)",
               }}
             >
               <p className="text-lg font-semibold app-title">
-                Explore more salary routes
+                Compare {formatCurrency(salary)} vs {formatCurrency(higherSalary)}
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want wider salary context rather than one city verdict alone.
+                Best when the real decision is whether the next salary jump is worth it.
+              </p>
+            </Link>
+
+            <Link
+              href={`/monthly-take-home/${roundedMonthlyTarget}`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Reverse from this monthly level
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want the planning route built around monthly life,
+                not just gross salary.
               </p>
             </Link>
           </section>
 
-          <section className="mt-14 grid gap-6 lg:grid-cols-[1fr_1fr]">
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Main answer
-              </p>
+          <CrossLinkRail
+            title="Use this regional salary reading to move into the next best route"
+            description="These links connect the city-intent salary layer to after-tax pages, reverse planning, comparison routes, editorial guides, and nearby city contexts."
+            items={contextualLinks}
+          />
 
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                {data.verdictTitle}
-              </h2>
-
-              <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
-                <p>{data.verdictSummary}</p>
-                <p>
-                  Estimated keep rate is about{" "}
-                  <strong>{data.keepPercent.toFixed(0)}%</strong>, which means
-                  gross salary alone does not tell the full story.
-                </p>
-                <p>
-                  The right answer depends on rent, travel cost, debt,
-                  household structure, and how much monthly flexibility you actually
-                  need in {regionLabel}.
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Decision routes
-              </p>
-
-              <div className="mt-5 grid gap-3">
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Compare this salary across nearby city contexts
+            </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {otherRegions.map((item) => (
                 <Link
-                  href="/compare-salary"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+                  key={item.slug}
+                  href={`/good-salary/${salary}/${item.slug}`}
+                  className="rounded-[28px] border px-6 py-6 transition hover-lift"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--card-strong)",
+                  }}
                 >
-                  Compare this with another salary
+                  <p className="text-lg font-semibold app-title">
+                    {formatCurrency(salary)} in {item.label}
+                  </p>
+                  <p className="mt-3 text-sm leading-8 app-copy">
+                    Switch the city context and judge how the same salary may feel differently.
+                  </p>
                 </Link>
-                <Link
-                  href={`/benchmarks/software-engineer/${resolvedParams.region}`}
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Explore a role benchmark in {regionLabel}
-                </Link>
-                <Link
-                  href="/salary-hub"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Explore more salary routes
-                </Link>
-              </div>
+              ))}
             </div>
           </section>
         </Container>

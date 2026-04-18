@@ -4,6 +4,7 @@ import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import CrossLinkRail from "../../components/seo/cross-link-rail";
 import RelatedLinks from "../../components/seo/related-links";
 
 export const metadata: Metadata = {
@@ -63,10 +64,9 @@ export default function AssumptionsPage() {
               The baseline assumptions behind TaxDecod outputs
             </h1>
             <p className="mt-5 text-sm leading-8 app-copy sm:text-base">
-              TaxDecod uses a transparent assumption layer so salary and
-              take-home outputs can be interpreted more consistently. This page
-              explains the general assumptions users should keep in mind when
-              reading platform outputs.
+              TaxDecod uses a transparent assumption layer so salary and take-home
+              outputs can be interpreted more consistently. This page explains the
+              general assumptions users should keep in mind when reading platform outputs.
             </p>
           </div>
 
@@ -142,6 +142,38 @@ export default function AssumptionsPage() {
               ))}
             </div>
           </section>
+
+          <CrossLinkRail
+            eyebrow="Trust layer"
+            title="Use assumptions together with the other interpretation pages"
+            description="Assumptions are more useful when read together with methodology, disclaimer language, and the broader platform context."
+            items={[
+              {
+                href: "/methodology",
+                title: "Methodology",
+                description:
+                  "Read how TaxDecod applies logic across core route types.",
+              },
+              {
+                href: "/disclaimer",
+                title: "Disclaimer",
+                description:
+                  "Read what the platform is and is not intended to provide.",
+              },
+              {
+                href: "/about",
+                title: "About",
+                description:
+                  "Read the broader product purpose and platform direction.",
+              },
+              {
+                href: "/contact",
+                title: "Contact",
+                description:
+                  "Use the contact route for feedback, site issues, or route-specific questions.",
+              },
+            ]}
+          />
 
           <section className="mt-12 grid gap-4 md:grid-cols-3">
             <Link

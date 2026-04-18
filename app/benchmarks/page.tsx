@@ -1,190 +1,240 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
-import SeoPageHero from "../../components/seo/seo-page-hero";
-import SeoRealityCard from "../../components/seo/seo-reality-card";
-import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
-import { TRUST_COPY } from "../../lib/tax/config";
+import CrossLinkRail from "../../components/seo/cross-link-rail";
+import {
+  getBenchmarkRolesByRollout,
+  getFeaturedComparisonPairs,
+  getFlagshipSalaryValues,
+  getPriorityRegionSlugs,
+  getRegionsByRollout,
+  PROGRAMMATIC_ROLLOUT,
+} from "../../components/seo/programmatic-expansion-config";
+import { formatCurrency } from "../../lib/tax/utils/currency";
 
-const benchmarkRoutes = [
-  {
-    title: "Software Engineer salary London",
-    href: "/benchmarks/software-engineer/london",
-  },
-  {
-    title: "Software Engineer salary Manchester",
-    href: "/benchmarks/software-engineer/manchester",
-  },
-  {
-    title: "Teacher salary London",
-    href: "/benchmarks/teacher/london",
-  },
-  {
-    title: "Teacher salary Manchester",
-    href: "/benchmarks/teacher/manchester",
-  },
-  {
-    title: "Nurse salary London",
-    href: "/benchmarks/nurse/london",
-  },
-  {
-    title: "Nurse salary Glasgow",
-    href: "/benchmarks/nurse/glasgow",
-  },
-  {
-    title: "Data Analyst salary Leeds",
-    href: "/benchmarks/data-analyst/leeds",
-  },
-  {
-    title: "Accountant salary Birmingham",
-    href: "/benchmarks/accountant/birmingham",
-  },
-];
-
-const cityIntentRoutes = [
-  {
-    title: "Is 30k a good salary in London?",
-    href: "/good-salary/30000/london",
-  },
-  {
-    title: "Is 40k a good salary in Manchester?",
-    href: "/good-salary/40000/manchester",
-  },
-  {
-    title: "Is 50k a good salary in Birmingham?",
-    href: "/good-salary/50000/birmingham",
-  },
-  {
-    title: "Is 35k a good salary in Leeds?",
-    href: "/good-salary/35000/leeds",
-  },
-];
-
-const benchmarkBrowseRoutes = [
-  {
-    title: "Browse all benchmark roles",
-    description:
-      "Enter the benchmark system by job title first, then move into the cities or regions that matter.",
-    href: "/benchmarks/roles",
-  },
-  {
-    title: "Browse all benchmark regions",
-    description:
-      "Enter the benchmark system by city or region first, then compare the job families present there.",
-    href: "/benchmarks/regions",
-  },
-];
+export const metadata: Metadata = {
+  title: "Salary Benchmarks | TaxDecod",
+  description:
+    "Explore salary benchmarks by role and region across the UK, then move into after-tax salary, compare, and city-context routes.",
+};
 
 export default function BenchmarksHubPage() {
+  const roles = getBenchmarkRolesByRollout(
+    PROGRAMMATIC_ROLLOUT.benchmarkPages
+  );
+  const regions = getRegionsByRollout(PROGRAMMATIC_ROLLOUT.benchmarkPages);
+  const featuredSalaries = getFlagshipSalaryValues().slice(0, 6);
+  const featuredComparisons = getFeaturedComparisonPairs().slice(0, 4);
+  const priorityRegions = getPriorityRegionSlugs().slice(0, 4);
+
   return (
     <main className="app-shell">
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
-        <Container>
-          <SeoPageHero
-            eyebrow="Salary benchmarks hub"
-            title="Role and city salary context for UK decisions"
-            description="Benchmark pages help users judge whether a salary is weak, typical, or strong before moving into after-tax comparison and monthly reality."
-          />
+        <Container className="max-w-6xl">
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium app-accent">Benchmarks hub</p>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-5xl">
+              Explore salary benchmarks by role and region
+            </h1>
+            <p className="mt-5 text-sm leading-8 app-copy sm:text-base">
+              Benchmark pages are meant to add market context to salary decisions.
+              They work best when they feed directly into after-tax salary pages,
+              comparison routes, and city-based judgment pages instead of staying
+              isolated as broad reference pages.
+            </p>
+          </div>
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description={TRUST_COPY.salaryHub.description}
-              points={[...TRUST_COPY.salaryHub.points]}
-            />
-          </div>
-
-          <div className="mt-10">
-            <SeoRealityCard label="Why benchmarks matter">
-              A salary on its own is incomplete. Benchmark context adds market
-              position, while after-tax tools add monthly reality. The best
-              decision comes from combining both.
-            </SeoRealityCard>
-          </div>
-
-          <div className="mt-10">
-            <SeoCtaCluster
-              items={[
-                {
-                  href: "/calculator",
-                  title: "Check a salary after tax",
-                  description:
-                    "Move from salary benchmark context into real take-home numbers.",
-                },
-                {
-                  href: "/compare-salary",
-                  title: "Compare two salary outcomes",
-                  description:
-                    "Test whether a new offer or raise changes monthly life enough.",
-                },
-                {
-                  href: "/reverse-tax",
-                  title: "Reverse from a target monthly income",
-                  description:
-                    "Start from the amount you want to keep and work backwards.",
-                },
+              description="Benchmark pages are directional context pages, not formal salary survey guarantees. Use them to understand role and region patterns, then move into after-tax analysis."
+              points={[
+                "Directional benchmark context",
+                "Role and region discovery layer",
+                "Connected to after-tax and comparison routes",
+                "Built for salary judgment support",
               ]}
             />
           </div>
 
-          <section className="mt-10 grid gap-6 lg:grid-cols-2">
-            {benchmarkBrowseRoutes.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="overflow-hidden rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800 sm:p-7"
-              >
-                <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                  Browse entry
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                  {item.title}
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                  {item.description}
-                </p>
-              </Link>
-            ))}
+          <section className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <Link
+              href="/benchmarks/roles"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Browse all benchmark roles
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Start role-first and move into city or region benchmark routes.
+              </p>
+            </Link>
+
+            <Link
+              href="/benchmarks/regions"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Browse all benchmark regions
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Start region-first and then move into the most relevant role family.
+              </p>
+            </Link>
+
+            <Link
+              href="/salary-hub"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">Salary hub</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Move across salary, monthly, compare, city-intent, and guide families.
+              </p>
+            </Link>
+
+            <Link
+              href="/guides/what-is-a-good-salary-uk"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Read the salary-judgment guide
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Add editorial interpretation behind benchmark context and salary meaning.
+              </p>
+            </Link>
           </section>
 
-          <section className="mt-14 grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Role + city benchmarks
-              </p>
-              <div className="mt-5 grid gap-3">
-                {benchmarkRoutes.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                  >
-                    {item.title}
-                  </Link>
-                ))}
-              </div>
-            </div>
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Full benchmark role coverage
+            </h2>
+            <p className="mt-3 text-sm leading-8 app-copy">
+              Role pages should work as a bridge from market context into real salary routes.
+            </p>
 
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                “Is this a good salary?” routes
-              </p>
-              <div className="mt-5 grid gap-3">
-                {cityIntentRoutes.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                  >
-                    {item.title}
-                  </Link>
-                ))}
-              </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {roles.map((role) => (
+                <div
+                  key={role.slug}
+                  className="rounded-[28px] border px-6 py-6"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--card-strong)",
+                  }}
+                >
+                  <p className="text-lg font-semibold app-title">{role.label}</p>
+                  <p className="mt-2 text-sm capitalize app-subtle">
+                    {role.category}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {regions.map((region) => (
+                      <Link
+                        key={region.slug}
+                        href={`/benchmarks/${role.slug}/${region.slug}`}
+                        className="rounded-full border px-3.5 py-2 text-xs font-medium transition hover-lift"
+                        style={{
+                          borderColor: "var(--line)",
+                          background: "var(--surface-2)",
+                          color: "var(--text)",
+                        }}
+                      >
+                        {region.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
+
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Full benchmark region coverage
+            </h2>
+            <p className="mt-3 text-sm leading-8 app-copy">
+              Region pages should make it easier to switch the location context while keeping role intent.
+            </p>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {regions.map((region) => (
+                <div
+                  key={region.slug}
+                  className="rounded-[28px] border px-6 py-6"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--surface-2)",
+                  }}
+                >
+                  <p className="text-lg font-semibold app-title">{region.label}</p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {roles.slice(0, 6).map((role) => (
+                      <Link
+                        key={`${region.slug}-${role.slug}`}
+                        href={`/benchmarks/${role.slug}/${region.slug}`}
+                        className="rounded-full border px-3.5 py-2 text-xs font-medium transition hover-lift"
+                        style={{
+                          borderColor: "var(--line)",
+                          background: "var(--card-strong)",
+                          color: "var(--text)",
+                        }}
+                      >
+                        {role.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <CrossLinkRail
+            eyebrow="Benchmark bridges"
+            title="Move from benchmark context into real decision routes"
+            description="These routes are the best next steps once a user has a role or city context and wants a practical salary reading."
+            items={[
+              ...featuredSalaries.map((salary) => ({
+                href: `/${salary}-after-tax-uk`,
+                title: `${formatCurrency(salary)} after tax`,
+                description:
+                  "Move from market context into a concrete after-tax salary route.",
+              })),
+            ].slice(0, 4)}
+          />
+
+          <CrossLinkRail
+            eyebrow="Compare bridges"
+            title="Use benchmark context to evaluate nearby salary jumps"
+            description="These comparison routes help users test whether the benchmark-adjacent salary jump is materially stronger after deductions."
+            items={featuredComparisons.map((pair) => ({
+              href: `/compare/${pair.salaryA}-vs-${pair.salaryB}-after-tax`,
+              title: `${formatCurrency(pair.salaryA)} vs ${formatCurrency(pair.salaryB)}`,
+              description:
+                "Use a fixed compare route to judge retained value, not just gross change.",
+            }))}
+          />
+
+          <CrossLinkRail
+            eyebrow="City-intent bridges"
+            title="Switch from benchmark context into real-life city salary judgment"
+            description="These routes help users judge what the same salary may feel like in different regional cost contexts."
+            items={priorityRegions.map((region) => ({
+              href: `/good-salary/40000/${region}`,
+              title: `${formatCurrency(40000)} in ${region}`,
+              description:
+                "Move into the city-intent layer and judge the salary in practical local context.",
+            }))}
+          />
         </Container>
       </section>
 

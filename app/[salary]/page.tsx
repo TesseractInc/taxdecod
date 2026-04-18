@@ -10,11 +10,12 @@ import SeoRealityCard from "../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
 import SalaryPageContent from "../../components/seo/salary-page-content";
 import SalaryPageSchema from "../../components/seo/salary-page-schema";
+import ContextualLinkSection from "../../components/seo/contextual-link-section";
+import { getContextualLinks } from "../../components/seo/contextual-link-engine";
 import { TAX_YEAR_LABEL, TRUST_COPY } from "../../lib/tax/config";
 import { buildSeoMetadata } from "../../components/seo/metadata";
 import {
   formatSalaryTitle,
-  getPopularSalarySlugs,
   getSalaryPageData,
   parseSalaryFromSlug,
 } from "../../components/seo/salary-pages";
@@ -27,8 +28,14 @@ type SalaryPageProps = {
   }>;
 };
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  return getPopularSalarySlugs();
+  const { getSalaryStaticParamsForRollout } = await import(
+    "../../components/seo/programmatic-expansion-config"
+  );
+
+  return getSalaryStaticParamsForRollout();
 }
 
 export async function generateMetadata({
@@ -96,8 +103,20 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
     keepPercent,
   });
 
-  const nearbyLower = Math.max(salary - 5000, 15000);
+  const nearbyLower = Math.max(salary - 5000, 10000);
   const nearbyHigher = salary + 5000;
+  const roundedMonthlyTarget = Math.max(
+    1500,
+    Math.min(5000, Math.round(data.result.netMonthly / 100) * 100)
+  );
+  const lowerCompare = Math.max(10000, salary - 10000);
+  const higherCompare = salary + 10000;
+
+  const contextualLinks = getContextualLinks({
+    type: "salary",
+    salary,
+    monthlyNet: data.result.netMonthly,
+  });
 
   return (
     <main className="app-shell">
@@ -229,6 +248,60 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
               weeklyNet={data.weeklyNet}
             />
           </div>
+
+          <ContextualLinkSection
+            title="Move into the next most useful route from this salary"
+            description="These links connect this salary page to monthly planning, comparison, editorial explanation, and regional interpretation routes."
+            items={contextualLinks}
+          />
+
+          <section className="mt-14 text-center">
+            <h3 className="text-xl font-semibold app-title">
+              Still deciding if this salary is right?
+            </h3>
+
+            <p className="mt-2 app-copy">
+              Compare it with nearby salaries or see what it looks like monthly.
+            </p>
+
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
+              <Link
+                href={`/compare/${lowerCompare}-vs-${salary}-after-tax`}
+                className="rounded-full border px-4 py-2 text-sm font-medium transition hover-lift"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--surface-2)",
+                  color: "var(--text)",
+                }}
+              >
+                Compare lower
+              </Link>
+
+              <Link
+                href={`/compare/${salary}-vs-${higherCompare}-after-tax`}
+                className="rounded-full border px-4 py-2 text-sm font-medium transition hover-lift"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--surface-2)",
+                  color: "var(--text)",
+                }}
+              >
+                Compare higher
+              </Link>
+
+              <Link
+                href={`/monthly-take-home/${roundedMonthlyTarget}`}
+                className="rounded-full border px-4 py-2 text-sm font-medium transition hover-lift"
+                style={{
+                  borderColor: "var(--line)",
+                  background: "var(--surface-2)",
+                  color: "var(--text)",
+                }}
+              >
+                Monthly view
+              </Link>
+            </div>
+          </section>
         </Container>
       </section>
 

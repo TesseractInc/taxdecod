@@ -8,122 +8,118 @@ import TaxYearTrustBar from "../../../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../../../components/seo/seo-cta-cluster";
-import PageSchema from "../../../../components/seo/page-schema";
+import ContextualLinkSection from "../../../../components/seo/contextual-link-section";
+import { getContextualLinks } from "../../../../components/seo/contextual-link-engine";
 import { buildSeoMetadata } from "../../../../components/seo/metadata";
 import { formatCurrency } from "../../../../lib/tax/utils/currency";
-import { TRUST_COPY } from "../../../../lib/tax/config";
 import {
-  formatCitySlug,
-  formatRoleSlug,
-  getBenchmarkParams,
-  parseBenchmark,
-} from "../../../../components/seo/role-region-benchmarks";
+  getBenchmarkRoleBySlug,
+  getBenchmarkRegionBySlug,
+  getBenchmarkRoles,
+  getBenchmarkRegions,
+} from "../../../../components/seo/benchmark-taxonomy";
+import { getBenchmarkPageData } from "../../../../components/seo/benchmark-page-data";
+import { TAX_YEAR_LABEL } from "../../../../lib/tax/config";
 
-type BenchmarkPageProps = {
+type PageProps = {
   params: Promise<{
     role: string;
     region: string;
   }>;
 };
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  return getBenchmarkParams().map(({ role, city }) => ({
-    role,
-    region: city,
-  }));
+  const { getBenchmarkStaticParamsForRollout } = await import(
+    "../../../../components/seo/programmatic-expansion-config"
+  );
+
+  return getBenchmarkStaticParamsForRollout();
 }
 
 export async function generateMetadata({
   params,
-}: BenchmarkPageProps): Promise<Metadata> {
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const benchmark = parseBenchmark(resolvedParams.role, resolvedParams.region);
+  const role = getBenchmarkRoleBySlug(resolvedParams.role);
+  const region = getBenchmarkRegionBySlug(resolvedParams.region);
 
-  if (!benchmark) {
+  if (!role || !region) {
     return buildSeoMetadata({
-      title: "Salary Benchmarks UK | TaxDecod",
-      description: "Role and region salary benchmark pages for UK salary decisions.",
+      title: "Salary Benchmarks | TaxDecod",
+      description:
+        "Explore salary benchmarks by role and region across the UK.",
       path: "/benchmarks",
     });
   }
 
-  const roleLabel = formatRoleSlug(benchmark.role);
-  const regionLabel = formatCitySlug(benchmark.city);
-
   return buildSeoMetadata({
-    title: `${roleLabel} salary ${regionLabel} after tax context`,
-    description: `See ${roleLabel} salary context in ${regionLabel}, including lower, median, and upper benchmark ranges for salary decision support.`,
-    path: `/benchmarks/${benchmark.role}/${benchmark.city}`,
+    title: `${role.label} salary benchmark in ${region.label} | TaxDecod`,
+    description: `Explore estimated ${role.label.toLowerCase()} salary benchmarks in ${region.label} and compare them with after-tax salary routes.`,
+    path: `/benchmarks/${role.slug}/${region.slug}`,
   });
 }
 
-export default async function BenchmarkPage({
-  params,
-}: BenchmarkPageProps) {
+export default async function BenchmarkRoleRegionPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const benchmark = parseBenchmark(resolvedParams.role, resolvedParams.region);
+  const role = getBenchmarkRoleBySlug(resolvedParams.role);
+  const region = getBenchmarkRegionBySlug(resolvedParams.region);
 
-  if (!benchmark) notFound();
+  if (!role || !region) {
+    notFound();
+  }
 
-  const roleLabel = formatRoleSlug(benchmark.role);
-  const regionLabel = formatCitySlug(benchmark.city);
+  const data = getBenchmarkPageData(role, region);
+
+  const nearbyRoles = getBenchmarkRoles()
+    .filter((item) => item.slug !== role.slug)
+    .slice(0, 3);
+
+  const nearbyRegions = getBenchmarkRegions()
+    .filter((item) => item.slug !== region.slug)
+    .slice(0, 3);
+
+  const contextualLinks = getContextualLinks({
+    type: "benchmark",
+    role: role.label,
+    region: region.slug,
+    medianSalary: data.medianSalary,
+  });
 
   return (
     <main className="app-shell">
-      <PageSchema
-        pageUrl={`https://taxdecod.com/benchmarks/${benchmark.role}/${benchmark.city}`}
-        title={`${roleLabel} salary ${regionLabel} after tax context | TaxDecod`}
-        description={`Salary benchmark context for ${roleLabel} in ${regionLabel}.`}
-        breadcrumbs={[
-          { name: "Home", url: "https://taxdecod.com" },
-          { name: "Benchmarks", url: "https://taxdecod.com/benchmarks" },
-          {
-            name: `${roleLabel} ${regionLabel}`,
-            url: `https://taxdecod.com/benchmarks/${benchmark.role}/${benchmark.city}`,
-          },
-        ]}
-        faqItems={[
-          {
-            question: `What is a typical ${roleLabel} salary in ${regionLabel}?`,
-            answer: `A rough benchmark range is ${formatCurrency(
-              benchmark.low
-            )} to ${formatCurrency(benchmark.high)}, with a median around ${formatCurrency(
-              benchmark.median
-            )}.`,
-          },
-          {
-            question: `Why does role and region salary context matter?`,
-            answer:
-              "Because a salary only becomes useful when judged against market level, living costs, progression, and the monthly take-home that actually reaches you.",
-          },
-        ]}
-      />
-
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
         <Container>
           <SeoPageHero
-            eyebrow="Role + region salary benchmark"
-            title={`${roleLabel} salary in ${regionLabel}`}
-            description="This page adds role and region context to salary decisions so users can judge whether a salary is weak, typical, or strong before moving into after-tax comparison."
-            highlightValue={formatCurrency(benchmark.median)}
-            highlightSubtext="approx median benchmark"
+            eyebrow="Role and region benchmark"
+            title={`${role.label} salary benchmark in ${region.label}`}
+            description={`Use this page to understand a practical salary benchmark range for ${role.label.toLowerCase()} roles in ${region.label}, then move into after-tax and comparison routes.`}
+            highlightValue={formatCurrency(data.medianSalary)}
+            highlightSubtext={`estimated benchmark midpoint for ${role.label.toLowerCase()} roles in ${region.label}`}
           />
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description={TRUST_COPY.salaryHub.description}
-              points={[...TRUST_COPY.salaryHub.points]}
+              description={`Benchmark pages are designed as directional context. They work best when combined with ${TAX_YEAR_LABEL}-style salary routes, comparison tools, and city-based judgment pages.`}
+              points={[
+                "Directional benchmark context",
+                "Useful with salary comparison tools",
+                "Built for role and region interpretation",
+                "Not a formal compensation survey",
+              ]}
             />
           </div>
 
           <div className="mt-10">
             <SeoRealityCard label="Benchmark reality">
-              A benchmark is not just about the headline salary. The real decision is
-              whether the role-level pay in <strong>{regionLabel}</strong> creates a
-              monthly take-home strong enough for the life and cost structure users
-              actually face there.
+              A benchmark page should not be read as a single guaranteed market
+              number. It is more useful as a directional context layer: what is
+              entry-level, what feels mid-market, and what starts to look strong
+              for a <strong>{role.label}</strong> in{" "}
+              <strong>{region.label}</strong>.
             </SeoRealityCard>
           </div>
 
@@ -131,100 +127,200 @@ export default async function BenchmarkPage({
             <SeoCtaCluster
               items={[
                 {
-                  href: "/calculator",
-                  title: "Check a salary after tax",
-                  description: "Move from benchmark context into real take-home numbers.",
+                  href: `/${data.medianSalary}-after-tax-uk`,
+                  title: "See the benchmark midpoint after tax",
+                  description:
+                    "Use the salary route when you want to know what the benchmark actually leaves you with after deductions.",
                 },
                 {
-                  href: "/compare-salary",
-                  title: "Compare two salary outcomes",
-                  description: "Useful when deciding between current pay and a new offer.",
+                  href: `/compare/${data.lowerComparisonSalary}-vs-${data.medianSalary}-after-tax`,
+                  title: "Compare nearby benchmark salary bands",
+                  description:
+                    "Useful when you want to know whether the benchmark jump really changes monthly life enough.",
                 },
                 {
-                  href: "/reverse-tax",
-                  title: "Reverse from a monthly target",
-                  description: "Start from the income you actually want to keep.",
+                  href: `/good-salary/${data.medianSalary}/${region.slug}`,
+                  title: "Judge the midpoint in local lifestyle context",
+                  description:
+                    "Useful when you want to go beyond benchmark numbers and think about real-life affordability.",
                 },
               ]}
             />
           </div>
 
-          <section className="mt-14 grid gap-6 lg:grid-cols-[1fr_1fr]">
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Benchmark range
+          <section className="mt-10 grid gap-4 lg:grid-cols-3">
+            <div
+              className="rounded-[28px] border px-6 py-6"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-sm font-medium app-subtle">Entry benchmark</p>
+              <p className="mt-3 text-3xl font-bold tracking-tight app-title">
+                {formatCurrency(data.entrySalary)}
               </p>
-
-              <div className="mt-5 space-y-3">
-                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Lower range</p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    {formatCurrency(benchmark.low)}
-                  </p>
-                </div>
-
-                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Median range</p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    {formatCurrency(benchmark.median)}
-                  </p>
-                </div>
-
-                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Upper range</p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    {formatCurrency(benchmark.high)}
-                  </p>
-                </div>
-              </div>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                A directional entry-level benchmark for this role in this region.
+              </p>
             </div>
 
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                How to use this page
+            <div
+              className="rounded-[28px] border px-6 py-6"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-sm font-medium app-subtle">Midpoint benchmark</p>
+              <p className="mt-3 text-3xl font-bold tracking-tight app-title">
+                {formatCurrency(data.medianSalary)}
               </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                A useful directional midpoint for comparing what “solid” often means.
+              </p>
+            </div>
 
-              <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
-                <p>
-                  Benchmark pages are for context, not final answers. They help users
-                  judge whether a role-level salary looks weak, median, or strong in a
-                  specific region.
-                </p>
-                <p>
-                  The real next step is to take a salary from this range and check the
-                  after-tax outcome. That is where benchmark context becomes decision
-                  quality.
-                </p>
-                <p>
-                  For example, a median benchmark of{" "}
-                  <strong>{formatCurrency(benchmark.median)}</strong> may still feel
-                  very different after tax depending on student loan, pension, and
-                  housing cost.
-                </p>
-              </div>
-
-              <div className="mt-6 grid gap-3">
-                <Link
-                  href="/calculator"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Check a benchmark salary after tax
-                </Link>
-                <Link
-                  href="/compare-salary"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Compare current salary vs benchmark
-                </Link>
-                <Link
-                  href="/salary-hub"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Explore more salary routes
-                </Link>
-              </div>
+            <div
+              className="rounded-[28px] border px-6 py-6"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-sm font-medium app-subtle">Upper benchmark</p>
+              <p className="mt-3 text-3xl font-bold tracking-tight app-title">
+                {formatCurrency(data.upperSalary)}
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                A directional upper-range benchmark for stronger roles in this market.
+              </p>
             </div>
           </section>
+
+          <section className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <Link
+              href={`/${data.entrySalary}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                See entry salary after tax
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Move from benchmark context into a real take-home salary route.
+              </p>
+            </Link>
+
+            <Link
+              href={`/${data.medianSalary}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                See midpoint salary after tax
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Best when you want the full after-tax picture of the benchmark midpoint.
+              </p>
+            </Link>
+
+            <Link
+              href={`/compare/${data.medianSalary}-vs-${data.comparisonSalary}-after-tax`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Compare midpoint vs stronger band
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when the real question is whether the stronger salary band is materially better.
+              </p>
+            </Link>
+
+            <Link
+              href={`/good-salary/${data.medianSalary}/${region.slug}`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Judge midpoint in city context
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Best when you want a salary judgment route, not just a role benchmark number.
+              </p>
+            </Link>
+          </section>
+
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Compare this role across nearby regions
+            </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {nearbyRegions.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/benchmarks/${role.slug}/${item.slug}`}
+                  className="rounded-[28px] border px-6 py-6 transition hover-lift"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--card-strong)",
+                  }}
+                >
+                  <p className="text-lg font-semibold app-title">
+                    {role.label} in {item.label}
+                  </p>
+                  <p className="mt-3 text-sm leading-8 app-copy">
+                    Switch the regional context and compare how the benchmark moves.
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Explore nearby role benchmarks in {region.label}
+            </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {nearbyRoles.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/benchmarks/${item.slug}/${region.slug}`}
+                  className="rounded-[28px] border px-6 py-6 transition hover-lift"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--card-strong)",
+                  }}
+                >
+                  <p className="text-lg font-semibold app-title">
+                    {item.label} in {region.label}
+                  </p>
+                  <p className="mt-3 text-sm leading-8 app-copy">
+                    Switch the role context while keeping the same city/region benchmark view.
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <ContextualLinkSection
+            title="Use this benchmark page to move into real salary-decision routes"
+            description="These links connect benchmark context to after-tax salary pages, city-intent judgment pages, comparison routes, and editorial salary guidance."
+            items={contextualLinks}
+          />
         </Container>
       </section>
 

@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import HomePageClient from "../components/home/home-page-client";
 
 export const metadata: Metadata = {
-  title:
-    "UK Salary Calculator, Payslip Checker and Take-Home Pay Tools | TaxDecod",
+  title: "TaxDecod — UK Salary Calculator, Take-Home Pay & Salary Comparison",
   description:
-    "Check salary after tax, compare take-home pay, work backwards from target income, and understand payslips with TaxDecod.",
+    "Understand your UK salary after tax. Compare salaries, reverse-plan target income, check payslips, and make better income decisions with practical UK salary clarity.",
 };
 
 export default function HomePage() {

@@ -29,6 +29,7 @@ const TAX_YEAR_CONFIG: Record<SupportedTaxYear, TaxYearConfig> = {
       plan1: 24990,
       plan2: 27295,
       plan4: 31395,
+      plan5: 25000,
       postgrad: 21000,
     },
     studentLoanRates: {
@@ -36,6 +37,7 @@ const TAX_YEAR_CONFIG: Record<SupportedTaxYear, TaxYearConfig> = {
       plan1: 0.09,
       plan2: 0.09,
       plan4: 0.09,
+      plan5: 0.09,
       postgrad: 0.06,
     },
   },
@@ -50,6 +52,7 @@ const TAX_YEAR_CONFIG: Record<SupportedTaxYear, TaxYearConfig> = {
       plan1: 26065,
       plan2: 28470,
       plan4: 32745,
+      plan5: 25000,
       postgrad: 21000,
     },
     studentLoanRates: {
@@ -57,6 +60,7 @@ const TAX_YEAR_CONFIG: Record<SupportedTaxYear, TaxYearConfig> = {
       plan1: 0.09,
       plan2: 0.09,
       plan4: 0.09,
+      plan5: 0.09,
       postgrad: 0.06,
     },
   },
@@ -130,17 +134,18 @@ export function calculateTakeHomeByYear(
   year: SupportedTaxYear
 ): TakeHomeResult {
   const config = TAX_YEAR_CONFIG[year];
-
   const grossAnnual =
     input.payPeriod === "monthly" ? input.salary * 12 : input.salary;
 
+  const pensionAnnual = grossAnnual * (input.pensionPercent / 100);
+  const taxableAnnual = Math.max(0, grossAnnual - pensionAnnual);
+
   const incomeTaxAnnual = calculateIncomeTaxByYear(
-    grossAnnual,
+    taxableAnnual,
     input.region,
     year
   );
-  const nationalInsuranceAnnual = calculateNiByYear(grossAnnual, year);
-  const pensionAnnual = grossAnnual * (input.pensionPercent / 100);
+  const nationalInsuranceAnnual = calculateNiByYear(taxableAnnual, year);
 
   const threshold = config.studentLoanThresholds[input.studentLoanPlan];
   const rate = config.studentLoanRates[input.studentLoanPlan];
@@ -148,7 +153,7 @@ export function calculateTakeHomeByYear(
   const studentLoanAnnual =
     input.studentLoanPlan === "none"
       ? 0
-      : Math.max(0, grossAnnual - threshold) * rate;
+      : Math.max(0, taxableAnnual - threshold) * rate;
 
   const totalDeductionsAnnual =
     incomeTaxAnnual +
@@ -156,7 +161,8 @@ export function calculateTakeHomeByYear(
     pensionAnnual +
     studentLoanAnnual;
 
-  const netAnnual = grossAnnual - totalDeductionsAnnual;
+  const netAnnual = Math.max(0, grossAnnual - totalDeductionsAnnual);
+  const netMonthly = netAnnual / 12;
 
   return {
     grossAnnual,
@@ -166,6 +172,6 @@ export function calculateTakeHomeByYear(
     studentLoanAnnual,
     totalDeductionsAnnual,
     netAnnual,
-    netMonthly: netAnnual / 12,
+    netMonthly,
   };
 }

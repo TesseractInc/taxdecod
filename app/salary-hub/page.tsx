@@ -1,335 +1,302 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
 import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
-import SeoPageHero from "../../components/seo/seo-page-hero";
-import SeoRealityCard from "../../components/seo/seo-reality-card";
-import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
-import { TRUST_COPY } from "../../lib/tax/config";
-import { SEO_GROWTH_CONFIG } from "../../components/seo/growth-config";
+import CrossLinkRail from "../../components/seo/cross-link-rail";
+import {
+  getFeaturedComparisonPairs,
+  getFlagshipSalaryValues,
+  getPriorityMonthlyTakeHomeValues,
+  getPriorityRegionSlugs,
+  getPrioritySalaryValues,
+} from "../../components/seo/programmatic-expansion-config";
+import { formatCurrency } from "../../lib/tax/utils/currency";
+import { TAX_YEAR_LABEL } from "../../lib/tax/config";
 
-const intentRoutes = [
-  {
-    title: "Use the full salary calculator",
-    description:
-      "Best when you know the salary already and want the complete deduction reading.",
-    href: "/calculator",
-  },
-  {
-    title: "Compare two salary outcomes",
-    description:
-      "Best when the real question is whether a raise or job move changes monthly life enough.",
-    href: "/compare-salary",
-  },
-  {
-    title: "Work backwards from a monthly income target",
-    description:
-      "Best when you know the amount you want to keep and need the salary behind it.",
-    href: "/reverse-tax",
-  },
-  {
-    title: "Check whether a payslip looks on track",
-    description:
-      "Best when the issue is not salary alone but how deductions are appearing on a real payslip.",
-    href: "/payslip-checker",
-  },
-];
-
-const monthlyTargets = SEO_GROWTH_CONFIG.contentClusters.monthlyIntentTargets;
-
-const benchmarkSeeds = [
-  {
-    role: "software-engineer",
-    city: "london",
-    label: "Software Engineer salary London",
-  },
-  {
-    role: "teacher",
-    city: "manchester",
-    label: "Teacher salary Manchester",
-  },
-  {
-    role: "nurse",
-    city: "glasgow",
-    label: "Nurse salary Glasgow",
-  },
-  {
-    role: "data-analyst",
-    city: "leeds",
-    label: "Data Analyst salary Leeds",
-  },
-];
-
-const scotlandRoutes = [
-  { label: "£30,000 after tax in Scotland", href: "/30000-after-tax-scotland" },
-  { label: "£40,000 after tax in Scotland", href: "/40000-after-tax-scotland" },
-  { label: "£50,000 after tax in Scotland", href: "/50000-after-tax-scotland" },
-  { label: "Browse Scotland salary routes", href: "/40000-after-tax-scotland" },
-];
-
-const differentiatorRoutes = [
-  {
-    title: "Reverse salary planning",
-    description:
-      "A stronger route when you are solving for the income you need rather than starting from a gross salary.",
-    href: "/reverse-tax",
-  },
-  {
-    title: "Payslip interpretation",
-    description:
-      "A stronger route when your real question is whether deductions to date look normal.",
-    href: "/payslip-checker",
-  },
-  {
-    title: "Student loan drag",
-    description:
-      "A stronger route when the same salary feels weaker because student loan repayment is changing the result.",
-    href: "/student-loan-calculator",
-  },
-];
+export const metadata: Metadata = {
+  title: "Salary Hub | TaxDecod",
+  description:
+    "Explore salary routes, monthly take-home targets, salary comparison paths, and city-based salary judgment pages across TaxDecod.",
+};
 
 export default function SalaryHubPage() {
-  const popularSalaries = SEO_GROWTH_CONFIG.salaryHub.popularSalaries;
-  const salaryGrid = SEO_GROWTH_CONFIG.salaryHub.gridSalaries;
+  const flagshipSalaries = getFlagshipSalaryValues();
+  const prioritySalaries = getPrioritySalaryValues();
+  const monthlyTargets = getPriorityMonthlyTakeHomeValues();
+  const regions = getPriorityRegionSlugs();
+  const featuredComparisons = getFeaturedComparisonPairs();
 
   return (
     <main className="app-shell">
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
-        <Container>
-          <SeoPageHero
-            eyebrow="Salary discovery hub"
-            title="Explore salary routes, take-home pay, and better next steps"
-            description="This hub is designed for fast salary lookup, wider route discovery, and movement into the tools that answer the next real question after a single salary result."
-          />
+        <Container className="max-w-6xl">
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium app-accent">Salary hub</p>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-5xl">
+              Explore salary routes, monthly targets, and decision paths
+            </h1>
+            <p className="mt-5 text-sm leading-8 app-copy sm:text-base">
+              This hub should act as a true bridge layer across the platform —
+              from after-tax salary pages into comparison, reverse planning,
+              monthly take-home routes, city-based salary judgment, guides, and
+              tool routes.
+            </p>
+          </div>
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description={TRUST_COPY.salaryHub.description}
-              points={[...TRUST_COPY.salaryHub.points]}
-            />
-          </div>
-
-          <div className="mt-10">
-            <SeoRealityCard label="Why this hub matters">
-              Salary discovery works best when users can move quickly between
-              nearby salary levels, comparison routes, reverse planning, benchmark
-              context, and deduction interpretation — not just open another salary page.
-            </SeoRealityCard>
-          </div>
-
-          <div className="mt-10">
-            <SeoCtaCluster
-              items={[
-                {
-                  href: "/calculator",
-                  title: "Use the full salary calculator",
-                  description:
-                    "Enter your exact salary and get the full guided take-home experience.",
-                },
-                {
-                  href: "/compare-salary",
-                  title: "Compare two salary outcomes",
-                  description:
-                    "See whether a pay rise or job move really changes monthly life after deductions.",
-                },
-                {
-                  href: "/reverse-tax",
-                  title: "Work backwards from a monthly goal",
-                  description:
-                    "Use reverse salary planning when the amount you want to keep matters most.",
-                },
+              description={`Salary hub pages use ${TAX_YEAR_LABEL}-style UK assumptions for consistency and discovery. They are designed to help users and crawlers move into the right route family quickly.`}
+              points={[
+                `Using ${TAX_YEAR_LABEL} UK salary assumptions`,
+                "Built for salary discovery",
+                "Connected to compare, monthly, and city-intent routes",
+                "Useful for crawl discovery and navigation",
               ]}
             />
           </div>
 
-          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Best route by question
+          <section className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <Link
+              href="/salary-pages"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">After-tax salary pages</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Browse the expanded after-tax salary route cluster from lower bands to stronger earners.
               </p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Choose the right route, not just another salary page
-              </h2>
-            </div>
+            </Link>
 
-            <div className="grid gap-4 p-6 md:grid-cols-2 sm:p-8">
-              {intentRoutes.map((item) => (
+            <Link
+              href="/salary-tools"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">Salary tools</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Move into calculator, compare, reverse, payslip, and deduction tools.
+              </p>
+            </Link>
+
+            <Link
+              href="/benchmarks"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">Benchmarks</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Add role and region market context to salary and raise decisions.
+              </p>
+            </Link>
+
+            <Link
+              href="/guides"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">Guides</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Read the editorial explanation layer behind salary, tax, and compare routes.
+              </p>
+            </Link>
+          </section>
+
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Flagship salary routes
+            </h2>
+            <p className="mt-3 text-sm leading-8 app-copy">
+              These are the strongest high-intent salary anchors across the platform.
+            </p>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {flagshipSalaries.map((salary) => (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                  key={salary}
+                  href={`/${salary}-after-tax-uk`}
+                  className="rounded-[28px] border px-6 py-6 transition hover-lift"
+                  style={{ borderColor: "var(--line)", background: "var(--surface-2)" }}
                 >
-                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    {item.title}
+                  <p className="text-lg font-semibold app-title">
+                    {formatCurrency(salary)} after tax
                   </p>
-                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                    {item.description}
+                  <p className="mt-3 text-sm leading-8 app-copy">
+                    Open the full salary route and move into take-home interpretation.
                   </p>
                 </Link>
               ))}
             </div>
           </section>
 
-          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Where TaxDecod is strongest
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Go beyond one salary figure
-              </h2>
-            </div>
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Priority salary discovery
+            </h2>
+            <p className="mt-3 text-sm leading-8 app-copy">
+              These routes cover the most common salary-intent bands users search for and compare.
+            </p>
 
-            <div className="grid gap-4 p-6 md:grid-cols-3 sm:p-8">
-              {differentiatorRoutes.map((item) => (
+            <div className="mt-6 flex flex-wrap gap-3">
+              {prioritySalaries.map((salary) => (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                  key={salary}
+                  href={`/${salary}-after-tax-uk`}
+                  className="rounded-full border px-4 py-2 text-sm font-medium transition hover-lift"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--card-strong)",
+                    color: "var(--text)",
+                  }}
                 >
-                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    {item.title}
-                  </p>
-                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                    {item.description}
-                  </p>
+                  {formatCurrency(salary)}
                 </Link>
               ))}
             </div>
           </section>
 
-          <section className="mt-10 grid gap-6 lg:grid-cols-2">
-            <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-              <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-                <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                  Monthly target routes
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                  Start from take-home goals
-                </h2>
-              </div>
+          <section className="mt-12 grid gap-8 xl:grid-cols-2">
+            <div>
+              <h2 className="text-2xl font-semibold app-title">
+                Monthly take-home targets
+              </h2>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                These reverse the normal salary journey and start from the amount users want to keep each month.
+              </p>
 
-              <div className="flex flex-wrap gap-3 p-6 sm:p-8">
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 {monthlyTargets.map((amount) => (
                   <Link
                     key={amount}
                     href={`/monthly-take-home/${amount}`}
-                    className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-white hover:text-sky-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950 dark:hover:text-sky-300"
+                    className="rounded-[28px] border px-6 py-6 transition hover-lift"
+                    style={{
+                      borderColor: "var(--line)",
+                      background: "var(--surface-2)",
+                    }}
                   >
-                    £{amount.toLocaleString("en-GB")}/month target
+                    <p className="text-lg font-semibold app-title">
+                      Take home {formatCurrency(amount)} / month
+                    </p>
+                    <p className="mt-3 text-sm leading-8 app-copy">
+                      Open the reverse-intent route for this monthly target.
+                    </p>
                   </Link>
                 ))}
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-              <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-                <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                  Role + city benchmarks
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                  Add market context
-                </h2>
-              </div>
+            <div>
+              <h2 className="text-2xl font-semibold app-title">
+                City-intent salary judgment
+              </h2>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                These routes help users judge what the same salary may mean in different UK city contexts.
+              </p>
 
-              <div className="grid gap-3 p-6 sm:p-8">
-                {benchmarkSeeds.map((item) => (
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {regions.map((region) => (
                   <Link
-                    key={`${item.role}-${item.city}`}
-                    href={`/benchmarks/${item.role}/${item.city}`}
-                    className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
+                    key={region}
+                    href={`/good-salary/40000/${region}`}
+                    className="rounded-[28px] border px-6 py-6 transition hover-lift"
+                    style={{
+                      borderColor: "var(--line)",
+                      background: "var(--surface-2)",
+                    }}
                   >
-                    {item.label}
+                    <p className="text-lg font-semibold capitalize app-title">
+                      Good salary in {region}
+                    </p>
+                    <p className="mt-3 text-sm leading-8 app-copy">
+                      Explore city-aware salary judgment pages for this region.
+                    </p>
                   </Link>
                 ))}
               </div>
             </div>
           </section>
 
-          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Scotland routes
+          <CrossLinkRail
+            eyebrow="Comparison bridges"
+            title="Use salary routes to move into raise and offer decisions"
+            description="These fixed comparison pages are strong mid-funnel routes once a user is deciding whether the next salary band is actually worth it."
+            items={featuredComparisons.slice(0, 4).map((pair) => ({
+              href: `/compare/${pair.salaryA}-vs-${pair.salaryB}-after-tax`,
+              title: `${formatCurrency(pair.salaryA)} vs ${formatCurrency(pair.salaryB)}`,
+              description:
+                "Use a fixed comparison route to judge retained value rather than gross change alone.",
+            }))}
+          />
+
+          <CrossLinkRail
+            eyebrow="Editorial bridges"
+            title="Move from salary routes into the explanation layer"
+            description="These are strong routes when the user needs help understanding tax drag, take-home logic, or whether a raise is really worth it."
+            items={[
+              {
+                href: "/guides/how-much-salary-increase-is-worth-it",
+                title: "How much salary increase is worth it?",
+                description:
+                  "Read the decision guide behind raise and offer comparisons.",
+              },
+              {
+                href: "/guides/what-is-a-good-salary-uk",
+                title: "What is a good salary in the UK?",
+                description:
+                  "Read the broader salary-judgment guide behind city and affordability context.",
+              },
+              {
+                href: "/guides/how-much-salary-to-take-home-3000",
+                title: "How much salary to take home £3,000?",
+                description:
+                  "Read the monthly target explanation route behind reverse salary planning.",
+              },
+              {
+                href: "/guides/how-student-loan-affects-salary-uk",
+                title: "How student loan affects salary",
+                description:
+                  "Read how student loan deductions can materially change take-home understanding.",
+              },
+            ]}
+          />
+
+          <section className="mt-12 grid gap-4 md:grid-cols-3">
+            <Link
+              href="/compare-salary"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">Compare salaries</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Judge whether the next salary band really changes monthly life enough.
               </p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Explore Scotland-specific salary pages
-              </h2>
-            </div>
+            </Link>
 
-            <div className="grid gap-3 p-6 md:grid-cols-2 sm:p-8">
-              {scotlandRoutes.map((item) => (
-                <Link
-                  key={item.href + item.label}
-                  href={item.href}
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-14 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Popular salary lookups
+            <Link
+              href="/reverse-tax"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">Reverse salary planning</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Work backwards from the monthly amount you actually want to keep.
               </p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Start from common salary levels
-              </h2>
-            </div>
+            </Link>
 
-            <div className="flex flex-wrap gap-3 p-6 sm:p-8">
-              {popularSalaries.map((salary) => (
-                <Link
-                  key={salary}
-                  href={`/${salary}-after-tax-uk`}
-                  className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-sky-200 hover:bg-white hover:text-sky-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950 dark:hover:text-sky-300"
-                >
-                  £{salary.toLocaleString("en-GB")} after tax
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-10 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_24px_80px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
-            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-8">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Salary grid
+            <Link
+              href="/payslip-checker"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{ borderColor: "var(--line)", background: "var(--card-strong)" }}
+            >
+              <p className="text-lg font-semibold app-title">Payslip checker</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Move from salary theory into real payslip and deduction interpretation.
               </p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                Browse nearby salary bands quickly
-              </h2>
-            </div>
-
-            <div className="grid gap-4 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:p-8">
-              {salaryGrid.map((salary) => (
-                <Link
-                  key={salary}
-                  href={`/${salary}-after-tax-uk`}
-                  className="group rounded-[28px] border border-slate-200 bg-slate-50/80 p-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
-                >
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Salary page
-                  </p>
-
-                  <h3 className="mt-2 text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-                    £{salary.toLocaleString("en-GB")}
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                    Open the after-tax breakdown, monthly reality, and related salary paths.
-                  </p>
-
-                  <p className="mt-5 text-sm font-medium text-sky-700 dark:text-sky-300">
-                    Open page →
-                  </p>
-                </Link>
-              ))}
-            </div>
+            </Link>
           </section>
         </Container>
       </section>
