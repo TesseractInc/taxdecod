@@ -260,12 +260,29 @@ export default function CalculatorCard({
                   }}
                 >
                   <p className="text-sm font-semibold app-title">
+                    What affects the result most
+                  </p>
+                  <p className="mt-2 text-sm leading-7 app-copy">
+                    The gross salary is only the starting point. Region,
+                    pension, student loan settings, and tax-code assumptions can
+                    all materially change take-home pay.
+                  </p>
+                </div>
+
+                <div
+                  className="mt-4 rounded-[22px] border px-4 py-4"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--surface-2)",
+                  }}
+                >
+                  <p className="text-sm font-semibold app-title">
                     What to do after the first result
                   </p>
                   <p className="mt-2 text-sm leading-7 app-copy">
-                    Use the first result to understand what your salary leaves you
-                    with. Then move into comparison, reverse planning, or payslip
-                    checking if the next decision needs more context.
+                    Use the first result to understand what your salary leaves
+                    you with. Then move into comparison, reverse planning, or
+                    payslip checking if the next decision needs more context.
                   </p>
                 </div>
               </div>
@@ -300,6 +317,59 @@ export default function CalculatorCard({
 
                 <div className="mt-5">
                   <ResultPreview result={result} values={currentValues} />
+                </div>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  <Link
+                    href="/compare-salary"
+                    className="rounded-[20px] border px-4 py-4 transition hover:-translate-y-0.5"
+                    style={{
+                      borderColor: "var(--line)",
+                      background: "var(--surface-2)",
+                    }}
+                  >
+                    <p className="text-sm font-semibold app-title">
+                      Compare against another salary
+                    </p>
+                    <p className="mt-2 text-xs leading-6 app-copy">
+                      Best when the next question is whether a raise or new role
+                      materially improves monthly life.
+                    </p>
+                  </Link>
+
+                  <Link
+                    href="/reverse-tax"
+                    className="rounded-[20px] border px-4 py-4 transition hover:-translate-y-0.5"
+                    style={{
+                      borderColor: "var(--line)",
+                      background: "var(--surface-2)",
+                    }}
+                  >
+                    <p className="text-sm font-semibold app-title">
+                      Work backwards from a target income
+                    </p>
+                    <p className="mt-2 text-xs leading-6 app-copy">
+                      Best when you know the monthly amount you want to keep and
+                      need the salary required to reach it.
+                    </p>
+                  </Link>
+
+                  <Link
+                    href="/payslip-checker"
+                    className="rounded-[20px] border px-4 py-4 transition hover:-translate-y-0.5"
+                    style={{
+                      borderColor: "var(--line)",
+                      background: "var(--surface-2)",
+                    }}
+                  >
+                    <p className="text-sm font-semibold app-title">
+                      Check a real payslip next
+                    </p>
+                    <p className="mt-2 text-xs leading-6 app-copy">
+                      Best when you want a first-check reading of deductions
+                      against real PAYE and year-to-date figures.
+                    </p>
+                  </Link>
                 </div>
               </div>
             </div>

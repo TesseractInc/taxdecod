@@ -43,6 +43,7 @@ export async function generateMetadata({
   }
 
   const { salaryA, salaryB } = parsed;
+  const data = getComparisonPageData(salaryA, salaryB);
 
   return buildSeoMetadata({
     title: `£${salaryA.toLocaleString("en-GB")} vs £${salaryB.toLocaleString(
@@ -52,7 +53,9 @@ export async function generateMetadata({
       "en-GB"
     )} vs £${salaryB.toLocaleString(
       "en-GB"
-    )} after tax in the UK and see the real annual and monthly take-home difference.`,
+    )} after tax in the UK and see the real annual and monthly take-home difference of about ${formatCurrency(
+      data.netMonthlyDifference
+    )} a month.`,
     path: `/compare/${salaryA}-vs-${salaryB}-after-tax`,
   });
 }
@@ -106,7 +109,8 @@ export default async function ComparisonSeoPage({
               <strong>{formatCurrency(data.grossDifference)}</strong> in gross
               salary, but only around{" "}
               <strong>{formatCurrency(data.netAnnualDifference)}</strong> in real
-              annual take-home pay.
+              annual take-home pay. That is why this kind of route should be judged
+              by retained value, not headline salary alone.
             </SeoRealityCard>
           </div>
 
@@ -148,7 +152,8 @@ export default async function ComparisonSeoPage({
                 Inspect £{salaryA.toLocaleString("en-GB")} on its own
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want the full one-salary deduction reading behind the first side of the comparison.
+                Useful when you want the full one-salary deduction reading behind
+                the first side of the comparison.
               </p>
             </Link>
 
@@ -164,7 +169,8 @@ export default async function ComparisonSeoPage({
                 Inspect £{salaryB.toLocaleString("en-GB")} on its own
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want the full one-salary deduction reading behind the second side of the comparison.
+                Useful when you want the full one-salary deduction reading behind
+                the second side of the comparison.
               </p>
             </Link>
 
@@ -180,7 +186,8 @@ export default async function ComparisonSeoPage({
                 Check a real payslip if the difference still feels wrong
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when a comparison looks fine on paper but the actual payslip experience still feels off.
+                Useful when a comparison looks fine on paper but the actual payslip
+                experience still feels off.
               </p>
             </Link>
           </section>

@@ -72,28 +72,28 @@ export const headerPreviewGroups: HeaderPreviewGroup[] = [
         label: "Payslip checker",
         href: "/payslip-checker",
         description:
-          "Check whether year-to-date Income Tax and NI look broadly on track.",
+          "Check whether PAYE, National Insurance, pension, and year-to-date deductions look broadly on track.",
         icon: "payslip",
       },
       {
         label: "Tax refund calculator",
         href: "/tax-refund-calculator",
         description:
-          "Estimate whether Income Tax paid looks high, low, or broadly aligned.",
+          "Estimate whether a refund route may be worth investigating further.",
         icon: "refund",
       },
       {
         label: "Tax code decoder",
         href: "/tax-code-decoder",
         description:
-          "Decode common PAYE tax codes in plain English before guessing at deductions.",
+          "Decode common UK tax codes and understand what they may imply.",
         icon: "methodology",
       },
     ],
   },
   {
     label: "Compare",
-    title: "Decision tools",
+    title: "Salary decisions",
     href: "/compare-salary",
     featured: {
       label: "Compare two salaries",
@@ -208,9 +208,9 @@ export const headerPreviewGroups: HeaderPreviewGroup[] = [
       href: "/salary-tools",
       description:
         "Move into bonus, overtime, leave pay, student loan, and other salary-adjacent tools.",
-        icon: "tools",
-        badge: "Specialist",
-      },
+      icon: "tools",
+      badge: "Specialist",
+    },
     links: [
       {
         label: "Student loan calculator",
@@ -236,6 +236,24 @@ export const headerPreviewGroups: HeaderPreviewGroup[] = [
     ],
   },
 ];
+
+export const iconMap = {
+  calculator: Calculator,
+  payslip: SearchCheck,
+  refund: RefreshCcw,
+  compare: Scale,
+  leaderboard: Trophy,
+  tools: LayoutGrid,
+  reality: Gauge,
+  methodology: FileText,
+  services: BriefcaseBusiness,
+  contact: ContactRound,
+  salaryhub: Wallet,
+  reverse: BadgePoundSterling,
+  benchmark: BriefcaseBusiness,
+  hourly: BadgePoundSterling,
+  monthly: Wallet,
+} satisfies Record<HeaderIconKey, React.ComponentType<{ className?: string }>>;
 
 export const quickAccessLinks: HeaderPreviewLink[] = [
   {
@@ -314,11 +332,11 @@ export const utilityMenuLinks: HeaderPreviewLink[] = [
     icon: "services",
   },
   {
-    label: "Services",
-    href: "/services",
+    label: "Salary pages",
+    href: "/salary-pages",
     description:
-      "Explore the broader product and platform direction behind TaxDecod.",
-    icon: "services",
+      "Browse indexed salary routes, nearby take-home bands, and related comparison paths.",
+    icon: "salaryhub",
   },
   {
     label: "Contact",

@@ -22,8 +22,8 @@ const guideLinks = [
     href: "/guides/how-income-tax-works-uk",
   },
   {
-    label: "How student loan affects take-home pay",
-    href: "/guides/how-student-loan-affects-take-home-pay",
+    label: "How student loan affects salary in the UK",
+    href: "/guides/how-student-loan-affects-salary-uk",
   },
   {
     label: "How to read a payslip in the UK",

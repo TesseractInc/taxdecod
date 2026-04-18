@@ -1,124 +1,242 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
+import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import RelatedLinks from "../../components/seo/related-links";
 
 export const metadata: Metadata = {
-  title: "About TaxDecod | UK Salary & Take-Home Pay Platform",
+  title: "About TaxDecod | UK Salary Clarity Platform",
   description:
-    "Learn how TaxDecod helps you understand your salary after tax, deductions, and real-world income decisions in the UK.",
+    "Learn what TaxDecod is, what it is designed to help with, and how the platform approaches UK salary clarity, take-home pay, and decision support.",
 };
 
+const principles = [
+  {
+    title: "Built for salary clarity",
+    body: "TaxDecod is designed to help users understand what salary actually means after deductions, not just what the gross number looks like on paper.",
+  },
+  {
+    title: "Designed for decision support",
+    body: "The product is built around real user questions like whether a raise is worth it, what salary is needed for a monthly target, and whether a payslip looks broadly on track.",
+  },
+  {
+    title: "Estimate-based and transparent",
+    body: "The platform is designed around transparent assumptions and planning logic. It is not presented as employer payroll, formal tax advice, or an HMRC decision.",
+  },
+  {
+    title: "Calm, practical, non-spammy",
+    body: "TaxDecod is intended to feel useful, trustworthy, and clear rather than noisy, aggressive, or cluttered.",
+  },
+];
+
+const whatPagesDo = [
+  {
+    title: "Core tools",
+    body: "Interactive routes like the salary calculator, comparison tool, reverse salary calculator, payslip checker, and statutory pay tools are built to help with practical salary questions.",
+  },
+  {
+    title: "Salary pages",
+    body: "Programmatic salary pages exist to make after-tax answers easier to find and easier to compare, while still pushing users toward more useful next-step tools.",
+  },
+  {
+    title: "Guides",
+    body: "Editorial guides exist to explain the logic behind salary, tax, take-home pay, payslips, and common planning questions in plain English.",
+  },
+  {
+    title: "Trust pages",
+    body: "Methodology, assumptions, disclaimer, privacy, and terms pages exist so users can understand what the platform is doing, what it is not doing, and how to interpret outputs responsibly.",
+  },
+];
+
 export default function AboutPage() {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "TaxDecod",
+    url: "https://taxdecod.com",
+    description:
+      "TaxDecod is a UK salary clarity platform built to help users understand take-home pay, salary comparisons, reverse salary planning, and payslip interpretation.",
+  };
+
   return (
     <main className="app-shell">
       <SiteHeader />
 
       <section className="py-16 sm:py-20">
-        <Container>
-          {/* HERO */}
-          <h1 className="text-3xl font-bold app-title sm:text-4xl">
-            About TaxDecod
-          </h1>
+        <Container className="max-w-5xl">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          />
 
-          <p className="mt-4 max-w-2xl text-base leading-7 app-copy">
-            TaxDecod is a UK-focused salary and take-home pay platform built to
-            help people understand what their income actually means after tax,
-            deductions, and real-life costs.
-          </p>
-
-          {/* CORE IDEA */}
-          <div className="mt-12 space-y-6 max-w-3xl">
-            <h2 className="text-xl font-semibold app-title">
-              Why TaxDecod exists
-            </h2>
-
-            <p className="app-copy leading-7">
-              Most salary tools show a number. Very few explain what that number
-              actually means in real life.
-            </p>
-
-            <p className="app-copy leading-7">
-              TaxDecod was built to close that gap — by turning gross salary
-              figures into clear, decision-ready insights.
-            </p>
-
-            <p className="app-copy leading-7">
-              Whether you are comparing job offers, checking a payslip, or trying
-              to understand how much you really take home each month, the goal is
-              simple: make salary decisions easier and more transparent.
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium app-accent">About TaxDecod</p>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-5xl">
+              TaxDecod is built to make UK salary decisions clearer
+            </h1>
+            <p className="mt-5 text-sm leading-8 app-copy sm:text-base">
+              TaxDecod is a UK salary clarity platform designed to help users
+              understand what salary actually means after deductions. The goal is
+              not just to show numbers, but to make salary, take-home pay,
+              comparison, reverse planning, and payslip interpretation easier to
+              understand in practical terms.
             </p>
           </div>
 
-          {/* WHAT IT DOES */}
-          <div className="mt-14 space-y-6 max-w-3xl">
-            <h2 className="text-xl font-semibold app-title">
-              What TaxDecod helps you do
-            </h2>
-
-            <ul className="space-y-3 app-copy leading-7">
-              <li>• Estimate take-home pay after UK tax and deductions</li>
-              <li>• Compare salaries based on real net income</li>
-              <li>• Work backwards from a target monthly income</li>
-              <li>• Understand payslips and deduction breakdowns</li>
-              <li>• Explore how tax, student loans, and pensions affect income</li>
-            </ul>
+          <div className="mt-8">
+            <TaxYearTrustBar
+              description="TaxDecod is designed around UK tax-year assumptions, planning logic, and transparent trust framing so users can understand what outputs mean and how to use them responsibly."
+              points={[
+                "Updated for the 2026/27 UK tax year",
+                "Built for salary clarity and planning",
+                "Transparent assumptions and trust framing",
+                "Not payroll, legal advice, or HMRC",
+              ]}
+            />
           </div>
 
-          {/* HOW IT WORKS */}
-          <div className="mt-14 space-y-6 max-w-3xl">
-            <h2 className="text-xl font-semibold app-title">
-              How calculations are handled
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              What TaxDecod is designed to help with
             </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {whatPagesDo.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-[28px] border px-6 py-6"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--card-strong)",
+                  }}
+                >
+                  <p className="text-lg font-semibold app-title">{item.title}</p>
+                  <p className="mt-3 text-sm leading-8 app-copy">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-            <p className="app-copy leading-7">
-              TaxDecod uses current UK tax-year assumptions, including income tax
-              bands, National Insurance thresholds, and common employee
-              deduction patterns.
-            </p>
-
-            <p className="app-copy leading-7">
-              All results are estimates designed for clarity and planning — not
-              exact payroll outputs.
-            </p>
-
-            <p className="app-copy leading-7">
-              For full details, you can review the methodology and assumptions
-              used across the platform.
-            </p>
-          </div>
-
-          {/* IMPORTANT NOTE */}
-          <div className="mt-14 rounded-[20px] border p-6 app-soft max-w-3xl">
-            <h2 className="text-lg font-semibold app-title">
-              Important note
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Product principles
             </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {principles.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-[28px] border px-6 py-6"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--surface-2)",
+                  }}
+                >
+                  <p className="text-lg font-semibold app-title">{item.title}</p>
+                  <p className="mt-3 text-sm leading-8 app-copy">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
-            <p className="mt-3 text-sm leading-7 app-copy">
-              TaxDecod is not a financial advisory service. It provides
-              estimate-based calculations to help you understand salary outcomes
-              more clearly. For official or legally binding figures, always refer
-              to HMRC or your employer’s payroll.
-            </p>
-          </div>
-
-          {/* CONTACT */}
-          <div className="mt-14 space-y-4 max-w-3xl">
-            <h2 className="text-xl font-semibold app-title">
-              Contact
+          <section
+            className="mt-12 rounded-[30px] border px-6 py-6 sm:px-7"
+            style={{
+              borderColor: "var(--line)",
+              background: "var(--card-strong)",
+            }}
+          >
+            <p className="text-sm font-medium app-accent">Important trust note</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight app-title">
+              TaxDecod is a guidance and interpretation platform
             </h2>
-
-            <p className="app-copy leading-7">
-              If you have questions, feedback, or notice anything that needs
-              improvement, you can reach out via the contact page.
+            <p className="mt-4 text-sm leading-8 app-copy sm:text-base">
+              TaxDecod is intended to help users understand salary outcomes more
+              clearly. It is not a replacement for employer payroll, accountant
+              advice, legal advice, regulated financial advice, or formal HMRC
+              records and decisions. Where formal confirmation matters, users
+              should always refer to official documents and qualified support.
             </p>
-          </div>
+          </section>
 
-          {/* FINAL STATEMENT */}
-          <div className="mt-16 max-w-3xl">
-            <p className="text-sm app-subtle">
-              Built for clarity. Focused on real take-home understanding.
-            </p>
+          <section className="mt-12 grid gap-4 md:grid-cols-2">
+            <Link
+              href="/methodology"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Read the methodology
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                See how TaxDecod approaches salary calculations, comparisons,
+                payslip checks, and guidance logic.
+              </p>
+            </Link>
+
+            <Link
+              href="/assumptions"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Read the assumptions
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Understand the default employee setup and the assumptions behind
+                estimate-based outputs.
+              </p>
+            </Link>
+
+            <Link
+              href="/disclaimer"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                Read the disclaimer
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Understand what TaxDecod is and is not designed to provide.
+              </p>
+            </Link>
+
+            <Link
+              href="/contact"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">Contact</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Use the contact route for general questions, feedback, or site issues.
+              </p>
+            </Link>
+          </section>
+
+          <div className="mt-12">
+            <RelatedLinks
+              title="Trust and platform pages"
+              links={[
+                { title: "Methodology", href: "/methodology" },
+                { title: "Assumptions", href: "/assumptions" },
+                { title: "Disclaimer", href: "/disclaimer" },
+                { title: "Privacy Policy", href: "/privacy-policy" },
+                { title: "Terms", href: "/terms" },
+                { title: "Contact", href: "/contact" },
+              ]}
+            />
           </div>
         </Container>
       </section>

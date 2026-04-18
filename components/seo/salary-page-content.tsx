@@ -25,6 +25,126 @@ type Props = {
   weeklyNet: number;
 };
 
+function getMonthlyRealityHeadline(salary: number, netMonthly: number) {
+  if (salary <= 20000) {
+    return `${formatCurrency(
+      salary
+    )} after tax is really about monthly survival room, not just a gross headline`;
+  }
+
+  if (salary <= 30000) {
+    return `${formatCurrency(
+      salary
+    )} after tax is really about whether the monthly take-home feels workable`;
+  }
+
+  if (salary <= 40000) {
+    return `${formatCurrency(
+      salary
+    )} after tax is where salary progression starts to matter in monthly life`;
+  }
+
+  if (salary <= 50000) {
+    return `${formatCurrency(
+      salary
+    )} after tax is where users start asking whether the next jump is really worth it`;
+  }
+
+  if (salary < 70000) {
+    return `${formatCurrency(
+      salary
+    )} after tax is where higher-rate tax starts changing how the next jump feels`;
+  }
+
+  if (salary < 100000) {
+    return `${formatCurrency(
+      salary
+    )} after tax is really about retention efficiency, not just gross status`;
+  }
+
+  return `${formatCurrency(
+    salary
+  )} after tax is a planning question, not just a salary lookup`;
+}
+
+function getDecisionReading(salary: number, netMonthly: number) {
+  if (salary <= 20000) {
+    return `At around ${formatCurrency(
+      netMonthly
+    )} per month, the real question is usually whether this covers basic monthly pressure well enough or whether a nearby salary jump materially improves affordability.`;
+  }
+
+  if (salary <= 30000) {
+    return `At around ${formatCurrency(
+      netMonthly
+    )} per month, this salary is often judged less by the gross number and more by whether rent, transport, and day-to-day cost still leave enough room each month.`;
+  }
+
+  if (salary <= 40000) {
+    return `At around ${formatCurrency(
+      netMonthly
+    )} per month, many users stop asking “what is the salary?” and start asking “is this enough for my lifestyle, and what would the next £5k actually change?”`;
+  }
+
+  if (salary <= 50000) {
+    return `At around ${formatCurrency(
+      netMonthly
+    )} per month, this salary often feels strong on paper, but users still need to test whether the next band creates a meaningfully better monthly result after deductions.`;
+  }
+
+  if (salary < 70000) {
+    return `At around ${formatCurrency(
+      netMonthly
+    )} per month, this salary is clearly strong, but the real decision usually becomes whether the next £5k or £10k still improves monthly life enough after higher-rate tax.`;
+  }
+
+  if (salary < 100000) {
+    return `At around ${formatCurrency(
+      netMonthly
+    )} per month, this salary already sits in a strong UK range, but the more important question is how efficiently the next salary jump converts into real take-home rather than how impressive the gross number looks.`;
+  }
+
+  return `At around ${formatCurrency(
+    netMonthly
+  )} per month, this salary deserves planning, comparison, and efficiency thinking rather than a simple “good or bad salary” judgment.`;
+}
+
+function getEfficiencyHeadline(salary: number) {
+  if (salary < 50270) {
+    return "Gross-to-net conversion";
+  }
+
+  if (salary < 100000) {
+    return "Higher-rate efficiency";
+  }
+
+  return "Planning efficiency";
+}
+
+function getEfficiencyBody(
+  salary: number,
+  keepPercent: number,
+  totalDeductions: number
+) {
+  if (salary < 50270) {
+    return `This route keeps about ${keepPercent.toFixed(
+      0
+    )}% of gross salary after deductions. That still leaves a meaningful annual deduction total of ${formatCurrency(
+      totalDeductions
+    )}, which is why monthly net pay matters more than the gross figure alone.`;
+  }
+
+  if (salary < 100000) {
+    return `This route keeps about ${keepPercent.toFixed(
+      0
+    )}% of gross salary after deductions. Above the higher-rate threshold, extra salary still helps, but each gross jump often feels less efficient than users expect once tax pressure increases.`;
+  }
+
+  return `This route keeps about ${keepPercent.toFixed(
+    0
+  )}% of gross salary after deductions. At this level, the headline gross number matters less than how efficiently the salary is structured, how much is actually retained, and whether further jumps still change monthly life enough to matter.`;
+}
+
 export default function SalaryPageContent({
   salary,
   input,
@@ -86,7 +206,7 @@ export default function SalaryPageContent({
               </p>
 
               <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-4xl">
-                {insightPack.headline}
+                {getMonthlyRealityHeadline(salary, result.netMonthly)}
               </h2>
 
               <p className="mt-4 text-base leading-8 text-slate-600 dark:text-slate-400">
@@ -103,7 +223,7 @@ export default function SalaryPageContent({
         <div className="grid gap-6 p-6 xl:grid-cols-[1.05fr_0.95fr] sm:p-8">
           <div className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-6 dark:border-slate-800 dark:bg-slate-900/70">
             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-              Your monthly salary reality
+              What this salary really feels like monthly
             </p>
 
             <h3 className="mt-3 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-5xl">
@@ -114,6 +234,15 @@ export default function SalaryPageContent({
               That is the estimated monthly amount you keep from a gross salary
               of {formatCurrency(salary)} after deductions.
             </p>
+
+            <div className="mt-5 rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Practical reading
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                {getDecisionReading(salary, result.netMonthly)}
+              </p>
+            </div>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <div className="rounded-[22px] border border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950/80">
@@ -156,7 +285,7 @@ export default function SalaryPageContent({
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950/80">
             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-              Deduction pressure
+              {getEfficiencyHeadline(salary)}
             </p>
 
             <div className="mt-5 space-y-3">
@@ -189,8 +318,20 @@ export default function SalaryPageContent({
             </div>
 
             <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
-              <p className="text-sm leading-7 text-slate-600 dark:text-slate-400">
-                {insightPack.practicalMeaning}
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Why this matters
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                {getEfficiencyBody(salary, keepPercent, totalDeductions)}
+              </p>
+            </div>
+
+            <div className="mt-4 rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 dark:border-slate-800 dark:bg-slate-900">
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Decision prompt
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                {insightPack.decisionPrompt}
               </p>
             </div>
           </div>
@@ -213,7 +354,7 @@ export default function SalaryPageContent({
           </p>
 
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-            {formatCurrency(salary)} is only useful when the take-home is understood
+            {formatCurrency(salary)} only becomes useful when the retained value is understood
           </h2>
 
           <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">

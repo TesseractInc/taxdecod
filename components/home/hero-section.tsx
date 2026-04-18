@@ -25,7 +25,7 @@ export default function HeroSection() {
       <div className="mx-auto max-w-5xl px-4 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-5 py-3 text-sm font-semibold text-sky-700 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-300">
           <ShieldCheck className="h-4 w-4" />
-          Updated for 2025/26 UK salary interpretation
+          Updated for the 2026/27 UK tax year
         </div>
 
         <h1 className="mt-6 text-[clamp(2.4rem,5vw,4rem)] font-bold leading-tight tracking-tight text-slate-900 dark:text-white">

@@ -26,7 +26,7 @@ const nextRoutes = [
   {
     title: "Check whether a payslip looks on track",
     description:
-      "Use this when your deductions feel unusual and you want a first-check reading of PAYE, NI, and year-to-date totals.",
+      "Use this when your deductions feel unusual and you want a first-check reading of PAYE, National Insurance, pension, and year-to-date totals.",
     href: "/payslip-checker",
   },
   {
@@ -75,6 +75,11 @@ export default function CalculatorPage() {
               and student loan deductions, then use the result to make a better
               salary decision.
             </p>
+
+            <p className="mx-auto mt-3 max-w-2xl text-xs app-subtle sm:text-sm">
+              Built for salary clarity, comparison, and first-check planning —
+              not as a replacement for payroll or formal advice.
+            </p>
           </div>
 
           <div className="mt-8">
@@ -95,7 +100,7 @@ export default function CalculatorPage() {
             <TaxYearTrustBar
               description="TaxDecod calculator results are designed to help users understand UK salary outcomes more clearly. They should be read as estimate-based salary guidance rather than payroll, legal, or financial advice."
               points={[
-                "Updated for the current UK tax-year framing",
+                "Updated for the 2026/27 UK tax year",
                 "Estimate-based outputs, not financial advice",
                 "Methodology and assumptions visible",
                 "Best used for salary decisions and first-check clarity",
@@ -110,6 +115,58 @@ export default function CalculatorPage() {
               description="Where formal confirmation matters, salary users should read calculator outputs alongside official GOV.UK guidance and payroll records."
             />
           </div>
+
+          <section className="mt-10 overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_70px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
+            <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-7">
+              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+                What affects the result
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+                The take-home number depends on more than gross salary
+              </h2>
+              <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
+                Income Tax is only one part of the outcome. National Insurance,
+                pension contributions, student loan repayments, region, and tax
+                code assumptions can all materially change what actually reaches
+                your bank account.
+              </p>
+            </div>
+
+            <div className="grid gap-4 p-6 md:grid-cols-3 sm:p-7">
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 dark:border-slate-800 dark:bg-slate-900/70">
+                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                  Why the estimate can differ from a payslip
+                </p>
+                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  Real payroll can differ because of cumulative PAYE, tax-code
+                  changes, bonus timing, pension setup, salary sacrifice, or
+                  employer-specific payroll handling.
+                </p>
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 dark:border-slate-800 dark:bg-slate-900/70">
+                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                  When to use this page
+                </p>
+                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  Use this route when you want a strong first-read of one salary
+                  before moving into comparison, reverse planning, or payslip
+                  interpretation.
+                </p>
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50/80 px-5 py-5 dark:border-slate-800 dark:bg-slate-900/70">
+                <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                  When to use another tool instead
+                </p>
+                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  If your main question is “is this raise worth it?”, “what salary
+                  gives me £X per month?”, or “does this payslip look right?”,
+                  another TaxDecod route will be more useful than staying here.
+                </p>
+              </div>
+            </div>
+          </section>
 
           <section className="mt-10 overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_70px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950">
             <div className="border-b border-slate-200 px-6 py-6 dark:border-slate-800 sm:px-7">
@@ -174,30 +231,30 @@ export default function CalculatorPage() {
 
           <div className="mt-10">
             <AffiliateRecommendationPanel
-              eyebrow="Useful money follow-up"
-              title="If your take-home is now clearer, these are the next practical moves"
-              description="This section is designed for users who have already understood the salary result and now want budgeting, credit, or saving-related next steps."
+              eyebrow="Useful next move"
+              title="Once your take-home is clear, stay inside the right TaxDecod route"
+              description="After understanding one salary, most users either compare another offer, work backwards from a monthly target, or check whether a real payslip fits the same pattern."
               items={[
                 {
-                  title: "Use a budgeting-first current account",
+                  title: "Compare this against another salary",
                   description:
-                    "Best when you want cleaner control over monthly spending after understanding your true take-home pay.",
-                  href: "/services",
-                  badge: "Budgeting",
+                    "Best when the next step is judging whether a raise or competing offer really changes monthly life after deductions.",
+                  href: "/compare-salary",
+                  badge: "Compare",
                 },
                 {
-                  title: "Check your credit position before bigger financial decisions",
+                  title: "Work backwards from your target monthly income",
                   description:
-                    "Useful when salary, borrowing power, and affordability need to be understood together.",
-                  href: "/services",
-                  badge: "Credit",
+                    "Use this when your real question is how much gross salary you need to keep a specific amount each month.",
+                  href: "/reverse-tax",
+                  badge: "Planning",
                 },
                 {
-                  title: "Explore saving or investing once your monthly surplus is clear",
+                  title: "Check whether your payslip looks normal",
                   description:
-                    "Best for users whose salary result shows real leftover room after bills and deductions.",
-                  href: "/services",
-                  badge: "Saving",
+                    "Use this when you want a first-check reading of PAYE, National Insurance, pension, and year-to-date deductions against a real payslip.",
+                  href: "/payslip-checker",
+                  badge: "Payslip",
                 },
               ]}
             />

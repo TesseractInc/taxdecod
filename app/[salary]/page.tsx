@@ -116,10 +116,8 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
             eyebrow="UK salary breakdown"
             title={`£${salary.toLocaleString("en-GB")} after tax in the UK`}
             description={contentPack.summary}
-            highlightValue={formatCurrency(data.result.netAnnual)}
-            highlightSubtext={`${formatCurrency(
-              data.result.netMonthly
-            )} per month after tax and deductions`}
+            highlightValue={formatCurrency(data.result.netMonthly)}
+            highlightSubtext={`estimated monthly take-home under ${TAX_YEAR_LABEL}-style assumptions`}
           />
 
           <div className="mt-8">
@@ -127,17 +125,19 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
               description={TRUST_COPY.salaryPage.description}
               points={[
                 ...TRUST_COPY.salaryPage.points,
-                "Useful for comparing salary reality, not just gross pay",
+                "Useful for real salary decisions, not just gross salary lookups",
               ]}
             />
           </div>
 
           <div className="mt-10">
             <SeoRealityCard label="Salary reality">
-              Using {TAX_YEAR_LABEL}-style assumptions, this salary keeps about{" "}
+              On this salary, the number that matters most is not the gross
+              headline but the monthly amount you actually keep. Under{" "}
+              {TAX_YEAR_LABEL}-style assumptions, this route keeps about{" "}
               <strong>{keepPercent.toFixed(0)}%</strong> of gross pay and loses{" "}
-              <strong>{formatCurrency(totalDeductions)}</strong> to tax and
-              deductions each year. {contentPack.thresholdNote}
+              <strong>{formatCurrency(totalDeductions)}</strong> per year to
+              deductions. {contentPack.thresholdNote}
             </SeoRealityCard>
           </div>
 
@@ -179,7 +179,8 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
                 See £{nearbyLower.toLocaleString("en-GB")} after tax
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want context around the next lower salary band.
+                Useful when you want to know whether the lower nearby salary band
+                feels materially weaker month to month.
               </p>
             </Link>
 
@@ -195,7 +196,8 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
                 See £{nearbyHigher.toLocaleString("en-GB")} after tax
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want context around the next higher salary band.
+                Useful when you want to see whether the next salary band creates
+                a meaningfully better take-home result.
               </p>
             </Link>
 
@@ -208,10 +210,11 @@ export default async function SalaryPage({ params }: SalaryPageProps) {
               }}
             >
               <p className="text-lg font-semibold app-title">
-                Judge whether this feels strong in a city context
+                Judge what this salary means in a city context
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want to go beyond tax and think about what this salary means in real life.
+                Useful when you want to go beyond tax and think about what this
+                salary may feel like in real life.
               </p>
             </Link>
           </section>

@@ -15,39 +15,39 @@ const tools = [
   { title: "Reverse Salary", href: "/reverse-tax" },
   { title: "Compare Salary", href: "/compare-salary" },
   { title: "Payslip Checker", href: "/payslip-checker" },
-  { title: "Maternity Pay", href: "/maternity-pay-calculator" },
-  { title: "Paternity Pay", href: "/paternity-pay-calculator" },
-  { title: "Holiday Pay", href: "/holiday-pay-calculator" },
   { title: "Student Loan", href: "/student-loan-calculator" },
   { title: "Tax Refund", href: "/tax-refund-calculator" },
   { title: "Tax Code", href: "/tax-code-decoder" },
   { title: "Overtime", href: "/overtime-calculator" },
+  { title: "Bonus Tax", href: "/bonus-tax-calculator" },
+  { title: "Salary Sacrifice", href: "/salary-sacrifice-calculator" },
+  { title: "Holiday Pay", href: "/holiday-pay-calculator" },
 ];
 
 const nextSteps = [
   {
-    title: "Compare this salary properly",
+    title: "Compare this salary against another offer",
     href: "/compare-salary",
     description:
-      "Check whether a raise or job change actually improves your monthly life after tax and deductions.",
+      "Use this when the real decision is whether a raise or new role changes monthly life enough after deductions.",
   },
   {
-    title: "Work backwards from your target income",
+    title: "Work backwards from the income you want to keep",
     href: "/reverse-tax",
     description:
-      "Start from what you want to keep each month and calculate the salary required to support it.",
+      "Use this when you know the monthly amount you need and want the estimated gross salary required to support it.",
   },
   {
-    title: "Check if your payslip looks right",
+    title: "Check whether a payslip looks on track",
     href: "/payslip-checker",
     description:
-      "Use a first-check reading of PAYE, National Insurance, and year-to-date deductions when something feels off.",
+      "Use a first-check reading of PAYE, National Insurance, pension, and year-to-date deductions when something feels off.",
   },
   {
-    title: "Explore nearby salary ranges",
+    title: "Explore nearby salary levels before deciding",
     href: "/salary-hub",
     description:
-      "See how slightly higher or lower salaries change your real take-home before making a decision.",
+      "Use salary pages and nearby ranges to understand whether slightly higher or lower pay materially changes the result.",
   },
 ];
 
@@ -238,24 +238,29 @@ export default function HomePageClient() {
     <main className="app-shell">
       <SiteHeader />
 
-      <section className="py-12">
+      <section className="py-10 sm:py-12">
         <Container>
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-3xl sm:text-5xl font-semibold app-title">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] app-accent sm:text-sm">
+              UK salary clarity platform
+            </p>
+
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight app-title sm:text-5xl">
               Know exactly what your salary really leaves you with
             </h1>
 
-            <p className="mt-4 app-copy">
-              UK salary calculator, payslip checker, and salary planning tools
-              built to show your real take-home after tax, National Insurance,
-              pension, and student loan deductions.
+            <p className="mt-4 text-sm leading-7 app-copy sm:text-base sm:leading-8">
+              Check take-home pay after Income Tax, National Insurance, pension,
+              and student loan deductions, then move into the next step that
+              actually helps the salary decision.
             </p>
 
-            <p className="mt-2 text-xs app-subtle">
-              Built around UK tax-year rules • Updated for 2025/26 • Estimate-based clarity
+            <p className="mt-3 text-xs app-subtle">
+              Updated for the 2026/27 UK tax year • Estimate-based guidance •
+              Built for salary clarity, not payroll replacement
             </p>
 
-            <div className="mt-6 flex justify-center gap-3">
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link href="/calculator" className="app-button-primary">
                 Calculate your take-home
               </Link>
@@ -346,8 +351,9 @@ export default function HomePageClient() {
                 className="mx-auto mt-3 max-w-2xl text-center text-sm leading-7 app-copy sm:text-base"
                 variants={itemVariants}
               >
-                Use the right tool for the exact salary question you are trying
-                to answer, from take-home checks to payslip review and salary planning.
+                Use the right route for the exact salary question you are trying
+                to answer, from take-home checks to salary comparison, reverse
+                planning, and payslip interpretation.
               </motion.p>
 
               <motion.div
@@ -411,15 +417,15 @@ export default function HomePageClient() {
                 className="text-center text-2xl font-semibold tracking-tight app-title sm:text-3xl"
                 variants={itemVariants}
               >
-                What to do next
+                What to do after the first result
               </motion.h2>
 
               <motion.p
                 className="mx-auto mt-3 max-w-2xl text-center text-sm leading-7 app-copy sm:text-base"
                 variants={itemVariants}
               >
-                Once you have a salary result, move into the next step that
-                actually improves the decision.
+                Once you have a salary result, the best next step should be
+                obvious: compare, reverse-plan, check a payslip, or explore nearby ranges.
               </motion.p>
 
               <motion.div
@@ -444,12 +450,12 @@ export default function HomePageClient() {
 
           <div className="mt-14">
             <TaxYearTrustBar
-              description="Built around UK tax-year assumptions and designed for clarity, planning, and decision support."
+              description="Built around current UK tax-year assumptions and designed for salary clarity, planning, and decision support."
               points={[
-                "Updated 2025/26 tax rules",
-                "Estimate-based outputs",
-                "PAYE-style calculations",
-                "Transparent assumptions",
+                "Updated for the 2026/27 UK tax year",
+                "Estimate-based outputs, not financial advice",
+                "PAYE-style salary interpretation",
+                "Transparent assumptions and trust framing",
               ]}
             />
           </div>

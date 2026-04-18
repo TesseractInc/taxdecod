@@ -12,16 +12,34 @@ const guides = [
     href: "/guides/how-income-tax-works-uk",
   },
   {
-    title: "How student loan affects take-home pay",
+    title: "How student loan affects salary in the UK",
     description:
       "A guide to why student loan repayment can materially change what salary actually leaves you with.",
-    href: "/guides/how-student-loan-affects-take-home-pay",
+    href: "/guides/how-student-loan-affects-salary-uk",
   },
   {
     title: "How to read a payslip in the UK",
     description:
       "A plain-English guide to PAYE, National Insurance, pension, tax code, and year-to-date deduction lines.",
     href: "/guides/how-to-read-a-payslip-uk",
+  },
+  {
+    title: "How much tax do I pay in the UK?",
+    description:
+      "Understand how salary is reduced by Income Tax, National Insurance, pension, and student loan deductions.",
+    href: "/guides/how-much-tax-do-i-pay-uk",
+  },
+  {
+    title: "Net vs gross salary explained",
+    description:
+      "Understand the real difference between gross salary and what actually reaches your bank account.",
+    href: "/guides/net-vs-gross-salary-explained",
+  },
+  {
+    title: "How much salary increase is worth it?",
+    description:
+      "See why a pay rise can feel smaller than expected after deductions and how to judge it more realistically.",
+    href: "/guides/how-much-salary-increase-is-worth-it",
   },
 ];
 

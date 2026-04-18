@@ -176,8 +176,48 @@ function getDominantAction(requiredGross: number): NextAction {
       "Now that you know the estimated salary needed, open the main calculator to see the fuller deduction picture and next-step options.",
       href: "/calculator",
     };
-  };
+  }
 
+
+function getInterpretationHeadline(targetMonthly: number, requiredGross: number) {
+  if (requiredGross >= 100000) {
+    return "This target is achievable, but the salary needed is now in a more complex planning range";
+  }
+
+  if (requiredGross >= 50000) {
+    return "This target is realistic, but it now depends on a noticeably stronger gross salary";
+  }
+
+  if (targetMonthly < 2500) {
+    return "This target is relatively accessible, but real affordability still depends on monthly cost pressure";
+  }
+
+  return "This target creates a practical salary benchmark you can now use in real decisions";
+}
+
+function getInterpretationBody(
+  targetMonthly: number,
+  requiredGross: number,
+  values: CalculatorInput
+) {
+  const regionLabel = values.region === "scotland" ? "Scotland" : "the UK";
+
+  if (requiredGross >= 100000) {
+    return `To keep around ${formatCurrency(
+      targetMonthly
+    )} per month under the current ${regionLabel} setup, the estimated gross salary needed is now high enough that planning quality matters more. This is the range where pension structure, salary sacrifice, and tax-efficiency decisions start becoming much more relevant.`;
+  }
+
+  if (requiredGross >= 50000) {
+    return `To keep around ${formatCurrency(
+      targetMonthly
+    )} per month under the current ${regionLabel} setup, the estimated gross salary needed is already beyond the range many users casually assume. This is exactly why reverse salary planning is useful: it replaces salary guessing with a clearer target.`;
+  }
+
+  return `To keep around ${formatCurrency(
+    targetMonthly
+  )} per month under the current ${regionLabel} setup, the estimated gross salary needed is now clearer and more usable. The result does not remove real-life variation, but it gives you a much better salary benchmark than working from gross assumptions alone.`;
+}
 
 const toneStyles = {
   neutral: {
@@ -293,6 +333,17 @@ export default function ReverseTaxCalculator() {
 
   const dominantAction = getDominantAction(calculatedGross);
 
+  const interpretationHeadline = getInterpretationHeadline(
+    targetMonthly,
+    calculatedGross
+  );
+
+  const interpretationBody = getInterpretationBody(
+    targetMonthly,
+    calculatedGross,
+    values
+  );
+
   const summaryCards = [
     {
       icon: Target,
@@ -335,8 +386,8 @@ export default function ReverseTaxCalculator() {
 
             <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
               Set the monthly or yearly take-home target first. Then adjust
-              region, pension, and student loan only where they materially affect
-              the result.
+              region, pension, and student loan only where they materially
+              affect the result.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -396,9 +447,7 @@ export default function ReverseTaxCalculator() {
                 <span className="font-semibold app-title">
                   {formatCurrency(reverseInput.targetNet)}
                 </span>{" "}
-                {reverseInput.payPeriod === "monthly"
-                  ? "per month"
-                  : "per year"}{" "}
+                {reverseInput.payPeriod === "monthly" ? "per month" : "per year"}{" "}
                 under the current setup.
               </p>
             </div>
@@ -462,9 +511,7 @@ export default function ReverseTaxCalculator() {
                         <p className="mt-1 text-sm font-semibold app-title">
                           {item.value}
                         </p>
-                        <p className="mt-1 text-xs app-subtle">
-                          {item.helper}
-                        </p>
+                        <p className="mt-1 text-xs app-subtle">{item.helper}</p>
                       </div>
                     </div>
                   </div>
@@ -507,6 +554,21 @@ export default function ReverseTaxCalculator() {
                   {formatCurrency(Math.abs(monthlyGap))}
                 </div>
               </div>
+            </div>
+
+            <div
+              className="mt-5 rounded-[24px] border p-5"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <p className="text-sm font-semibold app-title">
+                {interpretationHeadline}
+              </p>
+              <p className="mt-3 text-sm leading-7 app-copy">
+                {interpretationBody}
+              </p>
             </div>
 
             {secondaryInsights.length > 0 ? (
@@ -709,31 +771,30 @@ export default function ReverseTaxCalculator() {
 
       <div className="mt-8">
         <AffiliateRecommendationPanel
-          eyebrow="Useful money follow-up"
-          title="Once the target income is clear, the next practical financial step matters more"
-          description="This is designed for users who have already clarified the salary needed and now want help with budgeting, credit readiness, or building from future monthly surplus."
+          eyebrow="Useful salary follow-up"
+          title="Once the target income is clear, stay inside the right TaxDecod route"
+          description="This is designed for users who have already clarified the salary needed and now want to compare scenarios, inspect one salary more closely, or check a real payslip pattern."
           items={[
             {
-              title: "Set up a budgeting-first money system",
+              title: "Compare this target against another salary route",
               description:
-                "Best when the reverse result is being used for rent, bills, or household planning.",
-              href: "/services",
-              badge: "Budgeting",
+                "Best when you want to test whether a raise, role change, or nearby salary actually moves monthly life enough.",
+              href: "/compare-salary",
+              badge: "Compare",
             },
             {
-              title:
-                "Check affordability or credit position before bigger commitments",
+              title: "Inspect one salary in the main calculator",
               description:
-                "Useful when the salary target is tied to moving, borrowing, or wider affordability decisions.",
-              href: "/services",
-              badge: "Credit",
+                "Useful when the next step is a fuller reading of tax, National Insurance, pension, and student loan deductions for one route.",
+              href: "/calculator",
+              badge: "Calculator",
             },
             {
-              title: "Start planning what the future monthly surplus should do",
+              title: "Check whether a real payslip is on track",
               description:
-                "Best when the salary target is being used to support saving or investing goals.",
-              href: "/services",
-              badge: "Saving",
+                "Best when the target is being matched against actual PAYE, pension, or year-to-date deductions on a payslip.",
+              href: "/payslip-checker",
+              badge: "Payslip",
             },
           ]}
         />

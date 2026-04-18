@@ -8,86 +8,95 @@ import TaxYearTrustBar from "../../../components/shared/tax-year-trust-bar";
 import SeoPageHero from "../../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../../components/seo/seo-cta-cluster";
-import PageSchema from "../../../components/seo/page-schema";
+import SalaryPageSchema from "../../../components/seo/salary-page-schema";
+import MonthlyTakeHomeContent from "../../../components/seo/monthly-take-home-content";
 import { buildSeoMetadata } from "../../../components/seo/metadata";
+import { TAX_YEAR_LABEL } from "../../../lib/tax/config";
 import { formatCurrency } from "../../../lib/tax/utils/currency";
-import { TAX_YEAR_LABEL, TRUST_COPY } from "../../../lib/tax/config";
 import {
+  getMonthlyTakeHomeAmounts,
   getMonthlyTakeHomePageData,
-  getMonthlyTakeHomeParams,
   parseMonthlyTakeHomeAmount,
 } from "../../../components/seo/monthly-target-pages";
+import { getMonthlyTakeHomeContent } from "../../../components/seo/monthly-take-home-programmatic-content";
 
-type MonthlyTakeHomePageProps = {
+type PageProps = {
   params: Promise<{
     amount: string;
   }>;
 };
 
 export async function generateStaticParams() {
-  return getMonthlyTakeHomeParams();
+  return getMonthlyTakeHomeAmounts().map((amount) => ({
+    amount: String(amount),
+  }));
 }
 
 export async function generateMetadata({
   params,
-}: MonthlyTakeHomePageProps): Promise<Metadata> {
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const amount = parseMonthlyTakeHomeAmount(resolvedParams.amount);
 
   if (!amount) {
     return buildSeoMetadata({
-      title: "Monthly Take-Home Salary Planning UK | TaxDecod",
-      description: "Find the salary needed for your target monthly take-home in the UK.",
-      path: "/reverse-tax",
+      title: "Monthly Take-Home Salary Pages | TaxDecod",
+      description:
+        "Find the salary needed to reach target monthly take-home amounts in the UK.",
+      path: "/salary-hub",
     });
   }
 
+  const data = getMonthlyTakeHomePageData(amount);
+
+  const contentPack = getMonthlyTakeHomeContent({
+    targetMonthly: amount,
+    requiredSalary: data.grossAnnual,
+    annualNet: data.result.netAnnual,
+  });
+
   return buildSeoMetadata({
-    title: `What salary gives £${amount.toLocaleString("en-GB")} take-home per month UK`,
-    description: `Find the estimated gross salary needed to take home about £${amount.toLocaleString(
-      "en-GB"
-    )} per month in the UK after tax and deductions.`,
+    title: `How Much Salary to Take Home ${formatCurrency(amount)} a Month | TaxDecod`,
+    description: `${contentPack.summary} ${contentPack.thresholdNote}`.slice(
+      0,
+      155
+    ),
     path: `/monthly-take-home/${amount}`,
   });
 }
 
-export default async function MonthlyTakeHomePage({
-  params,
-}: MonthlyTakeHomePageProps) {
+export default async function MonthlyTakeHomePage({ params }: PageProps) {
   const resolvedParams = await params;
   const amount = parseMonthlyTakeHomeAmount(resolvedParams.amount);
 
-  if (!amount) notFound();
+  if (!amount) {
+    notFound();
+  }
 
   const data = getMonthlyTakeHomePageData(amount);
 
+  const contentPack = getMonthlyTakeHomeContent({
+    targetMonthly: amount,
+    requiredSalary: data.grossAnnual,
+    annualNet: data.result.netAnnual,
+  });
+
+  const lowerTarget = Math.max(amount - 500, 1000);
+  const higherTarget = amount + 500;
+  const lowerSalary = Math.max(data.grossAnnual - 5000, 15000);
+  const higherSalary = data.grossAnnual + 5000;
+
+  const monthlyGross = data.grossAnnual / 12;
+  const weeklyGross = data.grossAnnual / 52;
+  const weeklyNet = data.result.netAnnual / 52;
+
   return (
     <main className="app-shell">
-      <PageSchema
-        pageUrl={`https://taxdecod.com/monthly-take-home/${amount}`}
-        title={`What salary gives £${amount.toLocaleString("en-GB")} take-home per month UK | TaxDecod`}
-        description={`Find the salary needed for about £${amount.toLocaleString("en-GB")} monthly take-home in the UK.`}
-        breadcrumbs={[
-          { name: "Home", url: "https://taxdecod.com" },
-          { name: "Reverse salary", url: "https://taxdecod.com/reverse-tax" },
-          {
-            name: `£${amount.toLocaleString("en-GB")} monthly take-home`,
-            url: `https://taxdecod.com/monthly-take-home/${amount}`,
-          },
-        ]}
-        faqItems={[
-          {
-            question: `What salary do I need to take home £${amount.toLocaleString("en-GB")} a month?`,
-            answer: `Under standard UK assumptions, you need about ${formatCurrency(
-              data.grossAnnual
-            )} gross salary to take home roughly £${amount.toLocaleString("en-GB")} a month.`,
-          },
-          {
-            question: "Why is the gross salary needed much higher than the monthly take-home target?",
-            answer:
-              "Because tax, National Insurance, pension contributions, and other deductions reduce what reaches you as net pay.",
-          },
-        ]}
+      <SalaryPageSchema
+        salary={data.grossAnnual}
+        netAnnual={data.result.netAnnual}
+        netMonthly={data.result.netMonthly}
+        faqItems={contentPack.faqItems}
       />
 
       <SiteHeader />
@@ -95,29 +104,33 @@ export default async function MonthlyTakeHomePage({
       <section className="py-16 sm:py-20">
         <Container>
           <SeoPageHero
-            eyebrow="Monthly income planning"
-            title={`What salary gives £${amount.toLocaleString("en-GB")} take-home per month?`}
-            description="This page is for users who think in monthly life first and want to know the gross salary needed behind that target."
+            eyebrow="Monthly target route"
+            title={`How much salary to take home ${formatCurrency(amount)} a month`}
+            description={contentPack.summary}
             highlightValue={formatCurrency(data.grossAnnual)}
-            highlightSubtext="estimated gross salary needed"
+            highlightSubtext={`estimated gross salary needed under ${TAX_YEAR_LABEL}-style assumptions`}
           />
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description={TRUST_COPY.reversePage.description}
+              description={`This reverse-intent page uses ${TAX_YEAR_LABEL}-style UK salary assumptions to estimate the gross salary needed to take home about ${formatCurrency(
+                amount
+              )} per month.`}
               points={[
-                ...TRUST_COPY.reversePage.points,
-                "Useful for rent, savings, and monthly affordability planning",
+                `Updated for the ${TAX_YEAR_LABEL} UK tax year`,
+                "Built for target take-home planning",
+                "Useful for job search and raise decisions",
+                "Estimate-based guidance, not payroll exact",
               ]}
             />
           </div>
 
           <div className="mt-10">
-            <SeoRealityCard label="Monthly planning reality">
-              Using {TAX_YEAR_LABEL}-style assumptions, taking home about{" "}
-              <strong>£{amount.toLocaleString("en-GB")}</strong> a month usually
-              means earning about <strong>{formatCurrency(data.grossAnnual)}</strong>{" "}
-              gross per year.
+            <SeoRealityCard label="Monthly target reality">
+              The practical question is not “what salary sounds good?” but “what
+              gross salary is likely to leave about{" "}
+              <strong>{formatCurrency(amount)}</strong> per month after
+              deductions?” This page exists to answer that more directly.
             </SeoRealityCard>
           </div>
 
@@ -126,29 +139,29 @@ export default async function MonthlyTakeHomePage({
               items={[
                 {
                   href: "/reverse-tax",
-                  title: "Use the interactive reverse calculator",
+                  title: "Use the full reverse salary calculator",
                   description:
-                    "Adjust the target and assumptions live when you want a more exact planning route.",
+                    "Best when you want to change region, pension, or student loan settings instead of relying on the default route.",
                 },
                 {
                   href: "/compare-salary",
-                  title: "Compare nearby salary outcomes",
+                  title: "Compare against another salary route",
                   description:
-                    "Test whether nearby salary bands improve take-home enough to matter in practice.",
+                    "Useful when you want to test whether a nearby salary creates a materially better monthly result.",
                 },
                 {
                   href: "/calculator",
-                  title: "Inspect the full calculator result",
+                  title: "Inspect the required salary in full",
                   description:
-                    "Open the broader salary and deduction picture behind this estimated result.",
+                    "Use the main calculator when you want the broader tax, pension, and deduction picture behind the result.",
                 },
               ]}
             />
           </div>
 
-          <section className="mt-10 grid gap-4 lg:grid-cols-3">
+          <section className="mt-10 grid gap-4 lg:grid-cols-2 xl:grid-cols-4">
             <Link
-              href="/reverse-tax"
+              href={`/monthly-take-home/${lowerTarget}`}
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
@@ -156,15 +169,16 @@ export default async function MonthlyTakeHomePage({
               }}
             >
               <p className="text-lg font-semibold app-title">
-                Adjust this target live
+                Take home {formatCurrency(lowerTarget)} a month
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want to test assumptions instead of using a fixed monthly route.
+                Useful when you want to see whether a slightly lower monthly
+                target makes salary planning easier.
               </p>
             </Link>
 
             <Link
-              href="/compare-salary"
+              href={`/monthly-take-home/${higherTarget}`}
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
@@ -172,15 +186,16 @@ export default async function MonthlyTakeHomePage({
               }}
             >
               <p className="text-lg font-semibold app-title">
-                Compare salaries around this result
+                Take home {formatCurrency(higherTarget)} a month
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want to see whether the next salary band materially changes monthly life.
+                Useful when you want to test how much extra salary is needed for
+                the next monthly step up.
               </p>
             </Link>
 
             <Link
-              href="/guides/how-income-tax-works-uk"
+              href={`/${lowerSalary}-after-tax-uk`}
               className="rounded-[28px] border px-6 py-6 transition hover-lift"
               style={{
                 borderColor: "var(--line)",
@@ -188,91 +203,42 @@ export default async function MonthlyTakeHomePage({
               }}
             >
               <p className="text-lg font-semibold app-title">
-                Read why gross pay converts less cleanly than expected
+                See {formatCurrency(lowerSalary)} after tax
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when you want the reasoning behind why the required salary feels higher than expected.
+                Useful when you want to compare the nearest lower salary band
+                against this monthly target.
+              </p>
+            </Link>
+
+            <Link
+              href={`/${higherSalary}-after-tax-uk`}
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">
+                See {formatCurrency(higherSalary)} after tax
+              </p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Useful when you want to know whether the next salary band creates
+                a meaningfully better result.
               </p>
             </Link>
           </section>
 
-          <section className="mt-14 grid gap-6 lg:grid-cols-[1fr_1fr]">
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                Reverse salary result
-              </p>
-              <div className="mt-5 space-y-3">
-                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Target monthly take-home
-                  </p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    {formatCurrency(amount)}
-                  </p>
-                </div>
-                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Required gross salary
-                  </p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    {formatCurrency(data.grossAnnual)}
-                  </p>
-                </div>
-                <div className="rounded-[22px] bg-slate-50 px-4 py-4 dark:bg-slate-900">
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Estimated keep rate
-                  </p>
-                  <p className="mt-2 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                    {data.keepPercent.toFixed(0)}%
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[30px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950 sm:p-7">
-              <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
-                What this usually means
-              </p>
-              <div className="mt-5 space-y-4 text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-base">
-                <p>
-                  Monthly targets are usually more useful than gross salary
-                  guessing because they connect directly to rent, saving, and
-                  real affordability.
-                </p>
-                <p>
-                  To reach about <strong>{formatCurrency(amount)}</strong> per month,
-                  the salary required is often higher than users expect because
-                  deductions sit between gross pay and usable income.
-                </p>
-                <p>
-                  The best next step is usually to compare this result against
-                  a nearby salary band or use the full calculator for a deeper
-                  deduction reading.
-                </p>
-              </div>
-
-              <div className="mt-6 grid gap-3">
-                <Link
-                  href="/compare-salary"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Compare nearby salaries
-                </Link>
-                <Link
-                  href="/calculator"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Open the full calculator
-                </Link>
-                <Link
-                  href="/salary-hub"
-                  className="rounded-[22px] border border-slate-200 bg-slate-50 px-4 py-4 text-sm transition hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900 dark:hover:border-sky-800"
-                >
-                  Explore more salary pages
-                </Link>
-              </div>
-            </div>
-          </section>
+          <div className="mt-14">
+            <MonthlyTakeHomeContent
+              targetMonthly={amount}
+              requiredSalary={data.grossAnnual}
+              result={data.result}
+              monthlyGross={monthlyGross}
+              weeklyGross={weeklyGross}
+              weeklyNet={weeklyNet}
+            />
+          </div>
         </Container>
       </section>
 

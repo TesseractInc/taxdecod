@@ -1,6 +1,6 @@
 import type { CalculatorInput } from "../../types/tax";
 
-export const TAX_YEAR_LABEL = "2025/26";
+export const TAX_YEAR_LABEL = "2026/27";
 
 export const DEFAULT_UK_TAX_CODE = "1257L";
 export const DEFAULT_PENSION_PERCENT = 5;
@@ -75,6 +75,42 @@ export const TRUST_COPY = {
       "Annualised year-to-date estimate",
       "Best with payslip YTD values",
       "Built for first-check PAYE clarity",
+    ],
+  },
+  studentLoan: {
+    description: `This page uses ${TAX_YEAR_LABEL}-style UK deduction assumptions to show how student loan repayment can change take-home pay.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Plan-based student loan logic",
+      "Built for repayment drag comparison",
+      "Best used for take-home planning",
+    ],
+  },
+  taxRefund: {
+    description: `This page uses ${TAX_YEAR_LABEL}-style UK tax assumptions to provide a first-check refund signal where too much Income Tax may have been paid.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Estimate-based refund signal",
+      "Built for first-check review",
+      "Not an HMRC decision",
+    ],
+  },
+  bonus: {
+    description: `This page uses ${TAX_YEAR_LABEL}-style UK deduction assumptions to estimate how bonus pay may affect take-home income.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Built for bonus take-home clarity",
+      "Estimate-based, not payroll exact",
+      "Useful for salary decision context",
+    ],
+  },
+  overtime: {
+    description: `This page uses ${TAX_YEAR_LABEL}-style UK deduction assumptions to estimate how overtime pay may affect take-home income.`,
+    points: [
+      `Using ${TAX_YEAR_LABEL} UK tax assumptions`,
+      "Built for overtime take-home clarity",
+      "Estimate-based, not payroll exact",
+      "Useful for extra-hours decisions",
     ],
   },
 } as const;

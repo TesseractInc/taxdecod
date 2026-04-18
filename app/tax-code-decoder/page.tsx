@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
@@ -6,7 +7,14 @@ import SeoPageHero from "../../components/seo/seo-page-hero";
 import SeoRealityCard from "../../components/seo/seo-reality-card";
 import SeoCtaCluster from "../../components/seo/seo-cta-cluster";
 import TaxCodeDecoder from "../../components/tools/tax-code-decoder";
-import { TRUST_COPY } from "../../lib/tax/config";
+import { buildSeoMetadata } from "../../components/seo/metadata";
+
+export const metadata: Metadata = buildSeoMetadata({
+  title: "Tax Code Decoder UK | Understand Your PAYE Code | TaxDecod",
+  description:
+    "Decode common UK PAYE tax codes, understand what they usually mean, and see when a tax code may be changing your deductions.",
+  path: "/tax-code-decoder",
+});
 
 export default function TaxCodePage() {
   return (
@@ -18,15 +26,17 @@ export default function TaxCodePage() {
           <SeoPageHero
             eyebrow="PAYE interpretation tool"
             title="Tax code decoder"
-            description="Understand what a UK tax code usually signals, what allowance it points to, and when the code may be causing deductions to feel unusually high."
+            description="Understand what a UK tax code usually signals, what allowance it points to, and when the code may be causing deductions to feel unusually high or low."
           />
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description={TRUST_COPY.payslipChecker.description}
+              description="This page is designed to help users interpret common UK PAYE tax codes using 2026/27-style tax-year framing."
               points={[
-                ...TRUST_COPY.payslipChecker.points,
+                "Updated for the 2026/27 UK tax year",
                 "Built for tax-code first-check clarity",
+                "Useful before payslip or refund checks",
+                "Estimate-based interpretation, not an HMRC ruling",
               ]}
             />
           </div>

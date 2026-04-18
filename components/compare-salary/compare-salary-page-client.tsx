@@ -43,6 +43,113 @@ function normalizeSalary(value: number) {
   return Math.max(0, Math.round(value));
 }
 
+function getDecisionHeadline(
+  grossDifference: number,
+  monthlyDiff: number,
+  keepPercent: number
+) {
+  if (grossDifference <= 0) {
+    return "Use the monthly difference, not the headline salary, as the real signal";
+  }
+
+  if (monthlyDiff < 150) {
+    return "This is a real gross increase, but the monthly improvement is relatively modest";
+  }
+
+  if (monthlyDiff < 300) {
+    return "This increase may matter, but it is unlikely to transform monthly life on its own";
+  }
+
+  if (keepPercent < 55) {
+    return "A meaningful part of the raise is being absorbed by deductions";
+  }
+
+  return "This increase is large enough to feel more visible month to month";
+}
+
+function getDecisionBody(
+  salaryA: number,
+  salaryB: number,
+  monthlyDiff: number,
+  keepPercent: number,
+  grossDifference: number
+) {
+  if (grossDifference <= 0) {
+    return `Because the second salary is not higher than the first, the useful interpretation here is not “more pay” but whether the lower or equal route changes your overall deductions or trade-offs in a way that still makes sense.`;
+  }
+
+  if (monthlyDiff < 150) {
+    return `Moving from £${salaryA.toLocaleString("en-GB")} to £${salaryB.toLocaleString(
+      "en-GB"
+    )} increases the gross figure clearly, but the estimated monthly gain stays fairly contained. This is where users often realise that a raise can look bigger on paper than it feels in real life.`;
+  }
+
+  if (monthlyDiff < 300) {
+    return `Moving from £${salaryA.toLocaleString("en-GB")} to £${salaryB.toLocaleString(
+      "en-GB"
+    )} should still feel better, but not in a dramatic way. If the role change involves more stress, travel, or responsibility, this is the kind of comparison that deserves a calmer decision rather than a headline-driven one.`;
+  }
+
+  if (keepPercent < 55) {
+    return `This comparison shows a real salary increase, but a significant share of it is being lost to tax, National Insurance, pension, and student loan drag. The raise is not weak, but the retained value is lower than many users initially expect.`;
+  }
+
+  return `This jump from £${salaryA.toLocaleString("en-GB")} to £${salaryB.toLocaleString(
+    "en-GB"
+  )} is strong enough to create a clearer monthly difference after deductions. The higher salary is still not equal to the full headline gain, but the retained improvement is easier to justify in practical terms.`;
+}
+
+function getFollowUpPrompts(monthlyDiff: number, grossDifference: number) {
+  if (grossDifference <= 0) {
+    return [
+      {
+        title: "Inspect one salary in more detail",
+        description:
+          "Use the main calculator when the comparison alone is not enough and you need the fuller deduction picture for one salary route.",
+        href: "/calculator",
+      },
+      {
+        title: "Work backwards from the monthly figure you want",
+        description:
+          "Use reverse salary planning if the better question is what monthly amount you actually want to keep.",
+        href: "/reverse-tax",
+      },
+    ];
+  }
+
+  if (monthlyDiff < 200) {
+    return [
+      {
+        title: "Check whether the raise is really worth it",
+        description:
+          "Use reverse planning to test what salary would actually be needed to reach the monthly outcome you want.",
+        href: "/reverse-tax",
+      },
+      {
+        title: "Look at nearby salary bands before deciding",
+        description:
+          "Use salary pages when you want to know whether a slightly higher offer changes the picture more meaningfully.",
+        href: "/salary-hub",
+      },
+    ];
+  }
+
+  return [
+    {
+      title: "Inspect the stronger salary in the full calculator",
+      description:
+        "Use the main calculator when you want a deeper reading of the better route before making a decision.",
+      href: "/calculator",
+    },
+    {
+      title: "Check what monthly target would justify the move",
+      description:
+        "Use reverse salary planning if you want to translate this comparison into a cleaner target-income decision.",
+      href: "/reverse-tax",
+    },
+  ];
+}
+
 export default function CompareSalaryPageClient() {
   const { user, email } = useSupabaseAuth();
   const userScope = user?.id || email || "guest";
@@ -112,6 +219,22 @@ export default function CompareSalaryPageClient() {
     Math.abs(netDiff)
   )}`;
 
+  const decisionHeadline = getDecisionHeadline(
+    grossDifference,
+    monthlyDiff,
+    keepPercent
+  );
+
+  const decisionBody = getDecisionBody(
+    salaryA,
+    salaryB,
+    monthlyDiff,
+    keepPercent,
+    grossDifference
+  );
+
+  const followUpPrompts = getFollowUpPrompts(monthlyDiff, grossDifference);
+
   function handleSaveScenario() {
     const scenario: SavedScenario = {
       id: createScenarioId("compare"),
@@ -124,7 +247,9 @@ export default function CompareSalaryPageClient() {
       subtitle: `${formatCurrency(
         Math.abs(monthlyDiff)
       )}/month difference · ${
-        grossDifference > 0 ? `${keepPercent.toFixed(0)}% kept` : "comparison saved"
+        grossDifference > 0
+          ? `${keepPercent.toFixed(0)}% kept`
+          : "comparison saved"
       }`,
       payload: {
         salaryA,
@@ -166,15 +291,20 @@ export default function CompareSalaryPageClient() {
           <div className="mt-8">
             <TaxYearTrustBar
               description={TRUST_COPY.comparisonPage.description}
-              points={[...TRUST_COPY.comparisonPage.points]}
+              points={[
+                "Updated for the 2026/27 UK tax year",
+                ...TRUST_COPY.comparisonPage.points.filter(
+                  (point) => !point.includes("2025/26")
+                ),
+              ]}
             />
           </div>
 
           <div className="mt-10">
             <SeoRealityCard label="Why this matters">
               A higher gross salary does not always translate into a meaningfully
-              better outcome once tax, National Insurance, pension, and student
-              loan deductions are applied.
+              better outcome once Income Tax, National Insurance, pension, and
+              student loan deductions are applied.
             </SeoRealityCard>
           </div>
 
@@ -211,7 +341,7 @@ export default function CompareSalaryPageClient() {
                     Comparison input
                   </p>
                   <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
-                    Test the salary jump before you believe the headline number
+                    Test the salary jump before you trust the headline number
                   </h2>
                   <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400 sm:text-base">
                     Enter the current salary and the alternative salary below to
@@ -230,7 +360,8 @@ export default function CompareSalaryPageClient() {
                       }}
                       className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-700 transition hover:border-sky-200 hover:bg-white hover:text-sky-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-800 dark:hover:bg-slate-950 dark:hover:text-sky-300"
                     >
-                      £{a.toLocaleString("en-GB")} vs £{b.toLocaleString("en-GB")}
+                      £{a.toLocaleString("en-GB")} vs £
+                      {b.toLocaleString("en-GB")}
                     </button>
                   ))}
                 </div>
@@ -302,7 +433,8 @@ export default function CompareSalaryPageClient() {
                   <div
                     className="rounded-[18px] border px-4 py-3 text-sm"
                     style={{
-                      borderColor: "color-mix(in srgb, #10b981 22%, var(--line))",
+                      borderColor:
+                        "color-mix(in srgb, #10b981 22%, var(--line))",
                       background:
                         "color-mix(in srgb, #10b981 8%, var(--surface-2))",
                       color: "var(--text)",
@@ -377,6 +509,35 @@ export default function CompareSalaryPageClient() {
             </div>
           </section>
 
+          <section className="mt-10 rounded-[34px] border border-slate-200 bg-white p-6 shadow-[0_28px_90px_-40px_rgba(15,23,42,0.22)] dark:border-slate-800 dark:bg-slate-950 sm:p-8">
+            <p className="text-sm font-medium text-sky-600 dark:text-sky-400">
+              Decision reading
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 sm:text-3xl">
+              {decisionHeadline}
+            </h2>
+            <p className="mt-4 max-w-4xl text-sm leading-8 text-slate-600 dark:text-slate-400 sm:text-[15px]">
+              {decisionBody}
+            </p>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {followUpPrompts.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-5 transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white dark:border-slate-800 dark:bg-slate-900/70 dark:hover:border-sky-800 dark:hover:bg-slate-900"
+                >
+                  <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                    {item.title}
+                  </p>
+                  <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                    {item.description}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
           <div className="mt-10">
             <SavedScenariosPanel
               type="compare"
@@ -390,29 +551,29 @@ export default function CompareSalaryPageClient() {
           <div className="mt-8">
             <AffiliateRecommendationPanel
               eyebrow="Useful next move"
-              title="Once the salary gap is clear, these follow-up routes become more useful"
-              description="This is where returning users often move from salary comparison into budgeting, affordability, or saving decisions."
+              title="Once the salary gap is clear, stay inside the right TaxDecod route"
+              description="This is where most users move into raise planning, target take-home checks, or payslip verification."
               items={[
                 {
-                  title: "Use a budgeting-first money setup",
+                  title: "Work backwards from the monthly amount you want to keep",
                   description:
-                    "Best when you now understand the monthly difference and want to manage the new amount better.",
-                  href: "/services",
-                  badge: "Budgeting",
+                    "Best when this comparison shows the current gap clearly and you now want to target a specific take-home result.",
+                  href: "/reverse-tax",
+                  badge: "Planning",
                 },
                 {
-                  title: "Check credit or affordability before a bigger financial move",
+                  title: "Inspect one salary in more detail",
                   description:
-                    "Useful when the comparison is tied to renting, borrowing, or wider affordability decisions.",
-                  href: "/services",
-                  badge: "Credit",
+                    "Useful when one side of the comparison needs a fuller reading with tax, National Insurance, pension, and student loan context.",
+                  href: "/calculator",
+                  badge: "Calculator",
                 },
                 {
-                  title: "Start planning what the surplus is actually for",
+                  title: "Check whether a real payslip supports the pattern",
                   description:
-                    "Best when the new salary leaves meaningful room for saving, investing, or medium-term goals.",
-                  href: "/services",
-                  badge: "Saving",
+                    "Best when the next step is validating deductions against an actual payslip rather than comparing salary headlines only.",
+                  href: "/payslip-checker",
+                  badge: "Payslip",
                 },
               ]}
             />
@@ -431,7 +592,8 @@ export default function CompareSalaryPageClient() {
                 Work backwards from a target income
               </p>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                Use this when the monthly amount you want to keep matters more than the headline salary.
+                Use this when the monthly amount you want to keep matters more
+                than the headline salary.
               </p>
             </Link>
 
@@ -443,7 +605,8 @@ export default function CompareSalaryPageClient() {
                 Inspect one salary in more detail
               </p>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                Use the main calculator when you need a full guided reading of one salary route.
+                Use the main calculator when you need a full guided reading of
+                one salary route.
               </p>
             </Link>
 
@@ -455,7 +618,8 @@ export default function CompareSalaryPageClient() {
                 Browse nearby salary bands
               </p>
               <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-                Use the hub when you want wider salary context rather than a two-point comparison only.
+                Use the hub when you want wider salary context rather than a
+                two-point comparison only.
               </p>
             </Link>
           </section>

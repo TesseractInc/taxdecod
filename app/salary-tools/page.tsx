@@ -44,7 +44,7 @@ const tools = [
   {
     title: "Leave pay tools",
     description:
-      "Estimate maternity, paternity, and sick pay under statutory-style rules.",
+      "Estimate maternity, paternity, and leave-pay routes under statutory-style rules.",
     href: "/leave-pay",
   },
 ];
@@ -75,7 +75,7 @@ export default function SalaryToolsPage() {
             <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
               Use these routes when your question is narrower than a normal salary
               check — for example student loan drag, bonus tax, tax-code interpretation,
-              refund signals, or statutory pay.
+              refund signals, or statutory-style pay routes.
             </p>
           </section>
 

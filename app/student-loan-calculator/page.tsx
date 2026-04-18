@@ -37,12 +37,12 @@ export default function StudentLoanCalculatorPage() {
           {
             question: "How does student loan affect take-home pay?",
             answer:
-              "Student loan repayments reduce net pay because they are deducted from earnings above the relevant threshold.",
+              "Student loan repayments reduce net pay because repayment is taken from earnings above the relevant threshold for the selected plan.",
           },
           {
             question: "Why use a standalone student loan calculator?",
             answer:
-              "Because it isolates the student loan drag and makes it easier to compare the same salary with and without repayment pressure.",
+              "Because it isolates student-loan drag and makes it easier to see how much salary is being reduced by repayments before moving into broader salary decisions.",
           },
         ]}
       />
@@ -59,10 +59,12 @@ export default function StudentLoanCalculatorPage() {
 
           <div className="mt-8">
             <TaxYearTrustBar
-              description={TRUST_COPY.salaryPage.description}
+              description="This page uses 2026/27-style UK deduction assumptions to help show how student loan repayment can change take-home pay."
               points={[
-                ...TRUST_COPY.salaryPage.points,
-                "Built for student-loan drag comparison",
+                "Updated for the 2026/27 UK tax year",
+                "Plan-based student loan logic",
+                "Built for repayment drag comparison",
+                "Useful before broader salary decisions",
               ]}
             />
           </div>
@@ -70,8 +72,8 @@ export default function StudentLoanCalculatorPage() {
           <div className="mt-10">
             <SeoRealityCard label="Why this tool matters">
               Student loan is one of the most misunderstood salary drags because
-              the gross salary can look strong while the monthly result still
-              feels weaker than expected after repayments.
+              a gross salary can look strong while the monthly result still feels
+              weaker than expected after repayments.
             </SeoRealityCard>
           </div>
 
@@ -82,19 +84,19 @@ export default function StudentLoanCalculatorPage() {
                   href: "/compare-salary",
                   title: "Compare two salaries",
                   description:
-                    "Useful when you want to see whether a raise still feels strong after loan drag.",
+                    "Useful when you want to see whether a raise still feels strong after student-loan drag.",
                 },
                 {
                   href: "/calculator",
                   title: "Open the full calculator",
                   description:
-                    "Check the broader single-salary route with all deductions visible.",
+                    "Check the broader single-salary route with tax, pension, and student loan context together.",
                 },
                 {
-                  href: "/salary-sacrifice-calculator",
-                  title: "Explore salary sacrifice",
+                  href: "/guides/how-student-loan-affects-salary-uk",
+                  title: "Read the student loan guide",
                   description:
-                    "Useful when you want to improve tax efficiency after understanding deduction drag.",
+                    "Useful when you want the plain-English explanation behind why repayments can make a salary feel weaker.",
                 },
               ]}
             />

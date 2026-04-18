@@ -49,12 +49,6 @@ export default function AdSlot({
           data-full-width-responsive="true"
         />
 
-        <div
-          className="flex w-full items-center justify-center text-xs app-subtle"
-          style={{ minHeight }}
-        >
-          Ad space
-        </div>
       </div>
     </section>
   );

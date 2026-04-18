@@ -13,7 +13,7 @@ export default function TrustStrip() {
 
         <div className="flex items-center gap-2 app-subtle">
           <Clock className="h-4 w-4 text-sky-400" />
-          Updated for 2025/26 assumptions
+          Updated for the 2026/27 UK tax year
         </div>
 
         <div className="flex items-center gap-2 app-subtle">

@@ -1,48 +1,63 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import SiteFooter from "../../components/layout/site-footer";
 import Container from "../../components/ui/container";
-import PageHero from "../../components/ui/page-hero";
+import TaxYearTrustBar from "../../components/shared/tax-year-trust-bar";
+import RelatedLinks from "../../components/seo/related-links";
+
+export const metadata: Metadata = {
+  title: "Methodology | TaxDecod",
+  description:
+    "Understand how TaxDecod approaches UK salary calculations, take-home estimates, salary comparison logic, reverse salary planning, and payslip interpretation.",
+};
 
 const methodologySections = [
   {
-    title: "What TaxDecod is built to do",
-    body: "TaxDecod is designed to help users understand salary, deductions, and take-home outcomes more clearly. The site is built for estimation, interpretation, and decision support — especially where gross salary alone is not enough to answer the real question.",
+    title: "Salary calculation logic",
+    body: "Salary calculator routes estimate take-home pay using current UK tax-year assumptions, standard deduction logic, and the selected settings shown on the page, such as region, pension, and student loan plan where applicable.",
   },
   {
-    title: "How salary outcomes are approached",
-    body: "TaxDecod uses current UK tax-year logic, visible assumptions, and structured deduction modelling to estimate Income Tax, National Insurance, pension impact, and student loan drag where applicable. The aim is to make outputs understandable, not just technically generated.",
+    title: "Comparison logic",
+    body: "Comparison routes are designed to show the retained difference between salary options after deductions, not just the gross gap. This is intended to help users judge whether a raise or new role materially changes monthly life.",
   },
   {
-    title: "Why estimates can differ from payroll",
-    body: "Actual employer payroll outcomes may differ because real payslips can be affected by tax-code changes, cumulative PAYE treatment, irregular pay, bonus treatment, salary sacrifice setup, payroll timing, and employer-specific deductions or benefits.",
+    title: "Reverse salary planning",
+    body: "Reverse routes estimate the gross salary required to reach a target monthly or annual net amount under the selected setup. These routes are intended for planning and salary-target thinking rather than payroll prediction.",
   },
   {
-    title: "How benchmark and comparison pages should be read",
-    body: "Benchmark, comparison, and salary-exploration pages are designed to help users reason about relative value, market context, and take-home trade-offs. They are not employment-market guarantees, official salary ranges, or financial recommendations.",
-  },
-  {
-    title: "What this methodology does not claim",
-    body: "TaxDecod does not claim to replace payroll software, regulated tax advice, legal advice, or an HMRC record. It does not decide refunds, underpayments, or formal tax positions. It provides structured guidance to help users ask better questions and understand their numbers more clearly.",
+    title: "Payslip and tax-code interpretation",
+    body: "Payslip and tax-code routes provide first-check interpretation only. They are designed to help users understand patterns, identify possible issues, and choose a better next step, not to replace payroll or HMRC records.",
   },
 ];
 
-const sourceRoutes = [
+const scopeCards = [
   {
-    title: "Income Tax rates and allowances",
-    href: "https://www.gov.uk/income-tax-rates",
+    title: "What the methodology is for",
+    body: "This page exists to explain the logic and intent behind TaxDecod outputs so users understand what the platform is doing and how to interpret it responsibly.",
   },
   {
-    title: "National Insurance overview",
-    href: "https://www.gov.uk/national-insurance",
+    title: "What the methodology is not",
+    body: "This page is not a promise of payroll-perfect output in every case. Real payroll outcomes can vary because of employer configuration, cumulative PAYE, benefits, irregular pay, tax code changes, and other factors.",
+  },
+];
+
+const sourceNotes = [
+  {
+    title: "Tax-year references",
+    body: "TaxDecod is maintained using current UK tax-year assumptions and references to official GOV.UK / HMRC materials where relevant to platform logic and trust framing.",
   },
   {
-    title: "Student loan repayment guidance",
-    href: "https://www.gov.uk/repaying-your-student-loan",
+    title: "Default employee setup",
+    body: "Many pages use a default UK employee-style setup to keep outputs understandable and comparable. Where a route uses a specific configuration, that configuration should be read on the page itself.",
   },
   {
-    title: "Statutory pay guidance",
-    href: "https://www.gov.uk/browse/working/time-off",
+    title: "Estimate-based outputs",
+    body: "Outputs are designed to support guidance, interpretation, and planning. They should not be treated as formal tax advice, legal advice, employer payroll, or an HMRC ruling.",
+  },
+  {
+    title: "Page-specific context",
+    body: "Some routes, such as comparison pages, reverse planning pages, student loan pages, or Scotland pages, apply route-specific context and should be read within that context.",
   },
 ];
 
@@ -51,79 +66,168 @@ export default function MethodologyPage() {
     <main className="app-shell">
       <SiteHeader />
 
-      <section className="py-10 sm:py-14">
-        <Container>
-          <PageHero
-            eyebrow="Methodology"
-            title="How TaxDecod approaches salary and deduction estimates"
-            description="This page explains the operating logic behind the platform so users can understand what the site is designed to do, what it is not designed to do, and how outputs should be interpreted."
-          />
+      <section className="py-16 sm:py-20">
+        <Container className="max-w-5xl">
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium app-accent">Methodology</p>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight app-title sm:text-5xl">
+              How TaxDecod approaches salary outputs and interpretation
+            </h1>
+            <p className="mt-5 text-sm leading-8 app-copy sm:text-base">
+              TaxDecod is designed to help users understand salary, take-home
+              pay, salary comparison, reverse planning, and payslip logic more
+              clearly. This page explains the general methodology behind those
+              outputs so users can interpret them more responsibly.
+            </p>
+          </div>
 
-          <div className="mt-10 grid gap-4">
-            {methodologySections.map((section) => (
-              <section
-                key={section.title}
-                className="rounded-[30px] border px-6 py-6 sm:px-7"
+          <div className="mt-8">
+            <TaxYearTrustBar
+              description="Methodology should be read alongside assumptions, route settings, and disclaimer language. Outputs are estimate-based and intended for clarity, guidance, and planning support."
+              points={[
+                "Updated for the 2026/27 UK tax year",
+                "Estimate-based guidance logic",
+                "Transparent trust framing",
+                "Not payroll or HMRC records",
+              ]}
+            />
+          </div>
+
+          <section className="mt-12 grid gap-4 md:grid-cols-2">
+            {scopeCards.map((item) => (
+              <div
+                key={item.title}
+                className="rounded-[28px] border px-6 py-6"
                 style={{
                   borderColor: "var(--line)",
                   background: "var(--card-strong)",
                 }}
               >
-                <h2 className="text-2xl font-semibold tracking-tight app-title">
-                  {section.title}
-                </h2>
-                <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
-                  {section.body}
-                </p>
-              </section>
+                <p className="text-lg font-semibold app-title">{item.title}</p>
+                <p className="mt-3 text-sm leading-8 app-copy">{item.body}</p>
+              </div>
             ))}
-          </div>
+          </section>
+
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Core methodology areas
+            </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {methodologySections.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-[28px] border px-6 py-6"
+                  style={{
+                    borderColor: "var(--line)",
+                    background: "var(--surface-2)",
+                  }}
+                >
+                  <p className="text-lg font-semibold app-title">{item.title}</p>
+                  <p className="mt-3 text-sm leading-8 app-copy">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
 
           <section
-            className="mt-10 rounded-[30px] border px-6 py-6 sm:px-7"
+            className="mt-12 rounded-[30px] border px-6 py-6 sm:px-7"
             style={{
               borderColor: "var(--line)",
               background: "var(--card-strong)",
             }}
           >
-            <p className="text-sm font-medium app-accent">Reference framing</p>
+            <p className="text-sm font-medium app-accent">Important interpretation note</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight app-title">
-              Official reference points
+              TaxDecod is designed to improve understanding, not replace official records
             </h2>
-            <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
-              TaxDecod is built around current UK tax-year interpretation and
-              should be read alongside official GOV.UK guidance where formal
-              confirmation is needed.
+            <p className="mt-4 text-sm leading-8 app-copy sm:text-base">
+              The platform is built to help users understand patterns, salary
+              outcomes, and planning routes. Real payroll and formal tax outcomes
+              can differ because of employer-specific processing, updated tax
+              codes, irregular payments, benefits, cumulative PAYE, and other
+              factors that may not be fully represented in an estimate-based tool.
             </p>
+          </section>
 
-            <div className="mt-6 grid gap-3">
-              {sourceRoutes.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-[20px] border px-4 py-4 text-sm transition hover-lift"
+          <section className="mt-12">
+            <h2 className="text-2xl font-semibold app-title">
+              Source and assumption notes
+            </h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {sourceNotes.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-[28px] border px-6 py-6"
                   style={{
                     borderColor: "var(--line)",
                     background: "var(--surface-2)",
-                    color: "var(--text)",
                   }}
                 >
-                  {item.title}
-                </a>
+                  <p className="text-lg font-semibold app-title">{item.title}</p>
+                  <p className="mt-3 text-sm leading-8 app-copy">{item.body}</p>
+                </div>
               ))}
             </div>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/assumptions" className="app-button-secondary">
-                Read assumptions
-              </Link>
-              <Link href="/guides" className="app-button-primary">
-                Read salary guides
-              </Link>
-            </div>
           </section>
+
+          <section className="mt-12 grid gap-4 md:grid-cols-3">
+            <Link
+              href="/assumptions"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">Assumptions</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Read the default employee assumptions behind estimate-based outputs.
+              </p>
+            </Link>
+
+            <Link
+              href="/disclaimer"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">Disclaimer</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                See what TaxDecod is and is not intended to provide.
+              </p>
+            </Link>
+
+            <Link
+              href="/about"
+              className="rounded-[28px] border px-6 py-6 transition hover-lift"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--card-strong)",
+              }}
+            >
+              <p className="text-lg font-semibold app-title">About</p>
+              <p className="mt-3 text-sm leading-8 app-copy">
+                Read the broader platform purpose and product direction.
+              </p>
+            </Link>
+          </section>
+
+          <div className="mt-12">
+            <RelatedLinks
+              title="Trust and interpretation pages"
+              links={[
+                { title: "About", href: "/about" },
+                { title: "Assumptions", href: "/assumptions" },
+                { title: "Disclaimer", href: "/disclaimer" },
+                { title: "Privacy Policy", href: "/privacy-policy" },
+                { title: "Terms", href: "/terms" },
+                { title: "Contact", href: "/contact" },
+              ]}
+            />
+          </div>
         </Container>
       </section>
 

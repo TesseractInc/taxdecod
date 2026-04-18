@@ -29,6 +29,51 @@ const initialValues: PayslipCheckerInput = {
 
 const quickGrossPresets = [12000, 18000, 24000, 30000];
 
+function getTaxInterpretation(result: ReturnType<typeof estimatePayslipYtd>) {
+  if (result.taxStatus === "close") {
+    return "Your paid Income Tax currently looks broadly close to the estimated year-to-date pattern. That does not prove perfection, but it usually means there is no obvious tax signal from these inputs alone.";
+  }
+
+  if (result.taxStatus === "over") {
+    return "Your paid Income Tax is currently running above the estimated year-to-date reading. This can happen because of tax code changes, cumulative PAYE timing, bonus pay, or a payroll catch-up effect rather than a simple permanent error.";
+  }
+
+  return "Your paid Income Tax is currently running below the estimated year-to-date reading. This can happen when tax catches up later, a code changes mid-year, or payroll timing has not yet fully normalised.";
+}
+
+function getNiInterpretation(result: ReturnType<typeof estimatePayslipYtd>) {
+  if (result.niStatus === "close") {
+    return "Your National Insurance currently looks broadly close to the estimated year-to-date pattern based on the annualised salary route.";
+  }
+
+  if (result.niStatus === "over") {
+    return "Your National Insurance is running above the estimated year-to-date reading. This can happen with irregular earnings, bonus months, or differences between ordinary pay expectations and actual payroll timing.";
+  }
+
+  return "Your National Insurance is running below the estimated year-to-date reading. This does not automatically mean a problem, but it does suggest the payslip pattern deserves a closer look if the difference persists.";
+}
+
+function getDecisionRoute(result: ReturnType<typeof estimatePayslipYtd>) {
+  if (result.taxStatus === "over") {
+    return {
+      title: "Best next check: refund or tax-code route",
+      body: "Because Income Tax currently appears to be running high, the most useful next steps are usually the tax code decoder or refund estimator.",
+    };
+  }
+
+  if (result.taxStatus === "under") {
+    return {
+      title: "Best next check: tax-code and payroll context",
+      body: "Because Income Tax appears to be running low, the most useful next step is usually checking the tax code and understanding whether PAYE may catch up later.",
+    };
+  }
+
+  return {
+    title: "Best next check: broader salary or payslip interpretation",
+    body: "Because the year-to-date pattern looks fairly close, the next useful move is usually understanding the payslip in more detail or comparing the result with the broader salary route.",
+  };
+}
+
 export default function PayslipYtdChecker() {
   const [values, setValues] = useState<PayslipCheckerInput>(initialValues);
 
@@ -79,6 +124,7 @@ export default function PayslipYtdChecker() {
 
   const taxTone = getTone(result.taxStatus);
   const niTone = getTone(result.niStatus);
+  const decisionRoute = getDecisionRoute(result);
 
   return (
     <div className="space-y-8">
@@ -304,7 +350,7 @@ export default function PayslipYtdChecker() {
                 Read the year-to-date signal
               </h3>
               <p className="mt-2 text-sm leading-7 app-copy">
-                This is a first-check PAYE signal, not a payroll or HMRC ruling.
+                This is a first-check PAYE signal, not a payroll ruling or HMRC decision.
               </p>
             </div>
 
@@ -384,6 +430,12 @@ export default function PayslipYtdChecker() {
                     </p>
                   </div>
                 </div>
+
+                <div className="mt-4 rounded-[20px] border border-white/70 bg-white/85 px-4 py-4 dark:border-slate-800 dark:bg-slate-950/70">
+                  <p className="text-sm leading-7 text-slate-700 dark:text-slate-300">
+                    {getTaxInterpretation(result)}
+                  </p>
+                </div>
               </div>
 
               <div className={`rounded-[28px] border p-5 ${niTone.panel}`}>
@@ -431,6 +483,12 @@ export default function PayslipYtdChecker() {
                     </p>
                   </div>
                 </div>
+
+                <div className="mt-4 rounded-[20px] border border-white/70 bg-white/85 px-4 py-4 dark:border-slate-800 dark:bg-slate-950/70">
+                  <p className="text-sm leading-7 text-slate-700 dark:text-slate-300">
+                    {getNiInterpretation(result)}
+                  </p>
+                </div>
               </div>
 
               <div className="rounded-[28px] border app-card p-5">
@@ -454,6 +512,35 @@ export default function PayslipYtdChecker() {
                   </div>
                 </div>
 
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-[20px] border app-soft px-4 py-4">
+                    <p className="text-[11px] uppercase tracking-[0.14em] app-subtle">
+                      Estimated pension YTD
+                    </p>
+                    <p className="mt-2 text-xl font-semibold app-title">
+                      {formatCurrency(result.expectedYtdPension)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-[20px] border app-soft px-4 py-4">
+                    <p className="text-[11px] uppercase tracking-[0.14em] app-subtle">
+                      Estimated student loan YTD
+                    </p>
+                    <p className="mt-2 text-xl font-semibold app-title">
+                      {formatCurrency(result.expectedYtdStudentLoan)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-[20px] border app-soft px-4 py-4">
+                  <p className="text-sm font-semibold app-title">
+                    {decisionRoute.title}
+                  </p>
+                  <p className="mt-2 text-sm leading-7 app-copy">
+                    {decisionRoute.body}
+                  </p>
+                </div>
+
                 <div className="mt-4 rounded-[20px] border app-soft px-4 py-4">
                   <p className="text-sm leading-7 app-copy">
                     {result.confidenceNote}
@@ -467,7 +554,7 @@ export default function PayslipYtdChecker() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Link
-          href="/payslip-explained"
+          href="/guides/how-to-read-a-payslip-uk"
           className="rounded-[28px] border app-card p-6 transition hover:-translate-y-0.5"
         >
           <p className="text-lg font-semibold app-title">Decode your payslip</p>
@@ -477,22 +564,22 @@ export default function PayslipYtdChecker() {
         </Link>
 
         <Link
-          href="/calculator"
+          href="/tax-code-decoder"
           className="rounded-[28px] border app-card p-6 transition hover:-translate-y-0.5"
         >
-          <p className="text-lg font-semibold app-title">Open calculator</p>
+          <p className="text-lg font-semibold app-title">Check your tax code</p>
           <p className="mt-3 text-sm leading-7 app-copy">
-            Check the full take-home pay picture behind your salary.
+            Decode common UK tax codes before guessing why tax looks unusual.
           </p>
         </Link>
 
         <Link
-          href="/compare-salary"
+          href="/tax-refund-calculator"
           className="rounded-[28px] border app-card p-6 transition hover:-translate-y-0.5"
         >
-          <p className="text-lg font-semibold app-title">Compare salaries</p>
+          <p className="text-lg font-semibold app-title">Check refund route</p>
           <p className="mt-3 text-sm leading-7 app-copy">
-            See whether a higher salary really changes monthly life.
+            Estimate whether tax paid looks high enough to justify a refund-style check.
           </p>
         </Link>
 
@@ -510,6 +597,53 @@ export default function PayslipYtdChecker() {
             <li>Correct tax code</li>
           </ul>
         </div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <Link
+          href="/calculator"
+          className="rounded-[28px] border app-card p-6 transition hover:-translate-y-0.5"
+        >
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl app-soft p-3">
+              <Wallet2 className="h-5 w-5 app-accent" />
+            </div>
+            <p className="text-lg font-semibold app-title">Open calculator</p>
+          </div>
+          <p className="mt-3 text-sm leading-7 app-copy">
+            Check the broader take-home pay picture behind the salary route.
+          </p>
+        </Link>
+
+        <Link
+          href="/compare-salary"
+          className="rounded-[28px] border app-card p-6 transition hover:-translate-y-0.5"
+        >
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl app-soft p-3">
+              <ArrowRightLeft className="h-5 w-5 app-accent" />
+            </div>
+            <p className="text-lg font-semibold app-title">Compare salaries</p>
+          </div>
+          <p className="mt-3 text-sm leading-7 app-copy">
+            See whether a higher salary really changes monthly life enough after deductions.
+          </p>
+        </Link>
+
+        <Link
+          href="/guides/how-to-read-a-payslip-uk"
+          className="rounded-[28px] border app-card p-6 transition hover:-translate-y-0.5"
+        >
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl app-soft p-3">
+              <ReceiptText className="h-5 w-5 app-accent" />
+            </div>
+            <p className="text-lg font-semibold app-title">Read payslip guide</p>
+          </div>
+          <p className="mt-3 text-sm leading-7 app-copy">
+            Move into the plain-English guide when you want fuller payslip context.
+          </p>
+        </Link>
       </section>
     </div>
   );

@@ -1,57 +1,48 @@
-import FreshnessChip from "./freshness-chip";
-
 type TaxYearTrustBarProps = {
+  title?: string;
   description: string;
   points: string[];
-  reviewDate?: string;
 };
 
 export default function TaxYearTrustBar({
+  title = "Trust and interpretation",
   description,
   points,
-  reviewDate = "16 April 2026",
 }: TaxYearTrustBarProps) {
+  const safePoints = points.filter(Boolean).slice(0, 6);
+
   return (
     <section
-      className="overflow-hidden rounded-[28px] border"
+      className="rounded-[28px] border px-5 py-5 sm:px-6 sm:py-6"
       style={{
         borderColor: "var(--line)",
         background: "var(--card-strong)",
-        boxShadow: "var(--shadow-sm)",
       }}
     >
-      <div
-        className="border-b px-5 py-5 sm:px-6"
-        style={{ borderColor: "var(--line)" }}
-      >
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="max-w-3xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
-              Current tax-year framing
-            </p>
-            <p className="mt-3 text-sm leading-7 app-copy sm:text-[15px]">
-              {description}
-            </p>
-          </div>
+      <div className="max-w-3xl">
+        <p className="text-sm font-medium app-accent">{title}</p>
+        <p className="mt-2 text-sm leading-8 app-copy sm:text-[15px]">
+          {description}
+        </p>
+      </div>
 
-          <FreshnessChip reviewDate={reviewDate} />
+      {safePoints.length > 0 ? (
+        <div className="mt-5 flex flex-wrap gap-2.5">
+          {safePoints.map((point) => (
+            <div
+              key={point}
+              className="inline-flex rounded-full border px-3.5 py-2 text-xs font-medium"
+              style={{
+                borderColor: "var(--line)",
+                background: "var(--surface-1)",
+                color: "var(--text)",
+              }}
+            >
+              {point}
+            </div>
+          ))}
         </div>
-      </div>
-
-      <div className="grid gap-3 px-5 py-5 sm:grid-cols-2 lg:grid-cols-4 sm:px-6">
-        {points.map((point) => (
-          <div
-            key={point}
-            className="rounded-[20px] border px-4 py-3.5"
-            style={{
-              borderColor: "var(--line)",
-              background: "var(--surface-2)",
-            }}
-          >
-            <p className="text-sm leading-6 app-copy">{point}</p>
-          </div>
-        ))}
-      </div>
+      ) : null}
     </section>
   );
 }

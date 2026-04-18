@@ -2,85 +2,92 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Gift, Scale, Wallet2, TrendingUp } from "lucide-react";
+import {
+  AlertTriangle,
+  ReceiptText,
+  SearchCheck,
+  ShieldCheck,
+  Wallet2,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/tax/utils/currency";
 import ToolInsightPanel from "@/components/shared/tool-insight-panel";
 
-function estimateBonusTakeHome(bonus: number, salary: number) {
-  const baseRate = salary >= 50270 ? 0.42 : 0.28;
-  const extraDrag = salary >= 80000 ? 0.04 : 0;
-  const keepRate = Math.max(0.35, 1 - baseRate - extraDrag);
+function estimateExpectedTax(annualSalary: number) {
+  const personalAllowance = 12570;
+  const basicRateLimit = 50270;
 
-  return {
-    keepRate,
-    netBonus: bonus * keepRate,
-    deductions: bonus * (1 - keepRate),
-  };
+  if (annualSalary <= personalAllowance) return 0;
+
+  const taxable = annualSalary - personalAllowance;
+  const basicBand = Math.max(
+    0,
+    Math.min(taxable, basicRateLimit - personalAllowance)
+  );
+  const higherBand = Math.max(0, taxable - basicBand);
+
+  return basicBand * 0.2 + higherBand * 0.4;
 }
 
-function getHeadline(keepRate: number) {
-  if (keepRate >= 0.7) {
-    return "This bonus should retain a relatively strong share after deductions";
+function getHeadline(difference: number) {
+  if (difference > 1200) {
+    return "There may be a meaningful overpayment signal worth checking properly";
   }
-  if (keepRate >= 0.58) {
-    return "This bonus should still feel useful, but a noticeable share is being lost to deductions";
+  if (difference > 300) {
+    return "There may be a moderate overpayment signal worth reviewing";
   }
-  if (keepRate >= 0.48) {
-    return "A substantial part of this bonus is likely to disappear into deductions";
+  if (difference > 0) {
+    return "There may be a small overpayment signal, but the pattern is not conclusive on its own";
   }
-  return "This is the type of bonus that can feel much weaker than the headline number";
+  if (difference < -300) {
+    return "This pattern does not point to an obvious refund signal from these inputs";
+  }
+  return "This pattern looks broadly close and does not currently suggest a strong refund signal";
 }
 
-function getBody(keepRate: number, bonus: number) {
-  if (keepRate >= 0.7) {
-    return `From a bonus of ${formatCurrency(
-      bonus
-    )}, the retained amount should still feel fairly visible. The gross number will not fully translate into take-home, but the deduction drag is not especially heavy here.`;
+function getBody(difference: number) {
+  if (difference > 1200) {
+    return "This does not confirm that a refund is definitely due, but it is strong enough that the tax code, payslip pattern, and employment history deserve a closer look.";
   }
-
-  if (keepRate >= 0.58) {
-    return `From a bonus of ${formatCurrency(
-      bonus
-    )}, a noticeable share is likely to be lost to PAYE-style deductions. This is often the point where users realise why bonus money feels smaller than expected.`;
+  if (difference > 300) {
+    return "The gap is noticeable enough that a tax-code issue, job change, emergency tax period, or payroll adjustment may be worth reviewing.";
   }
-
-  if (keepRate >= 0.48) {
-    return `From a bonus of ${formatCurrency(
-      bonus
-    )}, the retained amount may still be useful, but the gap between gross and net is now large enough to matter. Comparing one-off bonus money with permanent salary can become important here.`;
+  if (difference > 0) {
+    return "There is some sign of potential overpayment, but smaller differences can still be explained by timing, cumulative PAYE, or incomplete context.";
   }
-
-  return `From a bonus of ${formatCurrency(
-    bonus
-  )}, the retained amount can be much lower than many users expect. In this range, it is common to feel that the headline bonus looked far stronger on paper than it does in reality.`;
+  if (difference < -300) {
+    return "This input set does not look like an obvious refund scenario. In some cases it may point more toward normal PAYE variation or even a catch-up pattern instead.";
+  }
+  return "At this stage the pattern looks reasonably close to expectation. That does not rule out issues, but it does mean there is no strong refund signal from these numbers alone.";
 }
 
-export default function BonusTaxCalculator() {
-  const [salary, setSalary] = useState(45000);
-  const [bonus, setBonus] = useState(5000);
+export default function TaxRefundCalculator() {
+  const [salary, setSalary] = useState(35000);
+  const [taxPaid, setTaxPaid] = useState(5200);
 
-  const result = useMemo(() => estimateBonusTakeHome(bonus, salary), [bonus, salary]);
+  const expectedTax = useMemo(() => estimateExpectedTax(salary), [salary]);
+  const difference = useMemo(() => taxPaid - expectedTax, [taxPaid, expectedTax]);
+  const possibleRefund = difference > 0 ? difference : 0;
 
   const insights = useMemo(
     () => [
       {
-        title: getHeadline(result.keepRate),
-        description: getBody(result.keepRate, bonus),
+        title: getHeadline(difference),
+        description: getBody(difference),
         tone:
-          result.keepRate >= 0.7
+          possibleRefund > 300
             ? ("positive" as const)
-            : result.keepRate < 0.5
+            : difference < -300
             ? ("warning" as const)
             : ("neutral" as const),
       },
       {
-        title: "What to do next",
+        title: "Important note",
         description:
-          "If the bonus looks weaker than expected, compare it against a permanent pay rise or inspect the broader salary route to understand whether recurring income would feel stronger.",
+          "Refund outcomes can depend on tax code history, job changes, emergency tax, cumulative PAYE, benefits, and HMRC records. This page is a first-check estimate only.",
         tone: "neutral" as const,
       },
     ],
-    [bonus, result.keepRate]
+    [difference, possibleRefund]
   );
 
   return (
@@ -89,13 +96,13 @@ export default function BonusTaxCalculator() {
         <div className="border-b border-slate-200 px-6 py-7 dark:border-slate-800 sm:px-8">
           <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr] xl:items-end">
             <div>
-              <p className="text-sm font-medium app-accent">One-off pay impact</p>
+              <p className="text-sm font-medium app-accent">Overpayment check</p>
               <h2 className="mt-2 text-3xl font-bold tracking-tight app-title sm:text-4xl">
-                See how much of a bonus may actually be kept
+                Check whether paid Income Tax looks high enough to review
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-8 app-copy sm:text-base">
-                This tool is designed to show why one-off bonus money can feel much
-                smaller than the headline figure after deductions.
+                This tool compares approximate expected Income Tax with the tax
+                already paid and helps show whether there is a refund-style signal.
               </p>
             </div>
 
@@ -105,7 +112,7 @@ export default function BonusTaxCalculator() {
                   Best use
                 </p>
                 <p className="mt-2 text-lg font-semibold app-title">
-                  Bonus take-home estimate
+                  First-check overpayment read
                 </p>
               </div>
 
@@ -114,7 +121,7 @@ export default function BonusTaxCalculator() {
                   Best next step
                 </p>
                 <p className="mt-2 text-lg font-semibold app-title">
-                  Compare with salary growth
+                  Tax code + payslip check
                 </p>
               </div>
             </div>
@@ -126,10 +133,11 @@ export default function BonusTaxCalculator() {
             <div className="mb-6">
               <p className="text-sm font-medium app-subtle">Step 1</p>
               <h3 className="mt-1 text-xl font-semibold app-title">
-                Enter salary and bonus
+                Enter salary and tax paid
               </h3>
               <p className="mt-2 text-sm leading-7 app-copy">
-                Use your main salary and the bonus amount to see a practical net-impact estimate.
+                Use an annual salary estimate and the Income Tax already paid if
+                you want a quick refund-style signal.
               </p>
             </div>
 
@@ -154,7 +162,7 @@ export default function BonusTaxCalculator() {
 
                 <div>
                   <label className="mb-2 block text-sm font-medium app-title">
-                    Bonus amount
+                    Income Tax paid
                   </label>
                   <div className="relative">
                     <span className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-xl font-semibold text-slate-500 dark:text-slate-400">
@@ -162,8 +170,8 @@ export default function BonusTaxCalculator() {
                     </span>
                     <input
                       type="number"
-                      value={bonus}
-                      onChange={(e) => setBonus(Number(e.target.value) || 0)}
+                      value={taxPaid}
+                      onChange={(e) => setTaxPaid(Number(e.target.value) || 0)}
                       className="app-input h-[64px] rounded-[22px] pl-12 text-2xl font-semibold"
                     />
                   </div>
@@ -178,11 +186,11 @@ export default function BonusTaxCalculator() {
                 }}
               >
                 <p className="text-sm font-semibold app-title">
-                  Why bonus money feels different
+                  What usually causes refund suspicion
                 </p>
                 <p className="mt-2 text-sm leading-7 app-copy">
-                  A bonus is one-off money, and the deduction pressure can feel sharper
-                  because users compare the gross figure emotionally, not just mathematically.
+                  Emergency tax, tax code issues, job changes, leaving work
+                  mid-year, or periods where payroll deducted too much too early.
                 </p>
               </div>
             </div>
@@ -192,10 +200,10 @@ export default function BonusTaxCalculator() {
             <div className="mb-6">
               <p className="text-sm font-medium app-subtle">Step 2</p>
               <h3 className="mt-1 text-xl font-semibold app-title">
-                Read the bonus impact clearly
+                Read the refund-style signal
               </h3>
               <p className="mt-2 text-sm leading-7 app-copy">
-                This is designed to show what the bonus may feel like after deductions, not just what it says on paper.
+                This is designed to show whether paid tax looks high enough to justify deeper checking.
               </p>
             </div>
 
@@ -203,21 +211,21 @@ export default function BonusTaxCalculator() {
               <div className="rounded-[30px] border app-card p-6">
                 <p className="text-sm font-medium app-accent">Interpretation</p>
                 <h3 className="mt-3 text-2xl font-semibold tracking-tight app-title sm:text-3xl">
-                  {getHeadline(result.keepRate)}
+                  {getHeadline(difference)}
                 </h3>
                 <p className="mt-4 text-sm leading-8 app-copy sm:text-[15px]">
-                  {getBody(result.keepRate, bonus)}
+                  {getBody(difference)}
                 </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="rounded-[24px] border app-card px-5 py-5">
                   <div className="inline-flex rounded-[14px] app-soft p-2">
-                    <Gift className="h-4 w-4 app-accent" />
+                    <ReceiptText className="h-4 w-4 app-accent" />
                   </div>
-                  <p className="mt-4 text-sm app-subtle">Gross bonus</p>
+                  <p className="mt-4 text-sm app-subtle">Expected tax</p>
                   <p className="mt-2 text-xl font-semibold app-title">
-                    {formatCurrency(bonus)}
+                    {formatCurrency(expectedTax)}
                   </p>
                 </div>
 
@@ -225,49 +233,70 @@ export default function BonusTaxCalculator() {
                   <div className="inline-flex rounded-[14px] app-soft p-2">
                     <Wallet2 className="h-4 w-4 app-accent" />
                   </div>
-                  <p className="mt-4 text-sm app-subtle">Estimated net bonus</p>
-                  <p className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
-                    {formatCurrency(result.netBonus)}
+                  <p className="mt-4 text-sm app-subtle">Tax paid</p>
+                  <p className="mt-2 text-xl font-semibold app-title">
+                    {formatCurrency(taxPaid)}
                   </p>
                 </div>
 
                 <div className="rounded-[24px] border app-card px-5 py-5">
                   <div className="inline-flex rounded-[14px] app-soft p-2">
-                    <TrendingUp className="h-4 w-4 app-accent" />
+                    <SearchCheck className="h-4 w-4 app-accent" />
                   </div>
-                  <p className="mt-4 text-sm app-subtle">Lost to deductions</p>
-                  <p className="mt-2 text-xl font-semibold app-title">
-                    {formatCurrency(result.deductions)}
+                  <p className="mt-4 text-sm app-subtle">Possible refund signal</p>
+                  <p className="mt-2 text-xl font-semibold text-emerald-600 dark:text-emerald-400">
+                    {formatCurrency(possibleRefund)}
                   </p>
                 </div>
               </div>
 
               <div className="rounded-[24px] border app-card px-5 py-5">
-                <p className="text-sm font-semibold app-title">Keep rate</p>
-                <p className="mt-2 text-2xl font-semibold app-title">
-                  {(result.keepRate * 100).toFixed(0)}%
-                </p>
+                <p className="text-sm font-semibold app-title">Best next move</p>
                 <p className="mt-3 text-sm leading-7 app-copy">
-                  This is the rough share of the bonus estimated to remain after deductions in this setup.
+                  A refund signal is strongest when it is supported by a tax-code issue,
+                  unusual payslip pattern, or mid-year employment change rather than a single number alone.
                 </p>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center rounded-full app-chip px-3 py-1.5 text-[11px] font-medium">
+                    <ShieldCheck className="mr-1.5 h-3.5 w-3.5" />
+                    First-check only
+                  </span>
+                  <span className="inline-flex items-center rounded-full app-chip px-3 py-1.5 text-[11px] font-medium">
+                    <AlertTriangle className="mr-1.5 h-3.5 w-3.5" />
+                    Verify with real records
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <ToolInsightPanel title="Bonus reading" insights={insights} />
+      <ToolInsightPanel title="Refund reading" insights={insights} />
 
       <section className="grid gap-4 md:grid-cols-3">
         <Link
-          href="/compare-salary"
+          href="/tax-code-decoder"
           className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
         >
           <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Compare against a salary rise
+            Decode the tax code
           </p>
           <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Useful when you want to judge whether permanent pay would feel stronger than one-off bonus money.
+            Best when the possible overpayment may be linked to the PAYE code applied.
+          </p>
+        </Link>
+
+        <Link
+          href="/payslip-checker"
+          className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
+        >
+          <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            Check the payslip pattern
+          </p>
+          <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
+            Useful when you want to inspect year-to-date PAYE and NI instead of relying on one refund estimate.
           </p>
         </Link>
 
@@ -279,19 +308,7 @@ export default function BonusTaxCalculator() {
             Open salary calculator
           </p>
           <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Go back to the broader salary route to understand total take-home context.
-          </p>
-        </Link>
-
-        <Link
-          href="/guides/how-much-salary-increase-is-worth-it"
-          className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-sky-200 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-sky-800"
-        >
-          <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            Read the raise guide
-          </p>
-          <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400">
-            Useful when the real decision is one-off reward versus permanent salary growth.
+            Return to the broader salary route for full take-home context.
           </p>
         </Link>
       </section>
