@@ -17,6 +17,8 @@ type RouteParams = {
   }>;
 };
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return GUIDE_EXPANSION_SET.map((g) => ({
     slug: g.slug,
