@@ -1,10 +1,9 @@
-import { GUIDE_EXPANSION_SET } from "./guide-expansion-config";
 import {
-  getBenchmarkStaticParamsForRollout,
-  getComparisonStaticParamsForRollout,
-  getGoodSalaryStaticParamsForRollout,
-  getMonthlyTakeHomeStaticParamsForRollout,
-  getSalaryStaticParamsForRollout,
+  getBenchmarkRolesByRollout,
+  getComparisonPairsByRollout,
+  getMonthlyTakeHomeValuesByRollout,
+  getRegionsByRollout,
+  getSalaryValuesByRollout,
 } from "./programmatic-expansion-config";
 
 export function getBaseSiteUrl() {
@@ -20,6 +19,14 @@ export function buildAbsoluteUrl(path: string) {
   const base = getBaseSiteUrl();
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   return `${base}${cleanPath}`;
+}
+
+export function uniqueRoutes(routes: string[]) {
+  return [...new Set(routes)].sort((a, b) => {
+    if (a === "/") return -1;
+    if (b === "/") return 1;
+    return a.localeCompare(b);
+  });
 }
 
 export function getStaticCoreRoutes() {
@@ -45,7 +52,6 @@ export function getStaticCoreRoutes() {
     "/benchmarks/roles",
     "/benchmarks/regions",
     "/guides",
-    "/insights",
     "/about",
     "/contact",
     "/methodology",
@@ -74,50 +80,50 @@ export function getEditorialGuideRoutes() {
   ];
 }
 
-export function getProgrammaticGuideRoutes() {
-  return GUIDE_EXPANSION_SET.map((guide) => `/guides/${guide.slug}`);
-}
-
-export function getGuideRoutes() {
-  return [...new Set([...getEditorialGuideRoutes(), ...getProgrammaticGuideRoutes()])];
-}
-
-export function getSalaryRoutes() {
-  return getSalaryStaticParamsForRollout().map((item) => `/${item.salary}`);
-}
-
-export function getMonthlyTakeHomeRoutes() {
-  return getMonthlyTakeHomeStaticParamsForRollout().map(
-    (item) => `/monthly-take-home/${item.amount}`
+export function getSitemapSalaryRoutes() {
+  return getSalaryValuesByRollout("flagship").map(
+    (salary) => `/${salary}-after-tax-uk`
   );
 }
 
-export function getGoodSalaryRoutes() {
-  return getGoodSalaryStaticParamsForRollout().map(
-    (item) => `/good-salary/${item.salary}/${item.region}`
+export function getSitemapMonthlyTakeHomeRoutes() {
+  return getMonthlyTakeHomeValuesByRollout("flagship").map(
+    (amount) => `/monthly-take-home/${amount}`
   );
 }
 
-export function getBenchmarkRoutes() {
-  return getBenchmarkStaticParamsForRollout().map(
-    (item) => `/benchmarks/${item.role}/${item.region}`
+export function getSitemapGoodSalaryRoutes() {
+  const salaries = getSalaryValuesByRollout("flagship");
+  const regions = getRegionsByRollout("flagship");
+
+  return salaries.flatMap((salary) =>
+    regions.map((region) => `/good-salary/${salary}/${region.slug}`)
   );
 }
 
-export function getComparisonRoutes() {
-  return getComparisonStaticParamsForRollout().map(
-    (item) => `/compare/${item.comparison}`
+export function getSitemapBenchmarkRoutes() {
+  const roles = getBenchmarkRolesByRollout("flagship");
+  const regions = getRegionsByRollout("flagship");
+
+  return roles.flatMap((role) =>
+    regions.map((region) => `/benchmarks/${role.slug}/${region.slug}`)
+  );
+}
+
+export function getSitemapComparisonRoutes() {
+  return getComparisonPairsByRollout("flagship").map(
+    (pair) => `/compare/${pair.salaryA}-vs-${pair.salaryB}-after-tax`
   );
 }
 
 export function getAllSitemapRoutes() {
-  return [
+  return uniqueRoutes([
     ...getStaticCoreRoutes(),
-    ...getGuideRoutes(),
-    ...getSalaryRoutes(),
-    ...getMonthlyTakeHomeRoutes(),
-    ...getGoodSalaryRoutes(),
-    ...getBenchmarkRoutes(),
-    ...getComparisonRoutes(),
-  ];
+    ...getEditorialGuideRoutes(),
+    ...getSitemapSalaryRoutes(),
+    ...getSitemapMonthlyTakeHomeRoutes(),
+    ...getSitemapGoodSalaryRoutes(),
+    ...getSitemapBenchmarkRoutes(),
+    ...getSitemapComparisonRoutes(),
+  ]);
 }
