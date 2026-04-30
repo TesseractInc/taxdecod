@@ -1,8 +1,7 @@
 "use client";
 
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ReactNode } from "react";
-import SupabaseAuthProvider from "../auth/supabase-auth-provider";
+import type { ReactNode } from "react";
 
 type ThemeProviderProps = {
   children: ReactNode;
@@ -16,7 +15,7 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
       enableSystem
       disableTransitionOnChange
     >
-      <SupabaseAuthProvider>{children}</SupabaseAuthProvider>
+      {children}
     </NextThemesProvider>
   );
 }
