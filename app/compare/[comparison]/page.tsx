@@ -29,6 +29,8 @@ type ComparisonSeoPageProps = {
   }>;
 };
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return getComparisonSeoSlugs();
 }
@@ -206,8 +208,8 @@ export default async function ComparisonSeoPage({
                 Check a real payslip if the difference still feels wrong
               </p>
               <p className="mt-3 text-sm leading-8 app-copy">
-                Useful when a comparison looks fine on paper but the actual payslip
-                experience still feels off.
+                Useful when a comparison looks fine on paper but the actual
+                payslip experience still feels off.
               </p>
             </Link>
           </section>

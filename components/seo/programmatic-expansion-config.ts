@@ -1,3 +1,11 @@
+import {
+  PROTECTED_INDEXED_BENCHMARK_PARAMS,
+  PROTECTED_INDEXED_COMPARISON_SLUGS,
+  PROTECTED_INDEXED_GOOD_SALARY_PARAMS,
+  PROTECTED_INDEXED_MONTHLY_TAKE_HOME_VALUES,
+  PROTECTED_INDEXED_SALARY_VALUES,
+} from "./indexed-protected-routes";
+
 export type BenchmarkRoleConfig = {
   slug: string;
   label: string;
@@ -156,11 +164,11 @@ export const PRIORITY_COMPARISON_PAIRS: ComparisonPair[] = [
 ];
 
 export const PROGRAMMATIC_ROLLOUT = {
-  salaryPages: "full" as ExpansionRolloutMode,
-  monthlyTakeHomePages: "full" as ExpansionRolloutMode,
-  goodSalaryPages: "full" as ExpansionRolloutMode,
-  benchmarkPages: "full" as ExpansionRolloutMode,
-  comparisonPages: "full" as ExpansionRolloutMode,
+  salaryPages: "flagship" as ExpansionRolloutMode,
+  monthlyTakeHomePages: "flagship" as ExpansionRolloutMode,
+  goodSalaryPages: "flagship" as ExpansionRolloutMode,
+  benchmarkPages: "flagship" as ExpansionRolloutMode,
+  comparisonPages: "flagship" as ExpansionRolloutMode,
 } as const;
 
 export function buildNumericRange(
@@ -177,7 +185,7 @@ export function buildNumericRange(
   return values;
 }
 
-export function uniqueSortedNumbers(values: number[]) {
+export function uniqueSortedNumbers(values: readonly number[]) {
   return [...new Set(values)].sort((a, b) => a - b);
 }
 
@@ -398,17 +406,21 @@ export function getFeaturedComparisonPairs(): ComparisonPair[] {
 }
 
 export function getSalaryStaticParamsForRollout() {
-  return getSalaryValuesByRollout(PROGRAMMATIC_ROLLOUT.salaryPages).map(
-    (salary) => ({
-      salary: `${salary}-after-tax-uk`,
-    })
-  );
+  return uniqueSortedNumbers([
+    ...getSalaryValuesByRollout(PROGRAMMATIC_ROLLOUT.salaryPages),
+    ...PROTECTED_INDEXED_SALARY_VALUES,
+  ]).map((salary) => ({
+    salary: `${salary}-after-tax-uk`,
+  }));
 }
 
 export function getMonthlyTakeHomeStaticParamsForRollout() {
-  return getMonthlyTakeHomeValuesByRollout(
-    PROGRAMMATIC_ROLLOUT.monthlyTakeHomePages
-  ).map((amount) => ({
+  return uniqueSortedNumbers([
+    ...getMonthlyTakeHomeValuesByRollout(
+      PROGRAMMATIC_ROLLOUT.monthlyTakeHomePages
+    ),
+    ...PROTECTED_INDEXED_MONTHLY_TAKE_HOME_VALUES,
+  ]).map((amount) => ({
     amount: String(amount),
   }));
 }
@@ -417,11 +429,19 @@ export function getGoodSalaryStaticParamsForRollout() {
   const salaries = getSalaryValuesByRollout(PROGRAMMATIC_ROLLOUT.goodSalaryPages);
   const regions = getRegionsByRollout(PROGRAMMATIC_ROLLOUT.goodSalaryPages);
 
-  return salaries.flatMap((salary) =>
+  const generated = salaries.flatMap((salary) =>
     regions.map((region) => ({
       salary: String(salary),
       region: region.slug,
     }))
+  );
+
+  return [...generated, ...PROTECTED_INDEXED_GOOD_SALARY_PARAMS].filter(
+    (item, index, list) =>
+      list.findIndex(
+        (candidate) =>
+          candidate.salary === item.salary && candidate.region === item.region
+      ) === index
   );
 }
 
@@ -429,18 +449,38 @@ export function getBenchmarkStaticParamsForRollout() {
   const roles = getBenchmarkRolesByRollout(PROGRAMMATIC_ROLLOUT.benchmarkPages);
   const regions = getRegionsByRollout(PROGRAMMATIC_ROLLOUT.benchmarkPages);
 
-  return roles.flatMap((role) =>
+  const generated = roles.flatMap((role) =>
     regions.map((region) => ({
       role: role.slug,
       region: region.slug,
     }))
   );
+
+  return [...generated, ...PROTECTED_INDEXED_BENCHMARK_PARAMS].filter(
+    (item, index, list) =>
+      list.findIndex(
+        (candidate) =>
+          candidate.role === item.role && candidate.region === item.region
+      ) === index
+  );
 }
 
 export function getComparisonStaticParamsForRollout() {
-  return getComparisonPairsByRollout(PROGRAMMATIC_ROLLOUT.comparisonPages).map(
-    (pair) => ({
-      comparison: `${pair.salaryA}-vs-${pair.salaryB}-after-tax`,
+  const generated = getComparisonPairsByRollout(
+    PROGRAMMATIC_ROLLOUT.comparisonPages
+  ).map((pair) => ({
+    comparison: `${pair.salaryA}-vs-${pair.salaryB}-after-tax`,
+  }));
+
+  const protectedIndexed = PROTECTED_INDEXED_COMPARISON_SLUGS.map(
+    (comparison) => ({
+      comparison,
     })
+  );
+
+  return [...generated, ...protectedIndexed].filter(
+    (item, index, list) =>
+      list.findIndex((candidate) => candidate.comparison === item.comparison) ===
+      index
   );
 }
