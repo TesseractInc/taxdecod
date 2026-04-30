@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
@@ -10,6 +11,16 @@ import PageSnapshot from "../../components/results/page-snapshot";
 import EmailCapturePanel from "../../components/shared/email-capture-panel";
 import { demoScenarioInput, demoScenarioResult } from "../../lib/tax/demo-scenario";
 import { TAX_YEAR_LABEL } from "../../lib/tax/config";
+
+export const metadata: Metadata = {
+  title: "Salary Reality Check | TaxDecod",
+  description:
+    "A salary reality-check experience inside TaxDecod. Kept live for users but not indexed while the page is being upgraded from demo content to a full production-quality tool route.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function RealityCheckPage() {
   return (

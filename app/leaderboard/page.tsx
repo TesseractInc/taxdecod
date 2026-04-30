@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
@@ -7,6 +8,16 @@ import SalaryLeaderboard from "../../components/results/salary-leaderboard";
 import UnderpaidDetector from "../../components/results/underpaid-detector";
 import DownloadReportButton from "../../components/results/download-report-button";
 import { demoScenarioInput, demoScenarioResult } from "../../lib/tax/demo-scenario";
+
+export const metadata: Metadata = {
+  title: "Salary Leaderboard | TaxDecod",
+  description:
+    "A salary ranking and pressure-signal page inside TaxDecod. Kept live for product exploration but not indexed while the page is being upgraded.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function LeaderboardPage() {
   return (

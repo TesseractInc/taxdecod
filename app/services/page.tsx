@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import SiteHeader from "../../components/layout/site-header";
 import Container from "../../components/ui/container";
 import PageHero from "../../components/ui/page-hero";
 import ExperiencePager from "../../components/ui/experience-pager";
 import ServicesShowcase from "../../components/home/services-showcase";
+
+export const metadata: Metadata = {
+  title: "TaxDecod Services | TaxDecod",
+  description:
+    "A broader service and ecosystem page inside TaxDecod. Kept live for navigation but not indexed while the product structure is being refined.",
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function ServicesPage() {
   return (
