@@ -6,286 +6,648 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   BadgePoundSterling,
+  Banknote,
+  BookOpen,
   BriefcaseBusiness,
   Calculator,
   ChevronDown,
   ChevronRight,
-  CheckCircle2,
+  CircleHelp,
+  Code2,
   ContactRound,
+  FileCheck2,
   FileText,
   Gauge,
+  GraduationCap,
+  Landmark,
   LayoutGrid,
   LifeBuoy,
   LogIn,
   LogOut,
   Menu,
+  Moon,
+  PiggyBank,
+  ReceiptText,
   RefreshCcw,
   Scale,
   SearchCheck,
   ShieldCheck,
   Sparkles,
-  Trophy,
+  Target,
+  TrendingUp,
   User2,
   Wallet,
   X,
 } from "lucide-react";
+
 import Container from "../ui/container";
 import ThemeToggle from "../ui/theme-toggle";
-import {
-  headerPreviewGroups,
-  primaryNavLinks,
-  quickAccessLinks,
-  utilityMenuLinks,
-  type HeaderIconKey,
-  type HeaderPreviewGroup,
-  type HeaderPreviewLink,
-} from "./page-links";
 import { useSupabaseAuth } from "../auth/supabase-auth-provider";
 
-type MobileSectionKey =
-  | "core"
-  | "calculator"
-  | "payslip"
-  | "leaderboard"
-  | "tools"
-  | "reality"
-  | "more";
-
-const iconMap: Record<HeaderIconKey, ComponentType<{ className?: string }>> = {
-  calculator: Calculator,
-  payslip: FileText,
-  refund: RefreshCcw,
-  compare: Scale,
-  leaderboard: Trophy,
-  tools: LayoutGrid,
-  reality: Wallet,
-  methodology: SearchCheck,
-  services: BriefcaseBusiness,
-  contact: ContactRound,
-  salaryhub: Gauge,
-  reverse: RefreshCcw,
-  benchmark: BadgePoundSterling,
-  hourly: BadgePoundSterling,
-  monthly: Wallet,
+type HeaderLink = {
+  label: string;
+  href: string;
+  description: string;
+  badge?: string;
+  icon: ComponentType<{ className?: string }>;
 };
 
-function ToolChip({
-  link,
+type HeaderSection = {
+  label: string;
+  short: string;
+  href: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  icon: ComponentType<{ className?: string }>;
+  featured: HeaderLink;
+  links: HeaderLink[];
+};
+
+const sections: HeaderSection[] = [
+  {
+    label: "Calculate",
+    short: "Calc",
+    href: "/calculator",
+    eyebrow: "Core tools",
+    title: "Start with your real take-home number.",
+    description:
+      "Salary, student loan, overtime, bonus, and sacrifice calculators for first-check clarity.",
+    icon: Calculator,
+    featured: {
+      label: "Salary calculator",
+      href: "/calculator",
+      description: "Estimate annual and monthly take-home pay after UK deductions.",
+      badge: "Start",
+      icon: Calculator,
+    },
+    links: [
+      {
+        label: "Student loan",
+        href: "/student-loan-calculator",
+        description: "Check how Plan 1, 2, 4, 5 or postgraduate loans affect pay.",
+        badge: "Deduction",
+        icon: GraduationCap,
+      },
+      {
+        label: "Bonus tax",
+        href: "/bonus-tax-calculator",
+        description: "Understand how a bonus can change monthly deductions.",
+        badge: "Scenario",
+        icon: Banknote,
+      },
+      {
+        label: "Overtime",
+        href: "/overtime-calculator",
+        description: "Estimate extra pay after tax and NI.",
+        badge: "Extra pay",
+        icon: TrendingUp,
+      },
+      {
+        label: "Salary sacrifice",
+        href: "/salary-sacrifice-calculator",
+        description: "Explore pension sacrifice and deduction effects.",
+        badge: "Pension",
+        icon: PiggyBank,
+      },
+    ],
+  },
+  {
+    label: "Decide",
+    short: "Decide",
+    href: "/compare-salary",
+    eyebrow: "Decision tools",
+    title: "Turn salary numbers into decisions.",
+    description:
+      "Compare offers, reverse-plan income targets, and understand if a raise is actually worth it.",
+    icon: Scale,
+    featured: {
+      label: "Compare salaries",
+      href: "/compare-salary",
+      description: "Compare two salaries by the real monthly difference after deductions.",
+      badge: "Offer",
+      icon: Scale,
+    },
+    links: [
+      {
+        label: "Reverse salary",
+        href: "/reverse-tax",
+        description: "Work backwards from the monthly amount you want to keep.",
+        badge: "Target",
+        icon: Target,
+      },
+      {
+        label: "Salary hub",
+        href: "/salary-hub",
+        description: "Browse core salary after-tax routes and salary bands.",
+        badge: "Hub",
+        icon: Gauge,
+      },
+      {
+        label: "Benchmarks",
+        href: "/benchmarks",
+        description: "Explore role and region salary context.",
+        badge: "Context",
+        icon: BriefcaseBusiness,
+      },
+      {
+        label: "£100k tax trap",
+        href: "/100k-tax-trap",
+        description: "Understand one of the UK’s most confusing salary zones.",
+        badge: "Guide",
+        icon: BadgePoundSterling,
+      },
+    ],
+  },
+  {
+    label: "Check",
+    short: "Check",
+    href: "/payslip-checker",
+    eyebrow: "Payslip and payroll clarity",
+    title: "Check what payroll is doing to your money.",
+    description:
+      "Use payslip, tax code, refund, and deduction routes when the real-world numbers look wrong.",
+    icon: ReceiptText,
+    featured: {
+      label: "Payslip checker",
+      href: "/payslip-checker",
+      description: "Check whether PAYE, NI, and year-to-date deductions broadly look right.",
+      badge: "YTD",
+      icon: ReceiptText,
+    },
+    links: [
+      {
+        label: "Tax code decoder",
+        href: "/tax-code-decoder",
+        description: "Understand tax code patterns in plain English.",
+        badge: "PAYE",
+        icon: Code2,
+      },
+      {
+        label: "Tax refund",
+        href: "/tax-refund-calculator",
+        description: "Check possible overpayment or refund signals.",
+        badge: "Refund",
+        icon: RefreshCcw,
+      },
+      {
+        label: "Payslip explained",
+        href: "/payslip-explained",
+        description: "Learn what each payslip line is usually trying to show.",
+        badge: "Learn",
+        icon: FileText,
+      },
+      {
+        label: "Leave pay",
+        href: "/leave-pay",
+        description: "Explore sick, maternity, paternity, and holiday pay routes.",
+        badge: "Leave",
+        icon: FileCheck2,
+      },
+    ],
+  },
+  {
+    label: "Learn",
+    short: "Learn",
+    href: "/guides",
+    eyebrow: "Guides and methodology",
+    title: "Understand the rules behind the result.",
+    description:
+      "Editorial guides, assumptions, methodology, and trust pages for credibility and clarity.",
+    icon: BookOpen,
+    featured: {
+      label: "Guides",
+      href: "/guides",
+      description: "Plain-English guides for salary, tax, take-home pay, and payslips.",
+      badge: "Editorial",
+      icon: BookOpen,
+    },
+    links: [
+      {
+        label: "Methodology",
+        href: "/methodology",
+        description: "How TaxDecod frames estimates and assumptions.",
+        badge: "Trust",
+        icon: SearchCheck,
+      },
+      {
+        label: "Assumptions",
+        href: "/assumptions",
+        description: "Read the current tax-year assumptions behind the tools.",
+        badge: "Rules",
+        icon: Landmark,
+      },
+      {
+        label: "Disclaimer",
+        href: "/disclaimer",
+        description: "Important limitations: estimates, not financial advice.",
+        badge: "Legal",
+        icon: ShieldCheck,
+      },
+      {
+        label: "Contact",
+        href: "/contact",
+        description: "Questions, corrections, or site feedback.",
+        badge: "Support",
+        icon: ContactRound,
+      },
+    ],
+  },
+];
+
+const quickLaunch: HeaderLink[] = [
+  sections[0].featured,
+  sections[1].featured,
+  sections[2].featured,
+  sections[0].links[0],
+  sections[2].links[1],
+  sections[3].featured,
+  {
+    label: "All tools",
+    href: "/salary-tools",
+    description: "Open the full TaxDecod tool directory.",
+    badge: "Index",
+    icon: LayoutGrid,
+  },
+  {
+    label: "Services",
+    href: "/services",
+    description: "Explore TaxDecod platform services and future offerings.",
+    badge: "Platform",
+    icon: BriefcaseBusiness,
+  },
+];
+
+const supportLinks: HeaderLink[] = [
+  {
+    label: "Contact",
+    href: "/contact",
+    description: "Send corrections, feedback, or questions.",
+    badge: "Support",
+    icon: ContactRound,
+  },
+  {
+    label: "About",
+    href: "/about",
+    description: "Learn what TaxDecod is built to do.",
+    badge: "Company",
+    icon: CircleHelp,
+  },
+  {
+    label: "Privacy policy",
+    href: "/privacy-policy",
+    description: "How privacy and data handling are explained.",
+    badge: "Privacy",
+    icon: ShieldCheck,
+  },
+  {
+    label: "Terms",
+    href: "/terms",
+    description: "Terms and conditions for using the platform.",
+    badge: "Legal",
+    icon: FileText,
+  },
+];
+
+function PremiumLogo() {
+  return (
+    <motion.div
+      className="relative grid h-12 w-12 shrink-0 place-items-center"
+      whileHover={{ scale: 1.04, rotate: -2 }}
+      transition={{ duration: 0.22 }}
+    >
+      <motion.div
+        className="absolute inset-0 rounded-[20px] bg-[conic-gradient(from_120deg,#22d3ee,#6366f1,#020617,#22d3ee)] opacity-95 blur-[1px]"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+      />
+      <div className="absolute inset-[2px] rounded-[18px] bg-white dark:bg-[#071014]" />
+      <motion.div
+        className="absolute inset-[6px] rounded-[15px] bg-[radial-gradient(circle_at_25%_18%,rgba(34,211,238,0.75),transparent_35%),radial-gradient(circle_at_82%_82%,rgba(99,102,241,0.58),transparent_43%),linear-gradient(145deg,#020617,#0f172a)]"
+        animate={{ opacity: [0.88, 1, 0.88] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute -right-1 -top-1 h-4 w-4 rounded-full border border-white/80 bg-cyan-300 shadow-[0_0_26px_rgba(34,211,238,0.88)]"
+        animate={{ scale: [1, 1.18, 1], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <BadgePoundSterling className="relative z-10 h-5 w-5 text-white" />
+    </motion.div>
+  );
+}
+
+function ToolTile({
+  item,
+  onNavigate,
   compact = false,
 }: {
-  link: HeaderPreviewLink;
+  item: HeaderLink;
+  onNavigate: () => void;
   compact?: boolean;
 }) {
-  const Icon = iconMap[link.icon];
+  const Icon = item.icon;
 
   return (
     <Link
-      href={link.href}
-      className={`group flex items-start gap-3 rounded-[18px] border transition ${
-        compact ? "px-4 py-3.5" : "px-4 py-4"
+      href={item.href}
+      onClick={onNavigate}
+      className={`group relative overflow-hidden rounded-[24px] border border-slate-200 bg-white/78 shadow-sm backdrop-blur-xl transition hover:-translate-y-1 hover:border-cyan-200 hover:shadow-xl dark:border-white/10 dark:bg-white/[0.045] dark:hover:border-cyan-300/25 ${
+        compact ? "p-3.5" : "p-4"
       }`}
-      style={{
-        borderColor: "var(--line)",
-        background: "var(--surface-1)",
-      }}
     >
-      <div
-        className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px]"
-        style={{
-          background: "color-mix(in srgb, var(--primary) 9%, transparent)",
-          color: "var(--primary)",
-          border: "1px solid color-mix(in srgb, var(--primary) 13%, transparent)",
-        }}
-      >
-        <Icon className="h-4 w-4" />
-      </div>
+      <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.16),transparent_38%),radial-gradient(circle_at_100%_16%,rgba(99,102,241,0.14),transparent_36%)]" />
 
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold app-title leading-5">
-            {link.label}
-          </p>
-          {link.badge ? (
-            <span
-              className="rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em]"
-              style={{
-                background: "color-mix(in srgb, var(--primary) 6%, transparent)",
-                color: "var(--primary)",
-                border: "1px solid color-mix(in srgb, var(--primary) 8%, transparent)",
-              }}
-            >
-              {link.badge}
-            </span>
-          ) : null}
+      <div className="relative z-10 flex items-center gap-3">
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[17px] bg-slate-950 text-white shadow-lg dark:bg-white dark:text-slate-950">
+          <Icon className="h-4.5 w-4.5" />
         </div>
 
-        <p className="mt-1 text-xs leading-5 app-subtle">
-          {link.description}
-        </p>
-      </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="truncate text-sm font-bold text-slate-950 dark:text-white">
+              {item.label}
+            </p>
+            {item.badge ? (
+              <span className="hidden rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-slate-500 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300 sm:inline-flex">
+                {item.badge}
+              </span>
+            ) : null}
+          </div>
 
-      <ChevronRight className="mt-1 h-4 w-4 shrink-0 app-subtle transition group-hover:translate-x-0.5" />
+          <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+            {item.description}
+          </p>
+        </div>
+
+        <ChevronRight className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-1 group-hover:text-cyan-600 dark:text-slate-500 dark:group-hover:text-cyan-300" />
+      </div>
     </Link>
   );
 }
 
-function GroupPanel({
-  group,
+function SectionDropdown({
+  section,
   onNavigate,
 }: {
-  group: HeaderPreviewGroup;
+  section: HeaderSection;
   onNavigate: () => void;
 }) {
-  const FeaturedIcon = iconMap[group.featured.icon];
+  const FeaturedIcon = section.featured.icon;
+  const SectionIcon = section.icon;
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)]">
-      <div
-        className="rounded-[24px] border p-5"
-        style={{
-          borderColor: "var(--line)",
-          background: "color-mix(in srgb, var(--surface-2) 92%, transparent)",
-        }}
-      >
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
-          {group.title}
-        </p>
+    <motion.div
+      key={section.label}
+      initial={{ opacity: 0, y: -10, scale: 0.985 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -10, scale: 0.985 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="absolute left-1/2 top-[86px] z-[95] hidden w-[min(1040px,calc(100vw-48px))] -translate-x-1/2 xl:block"
+    >
+      <div className="relative overflow-hidden rounded-[34px] border border-slate-200 bg-white/90 p-4 shadow-[0_34px_140px_-62px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#071014]/94">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.14),transparent_34%),radial-gradient(circle_at_92%_10%,rgba(99,102,241,0.12),transparent_34%)]" />
 
-        <Link
-          href={group.featured.href}
-          onClick={onNavigate}
-          className="mt-4 block rounded-[22px] border px-5 py-5 transition"
-          style={{
-            borderColor: "color-mix(in srgb, var(--primary) 14%, var(--line))",
-            background: "color-mix(in srgb, var(--primary) 4%, var(--surface-1))",
-          }}
-        >
-          <div className="flex items-start gap-4">
-            <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px]"
-              style={{
-                background: "color-mix(in srgb, var(--primary) 8%, transparent)",
-                color: "var(--primary)",
-              }}
-            >
-              <FeaturedIcon className="h-5 w-5" />
-            </div>
+        <div className="relative z-10 grid gap-4 lg:grid-cols-[0.76fr_1.24fr]">
+          <Link
+            href={section.featured.href}
+            onClick={onNavigate}
+            className="group relative overflow-hidden rounded-[28px] bg-slate-950 p-5 text-white shadow-[0_32px_100px_-60px_rgba(15,23,42,0.95)]"
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(34,211,238,0.28),transparent_34%),radial-gradient(circle_at_100%_18%,rgba(99,102,241,0.26),transparent_34%)]" />
+            <motion.div
+              className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full border border-cyan-300/20"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
+            />
 
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2.5">
-                <p className="text-[1.05rem] font-semibold app-title">
-                  {group.featured.label}
-                </p>
-                {group.featured.badge ? (
-                  <span
-                    className="rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em]"
-                    style={{
-                      background:
-                        "color-mix(in srgb, var(--primary) 6%, transparent)",
-                      color: "var(--primary)",
-                      border:
-                        "1px solid color-mix(in srgb, var(--primary) 8%, transparent)",
-                    }}
-                  >
-                    {group.featured.badge}
-                  </span>
-                ) : null}
+            <div className="relative z-10">
+              <div className="flex items-start justify-between gap-4">
+                <div className="grid h-12 w-12 place-items-center rounded-[18px] bg-white text-slate-950">
+                  <FeaturedIcon className="h-5 w-5" />
+                </div>
+                <div className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/10">
+                  <SectionIcon className="h-4.5 w-4.5 text-cyan-200" />
+                </div>
               </div>
 
-              <p className="mt-2.5 text-sm leading-6 app-copy">
-                {group.featured.description}
+              <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-300">
+                {section.eyebrow}
               </p>
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight">
+                {section.featured.label}
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-slate-300">
+                {section.featured.description}
+              </p>
+
+              <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-950 transition group-hover:-translate-y-0.5">
+                Open
+                <ChevronRight className="h-4 w-4" />
+              </div>
+            </div>
+          </Link>
+
+          <div>
+            <div className="flex items-end justify-between gap-4 px-1">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
+                  {section.label}
+                </p>
+                <h3 className="mt-1 text-xl font-semibold tracking-tight text-slate-950 dark:text-white">
+                  {section.title}
+                </h3>
+              </div>
+
+              <Link
+                href={section.href}
+                onClick={onNavigate}
+                className="hidden rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950 sm:inline-flex"
+              >
+                Open hub
+              </Link>
+            </div>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {section.links.map((link) => (
+                <ToolTile key={link.href + link.label} item={link} onNavigate={onNavigate} />
+              ))}
             </div>
           </div>
-        </Link>
-      </div>
-
-      <div
-        className="rounded-[24px] border p-5"
-        style={{
-          borderColor: "var(--line)",
-          background: "color-mix(in srgb, var(--surface-1) 96%, transparent)",
-        }}
-      >
-        <div className="mb-3.5 flex items-center gap-2">
-          <SearchCheck className="h-4 w-4 app-accent" />
-          <p className="text-sm font-semibold app-title">Core paths</p>
-        </div>
-
-        <div className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3">
-          {group.links.map((link) => (
-            <ToolChip key={link.href + link.label} link={link} compact />
-          ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-function AccountButton({
+function ExplorePanel({ onNavigate }: { onNavigate: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10, scale: 0.985 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -10, scale: 0.985 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className="absolute left-1/2 top-[86px] z-[95] hidden w-[min(1120px,calc(100vw-48px))] -translate-x-1/2 xl:block"
+    >
+      <div className="relative overflow-hidden rounded-[34px] border border-slate-200 bg-white/90 p-4 shadow-[0_34px_140px_-62px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#071014]/94">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.14),transparent_34%),radial-gradient(circle_at_92%_10%,rgba(99,102,241,0.12),transparent_34%)]" />
+
+        <div className="relative z-10">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-700 dark:text-cyan-300">
+                TaxDecod command menu
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">
+                Everything important, one click away.
+              </h3>
+            </div>
+
+            <Link
+              href="/salary-tools"
+              onClick={onNavigate}
+              className="inline-flex min-h-10 items-center rounded-full bg-slate-950 px-4 text-sm font-bold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+            >
+              Full tool index
+            </Link>
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
+            <div className="grid gap-3 md:grid-cols-2">
+              {quickLaunch.map((link) => (
+                <ToolTile key={link.href + link.label} item={link} onNavigate={onNavigate} />
+              ))}
+            </div>
+
+            <div className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-4 dark:border-white/10 dark:bg-white/[0.04]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                Support and trust
+              </p>
+              <div className="mt-4 grid gap-3">
+                {supportLinks.map((link) => (
+                  <ToolTile
+                    key={link.href + link.label}
+                    item={link}
+                    onNavigate={onNavigate}
+                    compact
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function AccountPanel({
   signedIn,
   email,
-  onClick,
+  loginEmail,
+  setLoginEmail,
+  ready,
+  status,
+  notice,
+  clearNotice,
+  handleSendLink,
+  signOut,
 }: {
   signedIn: boolean;
-  email?: string | null;
-  onClick: () => void;
+  email: string | null;
+  loginEmail: string;
+  setLoginEmail: (value: string) => void;
+  ready: boolean;
+  status: string;
+  notice: string | null;
+  clearNotice: () => void;
+  handleSendLink: () => Promise<void>;
+  signOut: () => Promise<void>;
 }) {
   return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileHover={{ y: -1 }}
-      whileTap={{ scale: 0.985 }}
-      className="inline-flex items-center gap-2 rounded-[16px] border px-3 py-2"
-      style={{
-        borderColor: "var(--line)",
-        background: "color-mix(in srgb, var(--surface-1) 96%, transparent)",
-        color: "var(--text)",
-        boxShadow: "var(--shadow-sm)",
-      }}
+    <motion.div
+      initial={{ opacity: 0, y: -10, scale: 0.985 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -10, scale: 0.985 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="absolute right-6 top-[86px] z-[96] w-[min(420px,calc(100vw-32px))] overflow-hidden rounded-[30px] border border-slate-200 bg-white/92 p-4 shadow-[0_34px_120px_-70px_rgba(15,23,42,0.55)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#071014]/94"
     >
-      <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[12px]"
-        style={{
-          background: "color-mix(in srgb, var(--primary) 10%, transparent)",
-          color: "var(--primary)",
-          border: "1px solid color-mix(in srgb, var(--primary) 12%, transparent)",
-        }}
-      >
-        {signedIn ? <User2 className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
+      <div className="flex items-start gap-3">
+        <div className="grid h-11 w-11 place-items-center rounded-[17px] bg-slate-950 text-white dark:bg-white dark:text-slate-950">
+          {signedIn ? <User2 className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
+        </div>
+
+        <div>
+          <p className="text-sm font-bold text-slate-950 dark:text-white">
+            {signedIn ? "Account active" : "Save salary routes"}
+          </p>
+          <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
+            {signedIn
+              ? email
+              : "Sign in with a magic link to save scenarios and return later."}
+          </p>
+        </div>
       </div>
 
-      <div className="hidden min-w-0 text-left leading-tight sm:block">
-        <p className="text-[11px] font-medium uppercase tracking-[0.14em] app-subtle">
-          {signedIn ? "Account" : "Sign in"}
+      {signedIn ? (
+        <div className="mt-4 grid gap-2">
+          <Link
+            href="/calculator"
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-slate-950 text-sm font-bold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+          >
+            Open calculator
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => void signOut()}
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-sm font-bold text-slate-950 transition hover:bg-white dark:border-white/10 dark:bg-white/[0.04] dark:text-white"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign out
+          </button>
+        </div>
+      ) : (
+        <div className="mt-4 grid gap-2">
+          <input
+            type="email"
+            value={loginEmail}
+            onChange={(event) => {
+              setLoginEmail(event.target.value);
+              clearNotice();
+            }}
+            placeholder="you@example.com"
+            className="min-h-[48px] rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-950 outline-none transition focus:border-cyan-300 focus:bg-white focus:ring-4 focus:ring-cyan-100 dark:border-white/10 dark:bg-white/[0.04] dark:text-white dark:placeholder:text-slate-500"
+          />
+
+          <button
+            type="button"
+            onClick={() => void handleSendLink()}
+            disabled={!ready || status === "sending-link"}
+            className="inline-flex min-h-[48px] items-center justify-center rounded-2xl bg-slate-950 px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950"
+          >
+            {status === "sending-link" ? "Sending..." : "Send magic link"}
+          </button>
+        </div>
+      )}
+
+      {notice ? (
+        <p className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300">
+          {notice}
         </p>
-        <p className="max-w-[140px] truncate text-sm font-semibold app-title">
-          {signedIn ? email : "Saved scenarios"}
-        </p>
-      </div>
-    </motion.button>
+      ) : null}
+    </motion.div>
   );
 }
 
 export default function SiteHeader() {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [exploreOpen, setExploreOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
-  const [activePreview, setActivePreview] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [mobileSections, setMobileSections] = useState<
-    Record<MobileSectionKey, boolean>
-  >({
-    core: true,
-    calculator: false,
-    payslip: false,
-    leaderboard: false,
-    tools: false,
-    reality: false,
-    more: false,
-  });
+  const [loginEmail, setLoginEmail] = useState("");
 
   const {
     configured,
@@ -299,620 +661,283 @@ export default function SiteHeader() {
     clearNotice,
   } = useSupabaseAuth();
 
-  const [loginEmail, setLoginEmail] = useState("");
+  const signedIn = Boolean(user);
+
+  const currentSection = useMemo(
+    () => sections.find((section) => section.label === activeSection) ?? null,
+    [activeSection],
+  );
 
   useEffect(() => {
     if (email) setLoginEmail(email);
   }, [email]);
 
   useEffect(() => {
-    setMobileOpen(false);
-    setDesktopMenuOpen(false);
+    setActiveSection(null);
+    setExploreOpen(false);
     setAccountOpen(false);
-    setActivePreview(null);
+    setMobileOpen(false);
   }, [pathname]);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 8);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = useMemo(
-    () =>
-      primaryNavLinks
-        .map((item) => ({
-          ...item,
-          group: headerPreviewGroups.find((group) => group.href === item.href),
-        }))
-        .filter((item) => item.group),
-    [],
-  );
-
-  const signedIn = Boolean(user);
-  const activeGroup =
-    headerPreviewGroups.find((group) => group.href === activePreview) ?? null;
-
-  const handleSendLink = async () => {
+  async function handleSendLink() {
     await sendMagicLink(loginEmail);
-  };
+  }
 
-  const toggleMobileSection = (key: MobileSectionKey) => {
-    setMobileSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const shellBackground =
-    scrolled || activePreview || desktopMenuOpen || accountOpen
-      ? "color-mix(in srgb, var(--card-strong) 97%, transparent)"
-      : "color-mix(in srgb, var(--card-strong) 94%, transparent)";
+  function closePanels() {
+    setActiveSection(null);
+    setExploreOpen(false);
+    setAccountOpen(false);
+    setMobileOpen(false);
+  }
 
   return (
-    <header className="relative z-[80]">
-      <div className="top-trust-bar">
+    <header className="sticky top-0 z-[95]">
+      <div className="pt-3">
         <Container>
-          <div className="top-trust-inner">
-            <span className="top-trust-item">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Based on current HMRC guidance and UK PAYE rules
-            </span>
+          <div
+            className={`relative rounded-full border px-3 transition-all duration-300 ${
+              scrolled
+                ? "border-slate-200 bg-white/84 shadow-[0_18px_70px_-42px_rgba(15,23,42,0.45)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#071014]/84"
+                : "border-slate-200/70 bg-white/58 backdrop-blur-xl dark:border-white/10 dark:bg-[#071014]/58"
+            }`}
+          >
+            <div className="flex h-[66px] items-center justify-between gap-3">
+              <Link
+                href="/"
+                onClick={closePanels}
+                className="flex min-w-0 items-center gap-3"
+                aria-label="TaxDecod home"
+              >
+                <PremiumLogo />
+                <span className="hidden text-lg font-semibold tracking-[-0.045em] text-slate-950 dark:text-white sm:block">
+                  TaxDecod
+                </span>
+              </Link>
 
-            <span className="top-trust-divider" aria-hidden="true" />
+              <nav className="hidden items-center gap-1 xl:flex">
+                {sections.map((section) => {
+                  const active =
+                    activeSection === section.label ||
+                    pathname === section.href ||
+                    pathname?.startsWith(`${section.href}/`);
 
-            <span className="top-trust-item">
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Updated for the current UK tax year
-            </span>
-
-            <span className="top-trust-divider hidden md:block" aria-hidden="true" />
-
-            <span className="top-trust-item hidden md:inline-flex">
-              <Sparkles className="h-3.5 w-3.5" />
-              Core tools include salary, payslip, refund, and reality checks
-            </span>
-          </div>
-        </Container>
-      </div>
-
-      <div
-        className="site-header-shell border-b transition-[background,box-shadow] duration-200"
-        style={{
-          background: shellBackground,
-          boxShadow: scrolled ? "0 14px 34px rgba(11,22,39,0.08)" : "none",
-          borderColor: "var(--line)",
-        }}
-      >
-        <Container className="flex h-[74px] items-center justify-between gap-3">
-          <Link href="/" className="group flex min-w-0 items-center gap-3">
-            <div className="site-header-mark">
-              <BadgePoundSterling className="h-4.5 w-4.5" />
-            </div>
-
-            <div className="min-w-0 leading-tight">
-              <p className="truncate text-[1rem] font-semibold tracking-[-0.03em] app-title">
-                TaxDecod
-              </p>
-              <p className="truncate text-xs app-subtle">
-                UK salary and take-home guidance
-              </p>
-            </div>
-          </Link>
-
-          <nav className="hidden items-center gap-1 xl:flex">
-            {navItems.map((item) => {
-              const active = pathname === item.href || activePreview === item.href;
-
-              return (
-                <button
-                  key={item.href}
-                  type="button"
-                  onMouseEnter={() => {
-                    setDesktopMenuOpen(false);
-                    setActivePreview(item.href);
-                  }}
-                  onClick={() =>
-                    setActivePreview((prev) => (prev === item.href ? null : item.href))
-                  }
-                  className={`site-header-nav-link ${
-                    active ? "site-header-nav-link-active" : ""
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                      active ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-              );
-            })}
-          </nav>
-
-          <div className="flex items-center gap-2">
-            {configured ? (
-              <AccountButton
-                signedIn={signedIn}
-                email={email}
-                onClick={() => {
-                  setActivePreview(null);
-                  setDesktopMenuOpen(false);
-                  setMobileOpen(false);
-                  setAccountOpen((prev) => !prev);
-                }}
-              />
-            ) : null}
-
-            <ThemeToggle compact />
-
-            <button
-              type="button"
-              onClick={() => {
-                setActivePreview(null);
-
-                if (typeof window !== "undefined" && window.innerWidth >= 1280) {
-                  setAccountOpen(false);
-                  setDesktopMenuOpen((prev) => !prev);
-                } else {
-                  setMobileOpen((prev) => !prev);
-                }
-              }}
-              className="site-header-menu"
-              aria-label={mobileOpen || desktopMenuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={mobileOpen || desktopMenuOpen}
-            >
-              {mobileOpen || desktopMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-            </button>
-          </div>
-        </Container>
-
-        <AnimatePresence mode="wait">
-          {activeGroup ? (
-            <motion.div
-              key={`preview-${activeGroup.href}`}
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: "easeOut" }}
-              className="hidden border-t xl:block"
-              style={{ borderColor: "var(--line)" }}
-              onMouseLeave={() => setActivePreview(null)}
-            >
-              <Container className="py-4">
-                <div
-                  className="rounded-[28px] border p-5"
-                  style={{
-                    borderColor: "var(--line)",
-                    background: "color-mix(in srgb, var(--card-strong) 96%, transparent)",
-                    boxShadow: "var(--shadow-md)",
-                  }}
-                >
-                  <GroupPanel
-                    group={activeGroup}
-                    onNavigate={() => setActivePreview(null)}
-                  />
-                </div>
-              </Container>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {desktopMenuOpen ? (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: "easeOut" }}
-              className="hidden border-t xl:block"
-              style={{ borderColor: "var(--line)" }}
-            >
-              <Container className="py-4">
-                <div
-                  className="rounded-[28px] border p-4"
-                  style={{
-                    borderColor: "var(--line)",
-                    background: "var(--card-strong)",
-                    boxShadow: "var(--shadow-md)",
-                  }}
-                >
-                  <div
-                    className="overflow-y-auto pr-1"
-                    style={{ maxHeight: "min(72vh, 760px)" }}
-                  >
-                    <div className="grid gap-4 xl:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
-                      <div
-                        className="rounded-[24px] border p-5"
-                        style={{
-                          borderColor: "var(--line)",
-                          background: "var(--surface-2)",
-                        }}
-                      >
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
-                          Quick access
-                        </p>
-                        <h3 className="mt-2 text-2xl font-semibold app-title">
-                          Core tools first
-                        </h3>
-                        <p className="mt-3 text-sm app-copy">
-                          Calculator, payslip checker, refund check, compare, tools,
-                          and reality.
-                        </p>
-
-                        <div className="mt-5 grid gap-3">
-                          {quickAccessLinks.map((link) => (
-                            <ToolChip key={link.href + link.label} link={link} />
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="grid gap-4">
-                        <div
-                          className="rounded-[24px] border p-5"
-                          style={{
-                            borderColor: "var(--line)",
-                            background: "var(--surface-1)",
-                          }}
-                        >
-                          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                            {headerPreviewGroups.map((group) => {
-                              const Icon = iconMap[group.featured.icon];
-
-                              return (
-                                <button
-                                  key={group.href}
-                                  type="button"
-                                  onClick={() => {
-                                    setDesktopMenuOpen(false);
-                                    setActivePreview(group.href);
-                                  }}
-                                  className="rounded-[18px] border p-4 text-left transition"
-                                  style={{
-                                    borderColor: "var(--line)",
-                                    background: "var(--surface-1)",
-                                  }}
-                                >
-                                  <div
-                                    className="flex h-10 w-10 items-center justify-center rounded-[14px]"
-                                    style={{
-                                      background:
-                                        "color-mix(in srgb, var(--primary) 9%, transparent)",
-                                      color: "var(--primary)",
-                                    }}
-                                  >
-                                    <Icon className="h-4 w-4" />
-                                  </div>
-
-                                  <p className="mt-4 text-sm font-semibold app-title">
-                                    {group.label}
-                                  </p>
-                                  <p className="mt-1 text-xs app-subtle">{group.title}</p>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-
-                        <div className="grid gap-4 lg:grid-cols-2">
-                          <div
-                            className="rounded-[24px] border p-5"
-                            style={{
-                              borderColor: "var(--line)",
-                              background: "var(--surface-1)",
-                            }}
-                          >
-                            <p className="text-lg font-semibold app-title">
-                              More from TaxDecod
-                            </p>
-
-                            <div className="mt-4 grid gap-3">
-                              {utilityMenuLinks.map((link) => (
-                                <ToolChip key={link.href + link.label} link={link} />
-                              ))}
-                            </div>
-                          </div>
-
-                          <div
-                            className="rounded-[24px] border p-5"
-                            style={{
-                              borderColor: "var(--line)",
-                              background: "var(--surface-1)",
-                            }}
-                          >
-                            <div className="flex items-center gap-2">
-                              <LifeBuoy className="h-4 w-4 app-accent" />
-                              <p className="text-lg font-semibold app-title">
-                                Trust and methodology
-                              </p>
-                            </div>
-
-                            <p className="mt-3 text-sm app-copy">
-                              Clear salary logic, visible methodology, and support
-                              routes without pretending to be HMRC.
-                            </p>
-
-                            <div className="mt-5 flex flex-wrap gap-2">
-                              <Link href="/methodology" className="app-button-secondary">
-                                Methodology
-                              </Link>
-                              <Link href="/calculator" className="app-button-primary">
-                                Open calculator
-                              </Link>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Container>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {configured && accountOpen ? (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: "easeOut" }}
-              className="border-t"
-              style={{ borderColor: "var(--line)" }}
-            >
-              <Container className="py-4">
-                <div
-                  className="rounded-[28px] border p-5"
-                  style={{
-                    borderColor: "var(--line)",
-                    background: "var(--card-strong)",
-                    boxShadow: "var(--shadow-md)",
-                  }}
-                >
-                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div className="max-w-2xl">
-                      <p className="text-sm font-medium app-title">
-                        Account and saved scenarios
-                      </p>
-                      <p className="mt-2 text-sm app-copy">
-                        Sign in with email and come back to saved salary scenarios later.
-                      </p>
-                    </div>
-
-                    {signedIn ? (
-                      <div
-                        className="rounded-2xl border px-4 py-3"
-                        style={{
-                          borderColor:
-                            "color-mix(in srgb, var(--emerald) 30%, var(--line))",
-                          background:
-                            "color-mix(in srgb, var(--emerald) 10%, transparent)",
-                        }}
-                      >
-                        <p className="text-[11px] uppercase tracking-[0.14em] money-positive">
-                          Signed in
-                        </p>
-                        <p className="mt-1 max-w-[220px] truncate text-sm font-semibold app-title">
-                          {email}
-                        </p>
-                      </div>
-                    ) : null}
-                  </div>
-
-                  <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
-                    <input
-                      type="email"
-                      inputMode="email"
-                      value={loginEmail}
-                      onChange={(e) => {
-                        setLoginEmail(e.target.value);
-                        clearNotice();
-                      }}
-                      placeholder="you@example.com"
-                      className="app-input h-[50px]"
-                    />
-
-                    {!signedIn ? (
-                      <button
-                        type="button"
-                        onClick={handleSendLink}
-                        disabled={!ready || status === "sending-link"}
-                        className="app-button-primary disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {status === "sending-link" ? "Sending..." : "Send sign-in link"}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => void signOut()}
-                        className="app-button-secondary"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Sign out
-                      </button>
-                    )}
-
-                    <Link href="/calculator" className="app-button-secondary">
-                      Open calculator
-                    </Link>
-                  </div>
-
-                  {notice ? (
-                    <div
-                      className="mt-4 rounded-[16px] border px-4 py-3"
-                      style={{
-                        borderColor: "var(--line)",
-                        background: "var(--surface-2)",
-                      }}
-                    >
-                      <p className="text-xs app-copy">{notice}</p>
-                    </div>
-                  ) : null}
-                </div>
-              </Container>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {mobileOpen ? (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.16, ease: "easeOut" }}
-              className="border-t xl:hidden"
-              style={{ borderColor: "var(--line)" }}
-            >
-              <Container className="py-4">
-                <div
-                  className="rounded-[28px] border p-4"
-                  style={{
-                    borderColor: "var(--line)",
-                    background: "var(--card-strong)",
-                    boxShadow: "var(--shadow-md)",
-                  }}
-                >
-                  <div
-                    className="rounded-[20px] border p-4"
-                    style={{ borderColor: "var(--line)", background: "var(--surface-2)" }}
-                  >
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] app-accent">
-                      Core tools
-                    </p>
-
-                    <div className="mt-4 grid gap-3">
-                      {quickAccessLinks.map((link) => (
-                        <ToolChip key={link.href + link.label} link={link} />
-                      ))}
-                    </div>
-                  </div>
-
-                  {configured ? (
+                  return (
                     <button
+                      key={section.label}
                       type="button"
+                      onMouseEnter={() => {
+                        setExploreOpen(false);
+                        setAccountOpen(false);
+                        setActiveSection(section.label);
+                      }}
                       onClick={() => {
-                        setMobileOpen(false);
-                        setAccountOpen(true);
+                        setExploreOpen(false);
+                        setAccountOpen(false);
+                        setActiveSection((current) =>
+                          current === section.label ? null : section.label,
+                        );
                       }}
-                      className="mt-4 flex w-full items-center justify-between rounded-[20px] border px-4 py-4 text-left"
-                      style={{
-                        borderColor: "var(--line)",
-                        background: "var(--surface-1)",
-                      }}
+                      className={`relative inline-flex min-h-[42px] items-center gap-1.5 rounded-full px-4 text-sm font-bold transition ${
+                        active
+                          ? "text-slate-950 dark:text-white"
+                          : "text-slate-500 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white"
+                      }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="flex h-10 w-10 items-center justify-center rounded-[14px]"
-                          style={{
-                            background:
-                              "color-mix(in srgb, var(--primary) 9%, transparent)",
-                            color: "var(--primary)",
-                          }}
-                        >
-                          {signedIn ? (
-                            <User2 className="h-4 w-4" />
-                          ) : (
-                            <LogIn className="h-4 w-4" />
-                          )}
-                        </div>
+                      {active ? (
+                        <motion.span
+                          layoutId="premium-header-active-section"
+                          className="absolute inset-0 rounded-full bg-slate-100 dark:bg-white/[0.08]"
+                          transition={{ duration: 0.22 }}
+                        />
+                      ) : null}
 
-                        <div>
-                          <p className="text-sm font-semibold app-title">
-                            {signedIn ? "Account" : "Sign in / account"}
-                          </p>
-                          <p className="text-xs app-subtle">
-                            {signedIn ? email : "Save scenarios and return later"}
-                          </p>
-                        </div>
-                      </div>
-
-                      <ChevronRight className="h-4 w-4 app-subtle" />
+                      <span className="relative z-10">{section.label}</span>
+                      <ChevronDown
+                        className={`relative z-10 h-3.5 w-3.5 transition ${
+                          activeSection === section.label ? "rotate-180" : ""
+                        }`}
+                      />
                     </button>
-                  ) : null}
+                  );
+                })}
+              </nav>
 
-                  <div className="mt-4 space-y-3">
-                    {[
-                      { key: "calculator", label: "Calculator", group: headerPreviewGroups[0] },
-                      { key: "payslip", label: "Payslip Check", group: headerPreviewGroups[1] },
-                      { key: "leaderboard", label: "Leaderboard", group: headerPreviewGroups[2] },
-                      { key: "tools", label: "Tools", group: headerPreviewGroups[3] },
-                      { key: "reality", label: "Reality", group: headerPreviewGroups[4] },
-                      { key: "more", label: "More", group: null },
-                    ].map((section) => {
-                      const open = mobileSections[section.key as MobileSectionKey];
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSection(null);
+                    setAccountOpen(false);
+                    setMobileOpen(false);
+                    setExploreOpen((value) => !value);
+                  }}
+                  className="hidden min-h-[42px] items-center gap-2 rounded-full bg-slate-950 px-4 text-sm font-bold text-white shadow-[0_16px_44px_-30px_rgba(15,23,42,0.7)] transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950 xl:inline-flex"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Explore
+                </button>
 
-                      return (
-                        <div
-                          key={section.key}
-                          className="rounded-[20px] border"
-                          style={{
-                            borderColor: "var(--line)",
-                            background: "var(--surface-1)",
-                          }}
-                        >
-                          <button
-                            type="button"
-                            onClick={() =>
-                              toggleMobileSection(section.key as MobileSectionKey)
-                            }
-                            className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
-                          >
-                            <p className="text-sm font-semibold app-title">{section.label}</p>
-                            <ChevronDown
-                              className={`h-4 w-4 app-subtle transition ${
-                                open ? "rotate-180" : ""
-                              }`}
-                            />
-                          </button>
+                {configured ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveSection(null);
+                      setExploreOpen(false);
+                      setMobileOpen(false);
+                      setAccountOpen((value) => !value);
+                    }}
+                    className="hidden h-[42px] w-[42px] place-items-center rounded-full border border-slate-200 bg-white/76 text-slate-950 shadow-sm backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-white/[0.04] dark:text-white lg:grid"
+                    aria-label={signedIn ? "Open account" : "Sign in"}
+                  >
+                    {signedIn ? <User2 className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
+                  </button>
+                ) : null}
 
-                          <AnimatePresence initial={false}>
-                            {open ? (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.16, ease: "easeOut" }}
-                                className="overflow-hidden"
-                              >
-                                <div
-                                  className="border-t px-4 pb-4 pt-3"
-                                  style={{ borderColor: "var(--line)" }}
-                                >
-                                  <div className="grid gap-3">
-                                    {section.group
-                                      ? [section.group.featured, ...section.group.links].map(
-                                          (link) => (
-                                            <ToolChip
-                                              key={link.href + link.label}
-                                              link={link}
-                                            />
-                                          ),
-                                        )
-                                      : utilityMenuLinks.map((link) => (
-                                          <ToolChip key={link.href + link.label} link={link} />
-                                        ))}
-                                  </div>
-                                </div>
-                              </motion.div>
-                            ) : null}
-                          </AnimatePresence>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </Container>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+                <ThemeToggle compact />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveSection(null);
+                    setExploreOpen(false);
+                    setAccountOpen(false);
+                    setMobileOpen((value) => !value);
+                  }}
+                  className="grid h-[42px] w-[42px] place-items-center rounded-full border border-slate-200 bg-white/76 text-slate-950 shadow-sm backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-white/[0.04] dark:text-white xl:hidden"
+                  aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                >
+                  {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </Container>
       </div>
+
+      <AnimatePresence>
+        {currentSection ? (
+          <SectionDropdown section={currentSection} onNavigate={closePanels} />
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {exploreOpen ? <ExplorePanel onNavigate={closePanels} /> : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {accountOpen && configured ? (
+          <AccountPanel
+            signedIn={signedIn}
+            email={email}
+            loginEmail={loginEmail}
+            setLoginEmail={setLoginEmail}
+            ready={ready}
+            status={status}
+            notice={notice}
+            clearNotice={clearNotice}
+            handleSendLink={handleSendLink}
+            signOut={signOut}
+          />
+        ) : null}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {mobileOpen ? (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.985 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="absolute left-0 right-0 top-[86px] z-[95] xl:hidden"
+          >
+            <Container>
+              <div className="max-h-[calc(100vh-110px)] overflow-y-auto rounded-[30px] border border-slate-200 bg-white/92 p-4 shadow-[0_34px_120px_-70px_rgba(15,23,42,0.55)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#071014]/94">
+                <div className="grid gap-3">
+                  {sections.map((section) => (
+                    <div
+                      key={section.label}
+                      className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-3 dark:border-white/10 dark:bg-white/[0.04]"
+                    >
+                      <Link
+                        href={section.href}
+                        onClick={closePanels}
+                        className="flex items-center justify-between gap-3 px-1 py-2"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="grid h-10 w-10 place-items-center rounded-[16px] bg-slate-950 text-white dark:bg-white dark:text-slate-950">
+                            <section.icon className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-slate-950 dark:text-white">
+                              {section.label}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                              {section.short} routes
+                            </p>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-slate-400" />
+                      </Link>
+
+                      <div className="mt-2 grid gap-2">
+                        {[section.featured, ...section.links.slice(0, 2)].map((link) => (
+                          <ToolTile
+                            key={link.href + link.label}
+                            item={link}
+                            onNavigate={closePanels}
+                            compact
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  {supportLinks.map((link) => (
+                    <ToolTile
+                      key={link.href + link.label}
+                      item={link}
+                      onNavigate={closePanels}
+                      compact
+                    />
+                  ))}
+                </div>
+
+                {configured ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setAccountOpen(true);
+                    }}
+                    className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-slate-950 px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+                  >
+                    {signedIn ? "Open account" : "Sign in"}
+                  </button>
+                ) : null}
+
+                <Link
+                  href="/contact"
+                  onClick={closePanels}
+                  className="mt-3 inline-flex min-h-[48px] w-full items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-5 text-sm font-bold text-slate-950 transition hover:bg-white dark:border-white/10 dark:bg-white/[0.04] dark:text-white"
+                >
+                  <LifeBuoy className="mr-2 h-4 w-4" />
+                  Contact support
+                </Link>
+              </div>
+            </Container>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </header>
   );
 }
