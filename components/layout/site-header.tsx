@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState, type ComponentType } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentType,
+} from "react";
 import {
   BadgePoundSterling,
   Banknote,
@@ -25,7 +31,6 @@ import {
   LogIn,
   LogOut,
   Menu,
-  Moon,
   PiggyBank,
   ReceiptText,
   RefreshCcw,
@@ -36,7 +41,6 @@ import {
   Target,
   TrendingUp,
   User2,
-  Wallet,
   X,
 } from "lucide-react";
 
@@ -54,7 +58,6 @@ type HeaderLink = {
 
 type HeaderSection = {
   label: string;
-  short: string;
   href: string;
   eyebrow: string;
   title: string;
@@ -64,10 +67,9 @@ type HeaderSection = {
   links: HeaderLink[];
 };
 
-const sections: HeaderSection[] = [
+const headerSections: HeaderSection[] = [
   {
     label: "Calculate",
-    short: "Calc",
     href: "/calculator",
     eyebrow: "Core tools",
     title: "Start with your real take-home number.",
@@ -77,7 +79,8 @@ const sections: HeaderSection[] = [
     featured: {
       label: "Salary calculator",
       href: "/calculator",
-      description: "Estimate annual and monthly take-home pay after UK deductions.",
+      description:
+        "Estimate annual and monthly take-home pay after UK salary deductions.",
       badge: "Start",
       icon: Calculator,
     },
@@ -85,7 +88,8 @@ const sections: HeaderSection[] = [
       {
         label: "Student loan",
         href: "/student-loan-calculator",
-        description: "Check how Plan 1, 2, 4, 5 or postgraduate loans affect pay.",
+        description:
+          "Check how Plan 1, 2, 4, 5, or postgraduate loans affect pay.",
         badge: "Deduction",
         icon: GraduationCap,
       },
@@ -99,7 +103,7 @@ const sections: HeaderSection[] = [
       {
         label: "Overtime",
         href: "/overtime-calculator",
-        description: "Estimate extra pay after tax and NI.",
+        description: "Estimate extra pay after tax and National Insurance.",
         badge: "Extra pay",
         icon: TrendingUp,
       },
@@ -114,7 +118,6 @@ const sections: HeaderSection[] = [
   },
   {
     label: "Decide",
-    short: "Decide",
     href: "/compare-salary",
     eyebrow: "Decision tools",
     title: "Turn salary numbers into decisions.",
@@ -124,7 +127,8 @@ const sections: HeaderSection[] = [
     featured: {
       label: "Compare salaries",
       href: "/compare-salary",
-      description: "Compare two salaries by the real monthly difference after deductions.",
+      description:
+        "Compare two salaries by the real monthly difference after deductions.",
       badge: "Offer",
       icon: Scale,
     },
@@ -161,7 +165,6 @@ const sections: HeaderSection[] = [
   },
   {
     label: "Check",
-    short: "Check",
     href: "/payslip-checker",
     eyebrow: "Payslip and payroll clarity",
     title: "Check what payroll is doing to your money.",
@@ -171,7 +174,8 @@ const sections: HeaderSection[] = [
     featured: {
       label: "Payslip checker",
       href: "/payslip-checker",
-      description: "Check whether PAYE, NI, and year-to-date deductions broadly look right.",
+      description:
+        "Check whether PAYE, NI, and year-to-date deductions broadly look right.",
       badge: "YTD",
       icon: ReceiptText,
     },
@@ -200,7 +204,8 @@ const sections: HeaderSection[] = [
       {
         label: "Leave pay",
         href: "/leave-pay",
-        description: "Explore sick, maternity, paternity, and holiday pay routes.",
+        description:
+          "Explore sick, maternity, paternity, and holiday pay routes.",
         badge: "Leave",
         icon: FileCheck2,
       },
@@ -208,9 +213,8 @@ const sections: HeaderSection[] = [
   },
   {
     label: "Learn",
-    short: "Learn",
     href: "/guides",
-    eyebrow: "Guides and methodology",
+    eyebrow: "Guides and trust",
     title: "Understand the rules behind the result.",
     description:
       "Editorial guides, assumptions, methodology, and trust pages for credibility and clarity.",
@@ -218,7 +222,8 @@ const sections: HeaderSection[] = [
     featured: {
       label: "Guides",
       href: "/guides",
-      description: "Plain-English guides for salary, tax, take-home pay, and payslips.",
+      description:
+        "Plain-English guides for salary, tax, take-home pay, and payslips.",
       badge: "Editorial",
       icon: BookOpen,
     },
@@ -256,12 +261,12 @@ const sections: HeaderSection[] = [
 ];
 
 const quickLaunch: HeaderLink[] = [
-  sections[0].featured,
-  sections[1].featured,
-  sections[2].featured,
-  sections[0].links[0],
-  sections[2].links[1],
-  sections[3].featured,
+  headerSections[0].featured,
+  headerSections[1].featured,
+  headerSections[2].featured,
+  headerSections[0].links[0],
+  headerSections[2].links[1],
+  headerSections[3].featured,
   {
     label: "All tools",
     href: "/salary-tools",
@@ -294,7 +299,7 @@ const supportLinks: HeaderLink[] = [
     icon: CircleHelp,
   },
   {
-    label: "Privacy policy",
+    label: "Privacy",
     href: "/privacy-policy",
     description: "How privacy and data handling are explained.",
     badge: "Privacy",
@@ -311,29 +316,12 @@ const supportLinks: HeaderLink[] = [
 
 function PremiumLogo() {
   return (
-    <motion.div
-      className="relative grid h-12 w-12 shrink-0 place-items-center"
-      whileHover={{ scale: 1.04, rotate: -2 }}
-      transition={{ duration: 0.22 }}
-    >
-      <motion.div
-        className="absolute inset-0 rounded-[20px] bg-[conic-gradient(from_120deg,#22d3ee,#6366f1,#020617,#22d3ee)] opacity-95 blur-[1px]"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-      />
-      <div className="absolute inset-[2px] rounded-[18px] bg-white dark:bg-[#071014]" />
-      <motion.div
-        className="absolute inset-[6px] rounded-[15px] bg-[radial-gradient(circle_at_25%_18%,rgba(34,211,238,0.75),transparent_35%),radial-gradient(circle_at_82%_82%,rgba(99,102,241,0.58),transparent_43%),linear-gradient(145deg,#020617,#0f172a)]"
-        animate={{ opacity: [0.88, 1, 0.88] }}
-        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute -right-1 -top-1 h-4 w-4 rounded-full border border-white/80 bg-cyan-300 shadow-[0_0_26px_rgba(34,211,238,0.88)]"
-        animate={{ scale: [1, 1.18, 1], opacity: [0.7, 1, 0.7] }}
-        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-      />
+    <div className="relative grid h-12 w-12 shrink-0 place-items-center">
+      <div className="absolute inset-0 rounded-[20px] bg-slate-200/80 shadow-[0_14px_34px_-24px_rgba(15,23,42,0.55)] dark:bg-white/10" />
+      <div className="absolute inset-[3px] rounded-[18px] bg-white dark:bg-[#071014]" />
+      <div className="absolute inset-[7px] rounded-[15px] bg-[radial-gradient(circle_at_28%_22%,rgba(34,211,238,0.26),transparent_34%),linear-gradient(145deg,#020617,#111827)] dark:bg-[radial-gradient(circle_at_28%_22%,rgba(34,211,238,0.22),transparent_34%),linear-gradient(145deg,#111827,#020617)]" />
       <BadgePoundSterling className="relative z-10 h-5 w-5 text-white" />
-    </motion.div>
+    </div>
   );
 }
 
@@ -375,7 +363,7 @@ function ToolTile({
             ) : null}
           </div>
 
-          <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
             {item.description}
           </p>
         </div>
@@ -389,9 +377,13 @@ function ToolTile({
 function SectionDropdown({
   section,
   onNavigate,
+  onEnter,
+  onLeave,
 }: {
   section: HeaderSection;
   onNavigate: () => void;
+  onEnter: () => void;
+  onLeave: () => void;
 }) {
   const FeaturedIcon = section.featured.icon;
   const SectionIcon = section.icon;
@@ -399,6 +391,8 @@ function SectionDropdown({
   return (
     <motion.div
       key={section.label}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
       initial={{ opacity: 0, y: -10, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.985 }}
@@ -470,7 +464,11 @@ function SectionDropdown({
 
             <div className="mt-4 grid gap-3 md:grid-cols-2">
               {section.links.map((link) => (
-                <ToolTile key={link.href + link.label} item={link} onNavigate={onNavigate} />
+                <ToolTile
+                  key={link.href + link.label}
+                  item={link}
+                  onNavigate={onNavigate}
+                />
               ))}
             </div>
           </div>
@@ -480,9 +478,19 @@ function SectionDropdown({
   );
 }
 
-function ExplorePanel({ onNavigate }: { onNavigate: () => void }) {
+function ExplorePanel({
+  onNavigate,
+  onEnter,
+  onLeave,
+}: {
+  onNavigate: () => void;
+  onEnter: () => void;
+  onLeave: () => void;
+}) {
   return (
     <motion.div
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
       initial={{ opacity: 0, y: -10, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.985 }}
@@ -515,7 +523,11 @@ function ExplorePanel({ onNavigate }: { onNavigate: () => void }) {
           <div className="mt-5 grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
             <div className="grid gap-3 md:grid-cols-2">
               {quickLaunch.map((link) => (
-                <ToolTile key={link.href + link.label} item={link} onNavigate={onNavigate} />
+                <ToolTile
+                  key={link.href + link.label}
+                  item={link}
+                  onNavigate={onNavigate}
+                />
               ))}
             </div>
 
@@ -542,6 +554,7 @@ function ExplorePanel({ onNavigate }: { onNavigate: () => void }) {
 }
 
 function AccountPanel({
+  configured,
   signedIn,
   email,
   loginEmail,
@@ -553,6 +566,7 @@ function AccountPanel({
   handleSendLink,
   signOut,
 }: {
+  configured: boolean;
   signedIn: boolean;
   email: string | null;
   loginEmail: string;
@@ -579,12 +593,14 @@ function AccountPanel({
 
         <div>
           <p className="text-sm font-bold text-slate-950 dark:text-white">
-            {signedIn ? "Account active" : "Save salary routes"}
+            {signedIn ? "Account active" : "Login to TaxDecod"}
           </p>
           <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
             {signedIn
               ? email
-              : "Sign in with a magic link to save scenarios and return later."}
+              : configured
+                ? "Use a magic link to save scenarios and return later."
+                : "Account saving is not active yet. You can still use all public tools."}
           </p>
         </div>
       </div>
@@ -607,7 +623,7 @@ function AccountPanel({
             Sign out
           </button>
         </div>
-      ) : (
+      ) : configured ? (
         <div className="mt-4 grid gap-2">
           <input
             type="email"
@@ -629,6 +645,21 @@ function AccountPanel({
             {status === "sending-link" ? "Sending..." : "Send magic link"}
           </button>
         </div>
+      ) : (
+        <div className="mt-4 grid gap-2">
+          <Link
+            href="/calculator"
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-slate-950 text-sm font-bold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+          >
+            Continue to calculator
+          </Link>
+          <Link
+            href="/contact"
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-sm font-bold text-slate-950 transition hover:bg-white dark:border-white/10 dark:bg-white/[0.04] dark:text-white"
+          >
+            Contact support
+          </Link>
+        </div>
       )}
 
       {notice ? (
@@ -649,6 +680,8 @@ export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
 
+  const dropdownCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const {
     configured,
     ready,
@@ -664,7 +697,7 @@ export default function SiteHeader() {
   const signedIn = Boolean(user);
 
   const currentSection = useMemo(
-    () => sections.find((section) => section.label === activeSection) ?? null,
+    () => headerSections.find((section) => section.label === activeSection) ?? null,
     [activeSection],
   );
 
@@ -687,11 +720,51 @@ export default function SiteHeader() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (dropdownCloseTimer.current) {
+        clearTimeout(dropdownCloseTimer.current);
+      }
+    };
+  }, []);
+
+  function clearDropdownCloseTimer() {
+    if (dropdownCloseTimer.current) {
+      clearTimeout(dropdownCloseTimer.current);
+      dropdownCloseTimer.current = null;
+    }
+  }
+
+  function scheduleDropdownClose() {
+    clearDropdownCloseTimer();
+
+    dropdownCloseTimer.current = setTimeout(() => {
+      setActiveSection(null);
+      setExploreOpen(false);
+    }, 1000);
+  }
+
+  function openSectionDropdown(sectionLabel: string) {
+    clearDropdownCloseTimer();
+    setExploreOpen(false);
+    setAccountOpen(false);
+    setActiveSection(sectionLabel);
+  }
+
+  function openExploreDropdown() {
+    clearDropdownCloseTimer();
+    setActiveSection(null);
+    setAccountOpen(false);
+    setMobileOpen(false);
+    setExploreOpen(true);
+  }
+
   async function handleSendLink() {
     await sendMagicLink(loginEmail);
   }
 
   function closePanels() {
+    clearDropdownCloseTimer();
     setActiveSection(null);
     setExploreOpen(false);
     setAccountOpen(false);
@@ -723,7 +796,7 @@ export default function SiteHeader() {
               </Link>
 
               <nav className="hidden items-center gap-1 xl:flex">
-                {sections.map((section) => {
+                {headerSections.map((section) => {
                   const active =
                     activeSection === section.label ||
                     pathname === section.href ||
@@ -733,12 +806,10 @@ export default function SiteHeader() {
                     <button
                       key={section.label}
                       type="button"
-                      onMouseEnter={() => {
-                        setExploreOpen(false);
-                        setAccountOpen(false);
-                        setActiveSection(section.label);
-                      }}
+                      onMouseEnter={() => openSectionDropdown(section.label)}
+                      onMouseLeave={scheduleDropdownClose}
                       onClick={() => {
+                        clearDropdownCloseTimer();
                         setExploreOpen(false);
                         setAccountOpen(false);
                         setActiveSection((current) =>
@@ -773,7 +844,10 @@ export default function SiteHeader() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  onMouseEnter={openExploreDropdown}
+                  onMouseLeave={scheduleDropdownClose}
                   onClick={() => {
+                    clearDropdownCloseTimer();
                     setActiveSection(null);
                     setAccountOpen(false);
                     setMobileOpen(false);
@@ -785,27 +859,32 @@ export default function SiteHeader() {
                   Explore
                 </button>
 
-                {configured ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveSection(null);
-                      setExploreOpen(false);
-                      setMobileOpen(false);
-                      setAccountOpen((value) => !value);
-                    }}
-                    className="hidden h-[42px] w-[42px] place-items-center rounded-full border border-slate-200 bg-white/76 text-slate-950 shadow-sm backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-white/[0.04] dark:text-white lg:grid"
-                    aria-label={signedIn ? "Open account" : "Sign in"}
-                  >
-                    {signedIn ? <User2 className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
-                  </button>
-                ) : null}
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearDropdownCloseTimer();
+                    setActiveSection(null);
+                    setExploreOpen(false);
+                    setMobileOpen(false);
+                    setAccountOpen((value) => !value);
+                  }}
+                  className="hidden min-h-[42px] items-center gap-2 rounded-full border border-slate-200 bg-white/76 px-4 text-sm font-bold text-slate-950 shadow-sm backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-lg dark:border-white/10 dark:bg-white/[0.04] dark:text-white lg:inline-flex"
+                  aria-label={signedIn ? "Open account" : "Login"}
+                >
+                  {signedIn ? (
+                    <User2 className="h-4 w-4" />
+                  ) : (
+                    <LogIn className="h-4 w-4" />
+                  )}
+                  <span>{signedIn ? "Account" : "Login"}</span>
+                </button>
 
                 <ThemeToggle compact />
 
                 <button
                   type="button"
                   onClick={() => {
+                    clearDropdownCloseTimer();
                     setActiveSection(null);
                     setExploreOpen(false);
                     setAccountOpen(false);
@@ -824,17 +903,29 @@ export default function SiteHeader() {
 
       <AnimatePresence>
         {currentSection ? (
-          <SectionDropdown section={currentSection} onNavigate={closePanels} />
+          <SectionDropdown
+            section={currentSection}
+            onNavigate={closePanels}
+            onEnter={clearDropdownCloseTimer}
+            onLeave={scheduleDropdownClose}
+          />
         ) : null}
       </AnimatePresence>
 
       <AnimatePresence>
-        {exploreOpen ? <ExplorePanel onNavigate={closePanels} /> : null}
+        {exploreOpen ? (
+          <ExplorePanel
+            onNavigate={closePanels}
+            onEnter={clearDropdownCloseTimer}
+            onLeave={scheduleDropdownClose}
+          />
+        ) : null}
       </AnimatePresence>
 
       <AnimatePresence>
-        {accountOpen && configured ? (
+        {accountOpen ? (
           <AccountPanel
+            configured={configured}
             signedIn={signedIn}
             email={email}
             loginEmail={loginEmail}
@@ -861,44 +952,50 @@ export default function SiteHeader() {
             <Container>
               <div className="max-h-[calc(100vh-110px)] overflow-y-auto rounded-[30px] border border-slate-200 bg-white/92 p-4 shadow-[0_34px_120px_-70px_rgba(15,23,42,0.55)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#071014]/94">
                 <div className="grid gap-3">
-                  {sections.map((section) => (
-                    <div
-                      key={section.label}
-                      className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-3 dark:border-white/10 dark:bg-white/[0.04]"
-                    >
-                      <Link
-                        href={section.href}
-                        onClick={closePanels}
-                        className="flex items-center justify-between gap-3 px-1 py-2"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="grid h-10 w-10 place-items-center rounded-[16px] bg-slate-950 text-white dark:bg-white dark:text-slate-950">
-                            <section.icon className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-slate-950 dark:text-white">
-                              {section.label}
-                            </p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">
-                              {section.short} routes
-                            </p>
-                          </div>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-slate-400" />
-                      </Link>
+                  {headerSections.map((section) => {
+                    const SectionIcon = section.icon;
 
-                      <div className="mt-2 grid gap-2">
-                        {[section.featured, ...section.links.slice(0, 2)].map((link) => (
-                          <ToolTile
-                            key={link.href + link.label}
-                            item={link}
-                            onNavigate={closePanels}
-                            compact
-                          />
-                        ))}
+                    return (
+                      <div
+                        key={section.label}
+                        className="rounded-[24px] border border-slate-200 bg-slate-50/80 p-3 dark:border-white/10 dark:bg-white/[0.04]"
+                      >
+                        <Link
+                          href={section.href}
+                          onClick={closePanels}
+                          className="flex items-center justify-between gap-3 px-1 py-2"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="grid h-10 w-10 place-items-center rounded-[16px] bg-slate-950 text-white dark:bg-white dark:text-slate-950">
+                              <SectionIcon className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-950 dark:text-white">
+                                {section.label}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                                {section.eyebrow}
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-slate-400" />
+                        </Link>
+
+                        <div className="mt-2 grid gap-2">
+                          {[section.featured, ...section.links.slice(0, 2)].map(
+                            (link) => (
+                              <ToolTile
+                                key={link.href + link.label}
+                                item={link}
+                                onNavigate={closePanels}
+                                compact
+                              />
+                            ),
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
@@ -912,18 +1009,16 @@ export default function SiteHeader() {
                   ))}
                 </div>
 
-                {configured ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      setAccountOpen(true);
-                    }}
-                    className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-slate-950 px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
-                  >
-                    {signedIn ? "Open account" : "Sign in"}
-                  </button>
-                ) : null}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setAccountOpen(true);
+                  }}
+                  className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-slate-950 px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-950"
+                >
+                  {signedIn ? "Open account" : "Login"}
+                </button>
 
                 <Link
                   href="/contact"
